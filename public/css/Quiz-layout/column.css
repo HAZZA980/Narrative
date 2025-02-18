@@ -1,0 +1,257 @@
+/* General Styles */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main-content {
+    width: 73%;
+    position: relative; /* Allows absolute positioning within the content */
+}
+
+#quizContainer {
+    margin-top: 50px;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+#quizHeader {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#quizHeader h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+/* Controls */
+#topControls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: #fff;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    flex-wrap: wrap;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#startButton {
+    width: 80%;
+}
+
+#answerInput {
+    width: 50%;
+    margin: 0 10px;
+    text-align: center;
+    display: none; /* Initially hidden */
+}
+
+#rightControls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Increase font size for the score */
+#score {
+    font-size: 24px; /* Adjust the font size */
+    font-weight: bold;
+}
+
+/* Increase font size for the timer */
+#timer {
+    font-size: 30px; /* Adjust the font size */
+    font-weight: bold;
+}
+
+/* Style for all buttons */
+#topControls button,
+#rightControls button {
+    font-size: 18px; /* Adjust the font size */
+    margin: 5px; /* Add margin between buttons */
+    border-radius: 5px; /* Round button corners */
+    cursor: pointer; /* Change cursor to indicate it's clickable */
+    }
+
+/* Style for the score container to add more space */
+.score-container {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Ensure columns remain equal in size */
+}
+
+table tr {
+    border-bottom: 1px solid #ddd;
+}
+
+td {
+    padding: 5px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    border: 1px solid #ddd;
+}
+
+td.question {
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+td.answer {
+    background-color: #eaf4ff;
+    color: #007bff;
+    font-style: italic;
+}
+
+td.answer.correct {
+    background-color: #c8e6c9;
+    color: #388e3c;
+}
+
+td.answer.incorrect {
+    background-color: #ffcdd2;
+    color: #d32f2f;
+}
+
+/* Buttons */
+button {
+    height: 40px;
+    padding: 0 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px 40px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 80%;
+}
+
+.modal-content h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.modal-content p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+#resumeButton {
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #28a745;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#resumeButton:hover {
+    background-color: #218838;
+}
+
+/* Style the Give Up text */
+#giveUpText {
+    font-size: 12px; /* Smaller font size */
+    text-decoration: underline; /* Make it underlined */
+    color: #007BFF; /* Color for the underlined text, change as needed */
+    cursor: pointer; /* Change cursor to indicate it's clickable */
+    display: inline-block;
+    margin-top: 5px; /* Space from the score */
+}
+
+/* Ensure right controls (score, timer, give up) stay in position */
+#rightControls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-end;
+    position: relative;
+    flex-grow: 1;
+}
+
+/* Make sure the score and timer are always on the right */
+#score, #timer {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 24px;  /* Larger font size */
+}
+
+
+
+#back {
+    margin: 20px; /* Add some spacing around the button */
+    display: inline-block; /* Ensure proper alignment */
+}
+
+#back a {
+    display: inline-block; /* Makes the link behave like a button */
+    text-decoration: none; /* Remove underline */
+    padding: 10px 20px; /* Add padding for better clickability */
+    background-color: #007bff; /* Button background color */
+    color: #fff; /* Text color */
+    font-size: 16px; /* Font size */
+    font-weight: bold; /* Bold text */
+    border-radius: 5px; /* Rounded corners */
+    border: 1px solid transparent; /* Border styling */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effects */
+    text-align: center; /* Center the text */
+}
+
+#back a:hover {
+    background-color: #0056b3; /* Darker shade for hover effect */
+    transform: translateY(-2px); /* Subtle lift effect */
+}
+
+#back a:active {
+    background-color: #003f7f; /* Even darker shade for active state */
+    transform: translateY(0); /* Reset lift effect */
+}

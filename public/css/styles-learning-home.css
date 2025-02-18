@@ -1,0 +1,268 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    color: #333;
+}
+
+/* Main Container */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    margin: 10px;
+}
+
+.main-title {
+    font-size: 2rem;
+    color: #0a76ad;
+}
+
+/* Container for the quiz categories */
+.category-container {
+    padding: 2rem;
+    text-align: center;
+}
+
+.category-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* List of categories */
+.category-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+}
+
+.category-item {
+    margin: 1rem;
+    width: 200px; /* Adjust the width of each category */
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Make the links display as block level for styling */
+.category-item a {
+    display: block;
+    position: relative;
+    width: 100%;
+}
+
+/* Category image styling */
+.category-image {
+    position: relative;
+    width: 100%;
+    height: 250px; /* Set a fixed height for images */
+    overflow: hidden;
+}
+
+.category-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the area */
+    clip-path: polygon(20% 0, 100% 0, 80% 100%, 0 100%); /* Parallelogram shape */
+    transition: transform 0.3s ease-in-out; /* For hover effect */
+}
+
+/* Category text (hidden by default) */
+.category-text {
+    font-size: 1rem;
+    margin-top: 10px;
+    color: #000;
+    font-weight: bold;
+    opacity: 0; /* Make text invisible by default */
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Hover effect for image and text */
+.category-item:hover .category-image img {
+    transform: scale(1.1); /* Scale image when hovered */
+}
+
+.category-item:hover .category-text {
+    opacity: 1; /* Make text fully visible */
+}
+
+.section {
+    width: 30em;
+    background: #f5f5f5;
+    border-radius: 20px;
+    padding: 30px;
+}
+
+/* Quiz Section */
+.main-content {
+    display: flex;
+    gap: 40px;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Quiz List */
+.quiz-list {
+    list-style: none;
+    padding: 0;
+}
+
+.quiz-item {
+    margin-bottom: 15px;
+}
+
+.quiz-link {
+    color: #0a76ad;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.quiz-link:hover {
+    text-decoration: underline;
+}
+
+.quiz-score {
+    color: #555;
+}
+
+.quiz-description {
+    color: #666;
+}
+
+/* Resources Section */
+.resources {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.resources-links {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.resource-link {
+    padding: 10px 20px;
+    background-color: #2a3d66;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+}
+
+.resource-link:hover {
+    background-color: #1f2d47;
+}
+
+/*Search Bar*/
+.search {
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    width: 50%;
+    background: #F6F6F6;
+    border: none; /* Removed border */
+    margin: 2rem;
+}
+
+#text-search-bar {
+    width: 100%;
+    height: auto;
+    background: #F6F6F6;
+    border: none; /* Removed border */
+    outline: none; /* Removed outline */
+}
+
+.form-bar {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 2.75rem;
+    border: none; /* Removed border */
+}
+
+#btn-search {
+    background: #F6F6F6;
+    border-radius: 0;
+    border: none; /* Removed border */
+    outline: none; /* Removed outline */
+    cursor: pointer;
+    font-weight: 600;
+    padding-right: 2rem;
+}
+/*End of search Bar*/
+
+.desc {
+    width: 70%;
+    text-align: justify;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+
+/* Container for General Knowledge section */
+.generalKnowledge {
+    text-align: center; /* Center the button */
+    margin: 20px 0; /* Margin for spacing */
+}
+
+/* Styling the General Knowledge Quiz link */
+.genKnowledgeQuiz {
+    display: inline-block; /* Makes the link behave like a button */
+    padding: 12px 25px; /* Adds padding inside the button */
+    font-size: 18px; /* Font size for the text */
+    font-weight: 600; /* Slightly bold text */
+    text-decoration: none; /* Removes underline */
+    color: #fff; /* White text color */
+    background-color: #4CAF50; /* Green background */
+    border-radius: 50px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+/* Hover effect for the link */
+.genKnowledgeQuiz:hover {
+    background-color: #45a049; /* Slightly darker green on hover */
+    transform: translateY(-3px); /* Slight lift effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Enhance shadow on hover */
+}
+
+/* Focus effect for accessibility */
+.genKnowledgeQuiz:focus {
+    outline: none; /* Removes the default outline */
+    box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.5); /* Green glow around the button */
+}
+
+/* Responsive: Adjusts button size on smaller screens */
+@media (max-width: 600px) {
+    .genKnowledgeQuiz {
+        font-size: 16px; /* Smaller font on small screens */
+        padding: 10px 20px; /* Adjust padding on small screens */
+    }
+}

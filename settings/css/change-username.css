@@ -1,0 +1,74 @@
+/* Main parent container */
+.change-username-parent-containerr {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 34vh; /* Full viewport height */
+    font-family: Arial, sans-serif; /* Clean font style */
+}
+
+/* Section container */
+.change-username-section-container {
+    width: 73%;
+    max-width: 600px; /* Limit the width for better responsiveness */
+    padding: 20px;
+    background-color: #ffffff; /* White background for form */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border-radius: 8px; /* Rounded corners */
+    text-align: center;
+}
+
+/* Form elements */
+.change-username-form label {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333; /* Darker text for contrast */
+}
+
+.change-username-form input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.change-username-form input[type="text"]:focus {
+    border-color: #007bff; /* Highlighted border color on focus */
+}
+
+.change-username-form button {
+    display: inline-block;
+    background-color: #007bff; /* Primary button color */
+    color: #ffffff; /* White text color */
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.change-username-form button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .change-username-section-container {
+        width: 90%; /* Reduce width on smaller screens */
+        padding: 15px;
+    }
+
+    .change-username-form label, .change-username-form input[type="text"], .change-username-form button {
+        font-size: 13px; /* Adjust font sizes */
+    }
+}

@@ -1,0 +1,178 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7fc;
+    color: #333;
+}
+
+main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+h3 {
+    font-size: 1.5em;
+    margin-bottom: 1em;
+    color: #3d3d3d;
+}
+/* Ensuring the main container doesn't stretch its children */
+.main-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 20px;
+    align-items: flex-start;  /* Align items to the start to prevent stretching */
+}
+
+.menu-container {
+     width: 220px;
+     background-color: #2a3d66;
+     color: white;
+     padding: 20px;
+     border-radius: 8px;
+     margin-right: 20px;
+     display: flex;
+     flex-direction: column;
+     overflow: hidden;
+     flex-shrink: 0;
+     height: auto; /* Ensure the height adjusts based on content */
+     align-self: flex-start; /* Prevent menu container from stretching */
+     position: sticky; /* Make it sticky */
+     top: 20px; /* Stick it 20px from the top of the viewport */
+     z-index: 10; /* Ensure the menu stays on top of the other content */
+ }
+
+/* Optionally, add some shadow or border to indicate stickiness */
+.menu-container.sticky {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.menu-item {
+    height: 50px; /* Set a fixed height for each menu item */
+    padding: 12px;
+    background-color: #3e5a80;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.menu-item:hover {
+    background-color: #1f2d47;
+}
+
+.menu-item:active {
+    background-color: #1a2235;
+}
+
+.menu-item[data-category="film&tv"]:hover {
+    background-color: #5f6367;
+}
+
+.menu-item[data-category="history"]:hover {
+    background-color: #b2a000;
+}
+
+.menu-item[data-category="literature"]:hover {
+    background-color: #9b3c72;
+}
+
+/* Main Content */
+.content-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: calc(100% - 240px); /* Adjust for menu width */
+}
+
+.quiz-category {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: none; /* Hide all initially */
+}
+
+.quiz-category.active {
+    display: block;
+}
+
+.quiz-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.quiz-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2em;
+}
+
+.quiz-link {
+    color: #2a3d66;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.quiz-link:hover {
+    text-decoration: underline;
+}
+
+.quiz-score {
+    font-size: 1em;
+    color: #0a76ad;
+    display: flex;
+    justify-content: flex-end;
+}
+
+
+.quiz-header p {
+    font-size: 1em;
+    color: #777;
+    margin-top: 10px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .menu-container {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+
+    .content-container {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .quiz-category {
+        margin: 0 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .menu-container {
+        padding: 15px;
+    }
+
+    .menu-item {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .quiz-link {
+        font-size: 1.1em;
+    }
+}

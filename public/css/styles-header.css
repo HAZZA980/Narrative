@@ -1,0 +1,232 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Ensure body has no margins or padding */
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+/* Header */
+.global-navigation {
+    position: relative; /* Ensures we can position elements like the username absolutely */
+    background-color: white;
+}
+
+.orb-container {
+    width: 73%;
+    height: 4rem;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline; /* Ensure vertical alignment */
+    line-height: 1px;
+    font-size: 0.8rem;
+    font-weight: 700;
+
+}
+
+.orb-nav-title {
+    display: flex; /* Make sure this element aligns its content with flex */
+    align-items: center; /* Vertically center the content */
+    height: 4rem; /* Set the height to match the container */
+}
+
+.orb-nav-title img {
+    height: 40px;
+    width: auto;
+}
+
+.orbit-header-links {
+    display: flex;
+    justify-content: space-between; /* Centers the items horizontally */
+    align-items: center; /* Ensures the items are vertically centered */
+    width: 50%;
+    padding: 0;
+    list-style-type: none;
+    font-size: 0.8rem;
+    height: 4rem; /* Match the height of the container */
+}
+
+.orbit-header-links a {
+    position: relative; /* Make sure this element can position its pseudo-element */
+    padding: 0 1rem;
+    text-decoration: none; /* Remove underline for links */
+    color: inherit; /* Keep the color the same as the parent element */
+}
+
+.orbit-header-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 55%;
+    width: 30%;
+    height: 2px; /* Thickness of the border */
+    background: white; /* Match the color of the text */
+    transform: translateX(-50%); /* Centers the element horizontally */
+    transition: width 0.3s ease-in, background-color 0.3s ease;
+}
+
+.header-links-img {
+    height: 30px;
+    margin: 1em;
+    width: auto;
+    background-color: white;
+}
+
+/* Optional: If you want to change the color of the links on hover, add this */
+.orbit-header-links li:hover a {
+    color: inherit; /* Change the text color when hovering over the li */
+}
+
+.orb-nav-blogs:hover::after{
+    background-color: blue;
+    width: 65%;
+    text-decoration: none; /* Ensure underline is not added on hover */
+}
+
+.orb-nav-articles:hover::after{
+    background-color: red;
+    width: 65%;
+    text-decoration: none; /* Ensure underline is not added on hover */
+}
+.orb-nav-learn:hover::after{
+    background-color: green;
+    width: 65%;
+    text-decoration: none; /* Ensure underline is not added on hover */
+}
+
+.orb-nav-search {
+    width: 20rem;
+    background-color: #f1f1f1;
+    position: relative;
+    top: 0.75rem;
+}
+
+#header-search-bar {
+    background: #f1f1f1;
+    padding-left: 1em;
+    height: 2.5em;
+    width: 18em;
+    border: none; /* Remove border */
+    outline: none; /* Remove the blue focus outline */
+}
+
+#header-search-bar:hover {
+    border: none; /* Remove border */
+    outline: none; /* Remove the blue focus outline */
+}
+
+.orb-nav-searchbar {
+    width: 20rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: flex;
+    color: black;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: flex-start;
+}
+
+/* Style for the button within the search bar */
+.orb-nav-searchbar button {
+    background: none; /* Remove default button styling */
+    border: none; /* Remove border */
+    cursor: pointer; /* Add pointer cursor for interactivity */
+    display: flex; /* Align content like the original */
+    align-items: center; /* Vertically align content */
+    padding: 0; /* Remove default padding */
+    color: inherit; /* Match the color of the text */
+    position: relative;
+    top: -15px;
+}
+
+.orb-nav-searchbar button p {
+    margin: 0; /* Remove margin for consistent alignment */
+    padding-left: 0.5em; /* Match the original padding */
+    font-weight: 700; /* Keep font weight consistent */
+    font-size: 0.8rem; /* Match the font size */
+}
+
+.orb-nav-searchbar button:hover {
+    text-decoration: none; /* Remove underline */
+    color: black; /* Ensure the text color remains consistent */
+}
+
+.orb-nav-searchbar:hover {
+    color: black;
+    text-decoration: none;
+    text-underline: none;
+}
+
+.orb-nav-searchbar img {
+    left: 0;
+    width: 2.5em;
+    margin: 0;
+    padding: 0;
+}
+
+.orb-nav:hover {
+    color: black;
+    text-decoration: none;
+    text-underline: none;
+}
+
+/* Username display */
+.user-logged-in {
+    font-size: 1rem;
+    color: #fff;
+    padding-left: 1rem;
+    position: absolute; /* Position it to the top-right */
+    top: 10px;  /* Adjust as necessary */
+    right: 10px; /* Position it on the top-right */
+}
+
+.account-link img{
+    height: 2.5em;
+}
+
+.orbit-sublink {
+    display: flex;
+    flex-direction: row;
+}
+
+
+/* Ensures that both account-link and sign-in button appear in the same position */
+.orb-container {
+    position: relative;
+    width: 73%;
+    height: 4rem;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    line-height: 1px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* When the user is logged out, show the Sign In button in the same place */
+.orb-nav-logout {
+    display: inline-block;
+}
+
+.orb-nav-logout li {
+    line-height: 4rem;  /* Match the height of the container */
+}
+
+
+.orb-nav-logout li:hover {
+    color: #007bff;
+    cursor: pointer;
+}
+
+/* Ensure that account link only shows when logged in */
+.account-link {
+    display: none;
+}
