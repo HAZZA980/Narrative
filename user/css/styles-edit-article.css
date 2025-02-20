@@ -365,18 +365,21 @@ input#blog-title {
     position: absolute;
     background: white;
     border: 1px solid #ccc;
+    bottom: 5rem;
+    left: 16rem;
     max-height: 200px;
     overflow-y: auto;
-    width: 200px;
+    width: 220px;
 }
 .suggestion-item {
     padding: 8px;
     cursor: pointer;
+
 }
 .suggestion-item:hover {
     background-color: #f0f0f0;
 }
-.tag {
+.selected-tag {
     display: inline-block;
     background: #007BFF;
     color: white;

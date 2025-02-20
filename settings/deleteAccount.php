@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo '<p>Account deleted successfully. You will be redirected in 3 seconds.</p>';
         echo '<script>
         setTimeout(function() {
-            window.location.href = "../layouts/pages/user/signIn_register.php"; // Redirect to the sign-in page
+            window.location.href = "../signIn_register.php"; // Redirect to the sign-in page
         }, 3000); // 3000 milliseconds = 3 seconds
         </script>';
         exit;

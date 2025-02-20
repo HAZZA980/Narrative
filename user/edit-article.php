@@ -5,22 +5,25 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 ob_start();
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
-include BASE_PATH . 'user/model/edit-article.php';
 include BASE_PATH . "user/view/delete-article-modal.html";
+include BASE_PATH . "user/model/edit-article.php";
 
 // Ensure the user is logged in
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: " . BASE_URL . "layouts/pages/user/login.php");
+    header("Location: " . BASE_URL . "home.php");
     exit;
 }
+
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Article</title>
-    <link rel="stylesheet" href="<?php echo BASE_URL ?>user/css/styles-edit-article.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL?>user/css/styles-edit-article.css">
     <link rel="stylesheet" href="<?php echo BASE_URL?>user/css/delete-article-modal.css">
 </head>
 <body>
@@ -33,7 +36,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
                 <h2>Are you sure you want to save the changes?</h2>
                 <div class="modal-actions">
                     <button id="confirmSave" class="modal-button">Yes</button>
-                    <button id="cancelSave" class="modal-button">Cancel</button>
+                    <button id="cancelSave" class="modal-button">No</button>
                 </div>
             </div>
         </div>
@@ -71,8 +74,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
                         </div>
                         <input type="text" id="tags-input" placeholder="Enter tags" autocomplete="off">
                         <div id="suggestions"></div>
-                        <input type="hidden" name="tags" id="tags-hidden"
-                               value="<?php echo htmlspecialchars($article['Tags']); ?>">
+                        <input type="hidden" name="tags" id="tags-hidden" value="<?php echo htmlspecialchars($article['Tags']); ?>">
                     </div>
 
 
@@ -85,6 +87,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
         </div>
 
         <aside class="aside-links">
+
+
             <aside class="aside-section">
                 <?php if ($is_author): ?>
                     <aside class="aside-admin">
@@ -103,7 +107,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
                                 </form>
                             </li>
                             <li class="admin-action-item">
-                                <a href="javascript:void(0);" class="admin-action-link" id="deleteLink"
+                                <a href="javascript:void(0);" class="admin-action-link delete-link"
                                    data-article-id="<?php echo $id; ?>">Delete Article</a>
                             </li>
                         </ul>
@@ -113,9 +117,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
                 <aside class="aside-last-updated">
                     <p>Last Updated: <?php echo htmlspecialchars($article['LastUpdated']) ?></p>
                 </aside>
-                <?php
-//                include BASE_PATH . "layouts/pages/user/delete-modal-js.php";
-                ?>
+
             </aside>
 
 
@@ -131,9 +133,10 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 <script>
     var BASE_URL = "<?php echo BASE_URL; ?>";
 </script>
-<script src="<?php echo BASE_URL?>user/model/editArticle.js"></script>
 <script src="<?php echo BASE_URL?>user/js/delete-article.js"></script>
+<script src="<?php echo BASE_URL?>user/js/editArticle.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="<?php echo BASE_URL ?>model/subcategories.js"></script>
+
 </body>
 </html>
