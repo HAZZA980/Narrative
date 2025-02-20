@@ -1,0 +1,74 @@
+.account-header-tabs {
+    width: 73%;
+    margin: 30px auto 0 auto;
+    background: #fff;
+    padding: 20px 0px 0 0px;
+}
+
+.account-tabs-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.account-username {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.account-tabs {
+    display: flex;
+    border-radius: 8px 0 0 0;
+    background-color: #f1f1f1;
+}
+
+.account-tab {
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.account-tab.active {
+    background-color: #f9f9f9;
+    border-top: 2px solid black;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    border-radius: 8px 8px 0 0;
+}
+
+.account-tab:hover {
+    color: #0056b3;
+}
+
+/* Admin Tab Styles */
+.account-tab.admin {
+    background-color: darkgrey;
+    color: black; /* Reddish color for the text */
+    font-weight: bold;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    transition: all 0.3s ease;
+    border-bottom: none;
+
+}
+
+.account-tab.admin:hover {
+    background-color: black; /* Slightly darker shade of red on hover */
+    color: #ffffff; /* Darker text color on hover */
+    border-color: black;
+}
+
+.account-tab.admin.active {
+    background-color: darkgrey;
+    color: black;
+    border-top: 2px solid black;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    border-bottom: 2px solid black;
+
+}

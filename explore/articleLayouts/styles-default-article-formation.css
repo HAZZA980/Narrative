@@ -1,0 +1,413 @@
+/* Flex container for blogs */
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: center;
+    gap: 1.5rem;
+    width: 70%;
+}
+
+.divider {
+    border-bottom: 1px solid lightgrey;
+    width: 100%;
+}
+
+.personal-feed-container {
+    margin-top: 3rem;
+}
+
+/* Individual blog items */
+.flex-item {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Merriweather', serif;
+    width: 100%;
+    background-color: #fff;
+}
+
+/* Flexbox layout for the main container */
+.article-main-link {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+}
+
+.inter {
+    width: 100%; /* Ensure the container spans full width */
+}
+
+/* Align author, writing about, tags, and edit icon in one row */
+.article-author-and-topic {
+    padding-right: 1em;
+    display: flex;
+    align-items: center; /* Vertically aligns the items */
+    justify-content: flex-start; /* Distribute space evenly between items */
+    gap: 8px; /* Space between author, writing about, and tags */
+    width: 100%; /* Ensure the container spans full width */
+}
+
+/* Style for the edit menu icon and dropdown */
+.edit-article {
+    position: relative; /* Ensure the menu is positioned relative to the icon */
+    display: flex;
+    align-items: center; /* Vertically align the icon */
+    cursor: pointer;
+    margin-bottom: 0.4em;
+}
+
+.edit-menu {
+    display: none; /* Hide menu by default */
+    position: absolute;
+    top: 30px; /* Adjust position based on your layout */
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    width: 150px;
+    text-align: left;
+    border-radius: 5px;
+}
+
+/* When the menu has the 'show' class, it will be displayed */
+.edit-menu.show {
+    display: block;
+}
+
+.edit-menu ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+.edit-menu li {
+    margin: 5px 0;
+}
+
+.edit-menu a {
+    display: block; /* Make the <a> a block element, so the whole <li> is clickable */
+    padding: 10px; /* Optional: Add some padding for better click area */
+    text-decoration: none; /* Remove underline from link */
+    color: black; /* Set text color */
+}
+
+.edit-menu a:hover {
+    background-color: #f0f0f0; /* Optional: Change background color on hover */
+}
+
+/* Hover and active state for menu icon */
+.edit-menu-icon {
+    width: 20px;
+    cursor: pointer;
+}
+
+/* Show the dropdown when clicking the icon */
+.edit-article.active .edit-menu {
+    display: block;
+}
+
+/* Style for the button inside the dropdown menu */
+.edit-article-option {
+    display: block; /* Make the <button> act like a block element so it fills the list item */
+    padding: 10px; /* Optional: Add padding to make the button easier to click */
+    text-decoration: none; /* Remove underline (in case any is applied) */
+    color: black; /* Set the text color */
+    background-color: transparent; /* Make the background transparent */
+    border: none; /* Remove default border */
+    text-align: left; /* Align the text to the left */
+    width: 100%; /* Make the button stretch to fill the list item */
+    cursor: pointer; /* Change the cursor to pointer */
+}
+
+/* Button hover effect */
+.edit-article-option:hover {
+    background-color: #f0f0f0; /* Optional: Background color change on hover */
+}
+
+/* Active state for the button */
+.edit-article-option:active {
+    background-color: #e0e0e0; /* Optional: A darker background when the button is pressed */
+}
+
+/* To make the button look like the other list items, use the following styling */
+.admin-action-item {
+    margin: 5px 0;
+}
+
+.admin-action-item form {
+    display: inline;
+}
+
+/* Styling for the author name link */
+#author-name {
+    color: black; /* Default color for the author */
+    font-weight: bold; /* Bold font for the author */
+    text-decoration: none; /* Remove underline by default */
+    font-style: italic;
+    flex-shrink: 0; /* Prevent shrinking of this element */
+}
+
+/* Styling for the "writing about" text */
+#writing-about {
+    color: #888; /* Lighter color */
+    font-weight: normal; /* Lighter font weight */
+    flex-shrink: 0; /* Prevent shrinking of this element */
+}
+
+/* Styling for the blog topic tags */
+#blog-tags {
+    color: black; /* Default color for the topic */
+    text-decoration: none; /* Remove underline by default */
+    flex-shrink: 0; /* Prevent shrinking of this element */
+}
+
+/* Hover effect for both author and tags */
+#author-name:hover, #blog-tags:hover {
+    text-decoration: underline; /* Underline on hover */
+    color: black; /* Ensure text stays black on hover */
+}
+
+
+
+/* Blog details on the left */
+.blog-body {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%; /* Adjusts the left section width */
+    padding-right: 1rem;
+}
+
+.blog-details {
+    display: flex;
+    flex-direction: column;
+    width: 80%; /* Adjusts the left section width */
+    padding-right: 1rem;
+    margin-right: 3rem;
+}
+
+/* Blog title */
+#blog-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+/* Blog content summary */
+#blog-content {
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+/* Image container on the right */
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 25%; /* Adjusts the image section width */
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.image-container img {
+    width: 100%;
+    height: auto;
+    object-fit: cover; /* Ensures the image scales properly */
+    object-position: center;
+}
+
+.blog-details-2 {
+    display: flex;
+    flex-direction: row;
+    align-content: flex-start;
+    justify-content: flex-start;
+    padding: 0 2rem 0 0;
+    width: 78%;
+}
+
+.bookmark .bookmark-form .bookmark-btn{
+    background-color: white;
+    border: white;
+    margin-top: 3px;
+}
+
+
+.like-btn {
+    border: none;
+    background-color: white;
+}
+/* Style for the bookmark icon */
+.like-icon {
+    cursor: pointer; /* Show pointer to indicate it's clickable */
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease; /* Smooth transition for feedback */
+}
+
+.like-icon:hover {
+    transform: scale(1.5); /* Slight zoom effect on hover */
+}
+
+/* Status message below the like icon */
+.like-status {
+    font-size: 0.9em; /* Slightly smaller text */
+    margin-top: 5px; /* Space between icon and text */
+}
+
+/* Active state when showing a message */
+.like-status.active {
+    opacity: 1; /* Fully visible */
+    color: green; /* Default success color, can be overridden dynamically */
+}
+
+
+
+
+
+
+/* Style for the bookmark icon */
+.bookmark-icon {
+    cursor: pointer; /* Show pointer to indicate it's clickable */
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease; /* Smooth transition for feedback */
+}
+
+.bookmark-icon:hover {
+    transform: scale(1.5); /* Slight zoom effect on hover */
+}
+
+/* Status message below the bookmark icon */
+.bookmark-status {
+    font-size: 0.9em; /* Slightly smaller text */
+    margin-top: 5px; /* Space between icon and text */
+    color: gray; /* Default color for text */
+    transition: opacity 0.3s ease; /* Smooth fade-in/out for text */
+    opacity: 0; /* Initially hidden */
+}
+
+/* Active state when showing a message */
+.bookmark-status.active {
+    opacity: 1; /* Fully visible */
+    color: green; /* Default success color, can be overridden dynamically */
+}
+
+
+/* Container to hold the likes and comments on the same row */
+.likes-and-comments {
+    margin-left: 3rem;
+    height: auto;
+    display: flex; /* Align the items in a row */
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: row;
+}
+
+.like-form, .bookmark-form {
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* Style for each like and comment section */
+.likes-and-comments div a {
+    display: flex; /* Align image and text horizontally */
+    align-items: center; /* Vertically align items */
+    gap: 5px; /* Space between image and text */
+    width: auto;
+}
+
+/* Ensuring the images are the same size as the text */
+.likes-and-comments img {
+    width: 16px; /* Set width of the image */
+    height: 16px; /* Set height of the image */
+    vertical-align: middle; /* Align image vertically with text */
+}
+
+/* Optional: Style for the number text */
+.likes-and-comments p {
+    margin: 0; /* Remove default margin around the paragraph */
+    font-size: 1rem; /* Adjust text size */
+    line-height: 1.5; /* Ensure good vertical spacing for text */
+}
+
+/* Style for the blog date */
+#blog-date {
+    font-size: 0.9rem; /* Make the date slightly smaller */
+    color: #888; /* Lighter color for the date */
+    margin-top: 2px;
+}
+
+
+
+/* Modal Styles */
+/* This is for the article opacity and modal */
+.private-article {
+    opacity: 0.5; /* Make the article 50% opaque */
+    position: relative;
+}
+
+/* The modal overlay */
+.private-overlay {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    color: white;
+    text-align: center;
+    font-size: 24px;
+    padding: 20px;
+    z-index: 10;
+    border-radius: 8px;
+}
+
+/* Make the modal visible */
+.private-overlay.show {
+    display: block;
+}
+
+/* Style for the private modal message */
+.private-overlay p {
+    margin: 0;
+    padding: 10px;
+}
+
+
+.like, .comment {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center; /* Align items vertically */
+    width: 5rem;
+}
+
+.like img, .comment img {
+    height: 1.5rem; /* Adjust height as needed */
+    margin-right: 0.5rem; /* Optional: space between the image and text */
+}
+
+.likes-count, .comments-count {
+    display: flex;
+    align-items: center; /* Vertically center the text */
+    padding: 0 5px; /* Optional: add some space around the text */
+}
+
+.comments-link {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Keep the text color same as its parent */
+}
+
+.comments-link:hover {
+    text-decoration: none; /* Ensure the underline does not appear on hover */
+    color: inherit; /* Keep the text color same on hover */
+}
