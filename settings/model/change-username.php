@@ -17,7 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($stmt->execute()) {
             $_SESSION['username'] = $new_username;
-            echo "Username updated successfully.";
+            header("Location: " . BASE_URL . "account/settings.php?success=username_changed");
+            exit;
         } else {
             echo "Error updating username.";
         }

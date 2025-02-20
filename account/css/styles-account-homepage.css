@@ -1,0 +1,88 @@
+/*body {*/
+/*    font-family: Arial, sans-serif;*/
+/*    background-color: white;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*}*/
+/*.account-main-container {*/
+/*    width: 80%;*/
+/*    margin: 30px auto;*/
+/*    background: #fff;*/
+/*    padding: 20px;*/
+/*    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);*/
+/*    border-radius: 8px;*/
+/*    position: relative; !* Ensure content is positioned relative to this container *!*/
+/*}*/
+
+/*.tab-content {*/
+/*    display: none; !* Initially hide all tab content *!*/
+/*    padding: 20px 0; !* Padding for content inside the tabs *!*/
+/*    min-height: 300px; !* Ensure all tabs have a consistent height *!*/
+/*    position: relative; !* Ensure loaded content is positioned within this container *!*/
+/*    overflow: auto; !* Handle content overflow *!*/
+/*}*/
+
+/*.tab-content.active {*/
+/*    display: block; !* Show the active tab content *!*/
+/*}*/
+
+/*.tabs-container {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: space-between;*/
+/*    margin-bottom: 20px;*/
+/*}*/
+
+/*.tabs {*/
+/*    display: flex;*/
+/*    gap: 20px;*/
+/*}*/
+
+/*.tab {*/
+/*    padding: 10px 20px;*/
+/*    cursor: pointer;*/
+/*    border: none;*/
+/*    background: none;*/
+/*    font-size: 16px;*/
+/*    font-weight: bold;*/
+/*    color: #555;*/
+/*    border-bottom: 3px solid transparent;*/
+/*    transition: color 0.3s ease, border-color 0.3s ease;*/
+/*}*/
+
+/*.tab:hover,*/
+/*.tab.active {*/
+/*    color: #007bff;*/
+/*    border-bottom-color: #007bff;*/
+/*}*/
+
+/*.account-name {*/
+/*    font-size: 24px;*/
+/*    font-weight: bold;*/
+/*    color: #333;*/
+/*}*/
+
+/*.content-section {*/
+/*    margin: 20px 0;*/
+/*}*/
+
+/*.content-item {*/
+/*    margin: 10px 0;*/
+/*}*/
+
+/*.content-link {*/
+/*    color: #007bff;*/
+/*    text-decoration: none;*/
+/*}*/
+
+/*.content-link:hover {*/
+/*    text-decoration: underline;*/
+/*}*/
+
+/*.content-link.delete {*/
+/*    color: red;*/
+/*}*/
+
+/*h1, h2 {*/
+/*    margin: 10px 0;*/
+/*}*/

@@ -12,126 +12,10 @@ include BASE_PATH . "user/model/article-logic.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($blog['title']); ?> | Narrative</title>
-    <link rel="stylesheet" href="../public/css/styles-article-displayed.css">
-    <link rel="stylesheet" href="../public/css/articleLayouts/styles-default-article-formation.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL?>user/css/delete-article-modal.css">
-    <style>
-        .comment-header {
-            justify-content: space-between;
-        }
+    <link rel="stylesheet" href="<?php echo BASE_URL ?>user/css/styles-article.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL ?>explore/articleLayouts/styles-default-article-formation.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL ?>user/css/delete-article-modal.css">
 
-
-        /* Style the dropdown menu */
-        .dropdown-menu {
-            position: absolute;
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 200px;
-            display: none;
-        }
-
-
-        .edit-comment-form {
-            display: flex;
-            flex-direction: column;
-        }
-        .edit-comment-form textarea {
-            width: 100%;
-        }
-
-        /* General Button Styling */
-        .btn {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        /* Update Button Specific Styling */
-        .btn-update {
-            background-color: #4CAF50; /* Green */
-            color: white;
-        }
-
-        .btn-update:hover {
-            background-color: #45a049; /* Slightly darker green */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Cancel Button Specific Styling */
-        .btn-cancel {
-            background-color: #f44336; /* Red */
-            color: white;
-            margin-left: 10px;
-        }
-
-        .btn-cancel:hover {
-            background-color: #d32f2f; /* Slightly darker red */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Optional: Add consistent spacing between buttons */
-        .hidden-update-cancel-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px; /* Add space above the buttons if needed */
-        }
-
-        /* General Textarea Styling */
-        .auto-resizing-textarea {
-            width: 100%; /* Full width */
-            min-height: 50px; /* Minimum height */
-            max-height: 300px; /* Optional: Add a maximum height */
-            padding: 10px;
-            font-size: 14px;
-            line-height: 1.5;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            resize: none; /* Disable manual resizing */
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: border-color 0.3s ease;
-            overflow: hidden;
-        }
-
-        .auto-resizing-textarea:focus {
-            border-color: #4CAF50; /* Green border on focus */
-            outline: none;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-        }
-
-        .date-author {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .preferred_tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px; /* Spacing between tags */
-        }
-
-        .tag {
-            background-color: #f0f0f0; /* Light grey background */
-            color: #333; /* Darker text for contrast */
-            padding: 6px 12px;
-            border-radius: 15px; /* Rounded pill shape */
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: bold;
-            transition: background 0.3s ease;
-        }
-
-        .tag:hover {
-            background-color: #007bff; /* Blue on hover */
-            color: #fff; /* White text on hover */
-        }
-
-    </style>
 </head>
 <body>
 
@@ -139,7 +23,16 @@ include BASE_PATH . "user/model/article-logic.php";
     <div class="main-content">
         <div class="flex-container">
             <div class="blogs-content">
-                <?php $blogTitle = htmlspecialchars($blog['title']); ?>
+                <?php
+                // Check if the article is private (DRAFT)
+                if ($currentPrivateState == 1): ?>
+                    <!-- DRAFT Banner -->
+                    <div class="draft-banner">
+                        DRAFT
+                    </div>
+                <?php endif;
+
+                $blogTitle = htmlspecialchars($blog['title']); ?>
                 <h1 class="blog-title"><?php echo $blogTitle; ?></h1>
                 <div class="blog-image-container">
                     <img src="<?php echo isset($blog['Image']) && !empty($blog['Image']) && $blog['Image'] !== 'narrative-logo-big.png'
@@ -186,7 +79,7 @@ include BASE_PATH . "user/model/article-logic.php";
                             $article_liked = $result->num_rows > 0 ? true : false;
                             ?>
                             <!-- Like button with form -->
-                            <form action="<?php echo BASE_URL; ?>layouts/pages/articles/like.php" method="POST"
+                            <form action="<?php echo BASE_URL; ?>features/likes/like.php" method="POST"
                                   class="like-form">
                                 <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
                                 <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
@@ -235,35 +128,50 @@ include BASE_PATH . "user/model/article-logic.php";
                         </div>
 
 
-                        <?php
-                        // Check if the article is already bookmarked
-                        $check_query = "SELECT * FROM user_bookmarks WHERE user_id = ? AND article_id = ?";
-                        $stmt = $conn->prepare($check_query);
-                        $stmt->bind_param("ii", $user_id, $article_id);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        $article_bookmarked = $result->num_rows > 0;
-                        ?>
-
                         <div class="bookmark">
-                            <!-- Bookmark button with form -->
-                            <form action="<?php echo BASE_URL; ?>layouts/pages/articles/bookmark.php" method="POST"
-                                  class="bookmark-form">
-                                <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
-                                <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
-                                <!-- Show filled icon if the article is bookmarked -->
-                                <button type="submit" class="bookmark-btn" name="bookmark_action"
-                                        value="<?php echo $article_bookmarked ? 'remove' : 'add'; ?>">
-                                    <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg"
-                                         alt="Add to Bookmarks" class="bookmark-icon"
-                                         style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>
-                                    <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus-fill.svg"
-                                         alt="Remove from Bookmarks" class="bookmark-icon"
-                                         style="display: <?php echo $article_bookmarked ? 'block' : 'none'; ?>"/>
-                                </button>
-                            </form>
+                            <?php
+                            // Check if the user is logged in
+                            if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+                                // Redirect to login page if not logged in
+                                echo '<form action="' . BASE_URL . 'signIn_register.php" method="GET">';
+                                echo '<button type="submit" class="bookmark-btn">';
+                                echo '<img src="' . BASE_URL . 'public/images/article-layout-img/file-earmark-plus.svg" alt="Add to Bookmarks" class="bookmark-icon"/>';
+                                echo '</button>';
+                                echo '</form>';
+                            } else {
+                                // Get the current user's ID
+                                $user_id = $_SESSION['user_id'];
+
+                                // Assuming you're inside the loop for displaying each article
+                                $article_id = $blog['id']; // Article ID for the current post
+
+                                // Check if the user has already bookmarked the article
+                                $check_query = "SELECT * FROM user_bookmarks WHERE user_id = ? AND article_id = ?";
+                                $stmt = $conn->prepare($check_query);
+                                $stmt->bind_param("ii", $user_id, $article_id);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                $article_bookmarked = $result->num_rows > 0;
+                                ?>
+                                <form action="<?php echo BASE_URL; ?>features/bookmarks/bookmark.php" method="POST"
+                                      class="bookmark-form">
+                                    <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
+                                    <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
+                                    <!-- Show filled icon if the article is bookmarked -->
+                                    <button type="submit" class="bookmark-btn" name="bookmark_action"
+                                            value="<?php echo $article_bookmarked ? 'remove' : 'add'; ?>">
+                                        <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg"
+                                             alt="Add to Bookmarks" class="bookmark-icon"
+                                             style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>
+                                        <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus-fill.svg"
+                                             alt="Remove from Bookmarks" class="bookmark-icon"
+                                             style="display: <?php echo $article_bookmarked ? 'block' : 'none'; ?>"/>
+                                    </button>
+                                </form>
+                            <?php } ?>
                             <p class="bookmark-status"></p>
                         </div>
+
                     </div>
                 </div>
                 <div class="preferred_tags">
@@ -326,18 +234,17 @@ include BASE_PATH . "user/model/article-logic.php";
                                     <!-- Original Comment Display -->
                                     <div class="comment-header">
                                         <p class="comment-username"><strong><?php echo htmlspecialchars($comment['username']); ?>:</strong> </p>
-                                    <?php if ($is_comment_author): ?>
-                                        <span class="comment-actions">
-                                    <!-- Inline Edit and Delete Links -->
-                                            <a href="javascript:void(0)" class="edit-comment-toggle">
-                                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/edit-comment.svg"></a> |
-                                            <a href="<?php echo BASE_URL; ?>layouts/pages/user/delete-comment.php?comment_id=<?php echo $comment['id']; ?>&article_id=<?php echo $article_id; ?>"
-                                               onclick="return confirm('Are you sure you want to delete this comment?');">
-                                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/trash.svg"></a>
-                                        </span>
-                                    <?php endif; ?>
+                                        <?php if ($is_comment_author): ?>
+                                            <span class="comment-actions">
+                            <!-- Inline Edit and Delete Links -->
+                            <a href="javascript:void(0)" class="edit-comment-toggle">
+                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/edit-comment.svg"></a> |
+                            <a href="<?php echo BASE_URL; ?>features/comments/delete-comment.php?comment_id=<?php echo $comment['id']; ?>&article_id=<?php echo $article_id; ?>"
+                               onclick="return confirm('Are you sure you want to delete this comment?');">
+                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/trash.svg"></a>
+                        </span>
+                                        <?php endif; ?>
                                     </div>
-
 
                                     <!-- Comment Body -->
                                     <div class="comment-display">
@@ -348,15 +255,15 @@ include BASE_PATH . "user/model/article-logic.php";
                                     </div>
 
                                     <!-- Hidden Edit Form -->
-                                    <form action="<?php echo BASE_URL; ?>layouts/pages/user/edit-comment.php"
+                                    <form action="<?php echo BASE_URL; ?>features/comments/edit-comment.php"
                                           method="POST"
                                           class="edit-comment-form" style="display: none;">
-                                    <textarea
-                                            name="comment"
-                                            placeholder="Write your comment here..."
-                                            class="auto-resizing-textarea"
-                                            required
-                                    ><?php echo htmlspecialchars($comment['comment']); ?></textarea>
+                        <textarea
+                                name="comment"
+                                placeholder="Write your comment here..."
+                                class="auto-resizing-textarea"
+                                required
+                        ><?php echo htmlspecialchars($comment['comment']); ?></textarea>
                                         <input type="hidden" name="comment_id" value="<?php echo $comment['id']; ?>">
                                         <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
                                         <div class="hidden-update-cancel-buttons">
@@ -372,15 +279,23 @@ include BASE_PATH . "user/model/article-logic.php";
                         <?php endif; ?>
                     </div>
 
-
                     <!-- Add a new comment -->
                     <h3 class="post-a-comment">POST A COMMENT</h3>
-                    <form action="<?php echo BASE_URL?>layouts/pages/articles/add-comment.php" method="POST" class="comment-form">
+                    <form action="<?php echo BASE_URL?>features/comments/add-comment.php" method="POST" class="comment-form">
                         <textarea name="comment" placeholder="Write your comment here..." required></textarea>
                         <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
-                        <button type="submit">Post Comment</button>
+
+                        <?php if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
+                            <!-- If not logged in, use the button to redirect to the login/register page -->
+                            <button type="button" class="redirect-to-login-btn" onclick="window.location.href='<?php echo BASE_URL; ?>signIn_register.php'">Log in to comment</button>
+                        <?php else: ?>
+                            <!-- If logged in, show the submit button -->
+                            <button type="submit">Post Comment</button>
+                        <?php endif; ?>
                     </form>
                 </div>
+
+
             </div>
         </div>
 
@@ -408,7 +323,7 @@ include BASE_PATH . "user/model/article-logic.php";
                             </li>
 
                             <li class="admin-action-item">
-                                <a href="javascript:void(0);" class="admin-action-link" id="deleteLink"
+                                <a href="javascript:void(0);" class="admin-action-link delete-link"
                                    data-article-id="<?php echo $id; ?>">Delete Article</a>
                             </li>
                         </ul>
@@ -484,8 +399,8 @@ include BASE_PATH . "user/model/article-logic.php";
 <script>
     var BASE_URL = "<?php echo BASE_URL; ?>";
 </script>
-<script src="<?php echo BASE_URL?>user/model/editArticle.js"></script>
-<script src="<?php echo BASE_URL?>user/js/delete-article.js"></script>
+<script src="<?php echo BASE_URL ?>user/model/editArticle.js"></script>
+<script src="<?php echo BASE_URL ?>user/js/delete-article.js"></script>
 
 <script>
     // Select all edit icons

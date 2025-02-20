@@ -10,8 +10,8 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="../public/css/articleLayouts/layoutOne_7_12_Item.css">
-    <title>Live & Learn | Narrative</title>
+    <link rel="stylesheet" href="articleLayouts/layoutOne_7_12_Item.css">
+    <title>Lifestyles | Narrative</title>
     <style>
     </style>
 </head>
@@ -40,7 +40,9 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
                     <div class="grid-item p<?php echo $i; ?>">
                         <a href="<?php echo BASE_URL?>user/article.php?id=<?php echo $row['id']; ?>">
                             <div class="image-container">
-                                <img src="<?php echo BASE_URL . 'public/images/users/' . htmlspecialchars($row['user_id']) . '/' . htmlspecialchars($row['Image']); ?>" alt="Article Image">
+                                <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
+                                    ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
+                                    : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
                             </div>
                             <div class="blog-details">
                                 <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?>
@@ -86,8 +88,9 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
                 <div class="grid-item p<?php echo $i; ?>">
                     <a href="<?php echo BASE_URL?>user/article.php?id=<?php echo $row['id']; ?>">
                         <div class="image-container">
-                            <img src="<?php echo BASE_URL . 'public/images/users/' . htmlspecialchars($row['user_id']) . '/' . htmlspecialchars($row['Image']); ?>"
-                                 alt="Article Image">
+                            <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
+                                ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
+                                : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
                         </div>
                         <div class="blog-details">
                             <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?>

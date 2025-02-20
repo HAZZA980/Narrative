@@ -8,7 +8,7 @@ include $_SERVER["DOCUMENT_ROOT"] . "/phpProjects/narrative/config/config.php";
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="../public/css/articleLayouts/layoutFive_8_Items.css">
+    <link rel="stylesheet" href="articleLayouts/layoutFive_8_Items.css">
     <title>Articles Home | Narrative</title>
     <style>
         /* Pagination Styles */
@@ -106,18 +106,18 @@ include $_SERVER["DOCUMENT_ROOT"] . "/phpProjects/narrative/config/config.php";
             <?php
             // Display previous page link
             if ($page > 1) {
-                echo "<a href='article-home.php?page=" . ($page - 1) . "' class='pagination-link'>Previous</a>";
+                echo "<a href='home.php?page=" . ($page - 1) . "' class='pagination-link'>Previous</a>";
             }
 
             // Display page links
             for ($i = 1; $i <= $total_pages; $i++) {
                 $active_class = ($i == $page) ? 'active' : '';
-                echo "<a href='article-home.php?page=$i' class='pagination-link $active_class'>$i</a>";
+                echo "<a href='home.php?page=$i' class='pagination-link $active_class'>$i</a>";
             }
 
             // Display next page link
             if ($page < $total_pages) {
-                echo "<a href='article-home.php?page=" . ($page + 1) . "' class='pagination-link'>Next</a>";
+                echo "<a href='home.php?page=" . ($page + 1) . "' class='pagination-link'>Next</a>";
             }
             ?>
         </div>
@@ -170,18 +170,18 @@ include $_SERVER["DOCUMENT_ROOT"] . "/phpProjects/narrative/config/config.php";
             <?php
             // Display previous page link
             if ($page > 1) {
-                echo "<a href='article-home.php?page=" . ($page - 1) . "' class='pagination-link'>Previous</a>";
+                echo "<a href='home.php?page=" . ($page - 1) . "' class='pagination-link'>Previous</a>";
             }
 
             // Display page links
             for ($i = 1; $i <= $total_pages; $i++) {
                 $active_class = ($i == $page) ? 'active' : '';
-                echo "<a href='article-home.php?page=$i' class='pagination-link $active_class'>$i</a>";
+                echo "<a href='home.php?page=$i' class='pagination-link $active_class'>$i</a>";
             }
 
             // Display next page link
             if ($page < $total_pages) {
-                echo "<a href='article-home.php?page=" . ($page + 1) . "' class='pagination-link'>Next</a>";
+                echo "<a href='home.php?page=" . ($page + 1) . "' class='pagination-link'>Next</a>";
             }
             ?>
         </div>

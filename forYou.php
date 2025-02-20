@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 //BASE_PATH won't work because it's in the config file that we're trying to import.
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 
@@ -14,8 +15,8 @@ if (!$user_id) {
     die("User ID not found in session.");
 }
 
-// Fetch user's preferred tags
-$stmt = $conn->prepare("SELECT tag FROM user_preferences WHERE user_id = ?");
+// Fetch user's preferred categories from user_preferences
+$stmt = $conn->prepare("SELECT DISTINCT tag FROM user_preferences WHERE user_id = ?");
 if (!$stmt) {
     die("Error preparing statement: " . $conn->error);
 }
@@ -23,27 +24,31 @@ $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$preferred_tags = [];
+$preferred_categories = [];
 while ($row = $result->fetch_assoc()) {
-    $preferred_tags[] = $row['tag'];
+    $preferred_categories[] = $row['tag']; // Assuming 'tag' holds category names
 }
+
+$stmt->close();
+
 //----------------------------------------------------------------------------------------------------------------------
 // Pagination setup
 $articles_per_page = 15;
 $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($current_page - 1) * $articles_per_page;
 
-// Fetch blogs based on preferences or fetch latest blogs with pagination
+// Fetch blogs based on preferred categories or fetch latest blogs with pagination
 $blogs_result = null;
-if (!empty($preferred_tags)) {
-    // Query blogs based on preferred tags with pagination
-    $placeholders = implode(",", array_fill(0, count($preferred_tags), "?"));
-    $query = "SELECT b.id, b.user_id, b.title, LEFT(b.content, 100) AS summary, b.datePublished, b.Tags, b.Image, u.username AS Author 
-              FROM tbl_blogs b
-              JOIN users u ON b.user_id = u.user_id
-              WHERE b.Tags IN ($placeholders) AND b.Private = 0
-              ORDER BY b.datePublished DESC 
-              LIMIT ? OFFSET ?";
+if (!empty($preferred_categories)) {
+    // Query blogs based on preferred categories with pagination
+    $placeholders = implode(",", array_fill(0, count($preferred_categories), "?"));
+    $query = "SELECT b.id, b.user_id, b.title, LEFT(b.content, 100) AS summary, b.datePublished, b.category, b.Tags, b.Image, u.username AS Author 
+          FROM tbl_blogs b
+          JOIN users u ON b.user_id = u.user_id
+          WHERE b.category IN ($placeholders) AND b.Private = 0
+          ORDER BY b.datePublished DESC 
+          LIMIT ? OFFSET ?";
+
 
     $stmt = $conn->prepare($query);
 
@@ -51,12 +56,12 @@ if (!empty($preferred_tags)) {
         die("Error preparing blogs query: " . $conn->error);
     }
 
-    // Merge preferred tags and the pagination parameters
-    $params = array_merge($preferred_tags, [$articles_per_page, $offset]);
+    // Merge preferred categories and the pagination parameters
+    $params = array_merge($preferred_categories, [$articles_per_page, $offset]);
 
     // Dynamically build the type string for bind_param()
-    $type_str = str_repeat("s", count($preferred_tags)) . "ii";
-    $stmt->bind_param($type_str, ...$params); // Bind the parameters
+    $type_str = str_repeat("s", count($preferred_categories)) . "ii";
+    $stmt->bind_param($type_str, ...$params);
 
     $stmt->execute();
     $blogs_result = $stmt->get_result();
@@ -64,9 +69,12 @@ if (!empty($preferred_tags)) {
     if (!$blogs_result) {
         die("Error executing blogs query: " . $stmt->error);
     }
+
+    $stmt->close();
 } else {
-    // If no preferred tags, fetch latest blogs with pagination
-    $query = "SELECT b.id, b.title, LEFT(b.content, 100) AS summary, b.datePublished, b.Tags, b.Image, u.username AS Author 
+    // If no preferred categories, fetch latest blogs with pagination
+    $query = "SELECT b.id, b.title, LEFT(b.content, 100) AS summary, b.datePublished, 
+                     b.Category, b.Image, u.username AS Author 
               FROM tbl_blogs b
               JOIN users u ON b.user_id = u.user_id
               WHERE b.Private = 0
@@ -78,33 +86,44 @@ if (!empty($preferred_tags)) {
         die("Error preparing blogs query: " . $conn->error);
     }
 
-    $stmt->bind_param("ii", $articles_per_page, $offset); // Explicit binding for pagination parameters
+    $stmt->bind_param("ii", $articles_per_page, $offset);
     $stmt->execute();
     $blogs_result = $stmt->get_result();
 
     if (!$blogs_result) {
         die("Error fetching latest blogs: " . $conn->error);
     }
+
+    $stmt->close();
 }
 
 // Count the total number of articles for pagination
-$total_query = "SELECT COUNT(*) as total FROM tbl_blogs WHERE Tags IN (" . implode(",", array_fill(0, count($preferred_tags), "?")) . ") AND Private = 0";
+$total_query = "SELECT COUNT(*) as total FROM tbl_blogs WHERE Private = 0";
+if (!empty($preferred_categories)) {
+    $total_query .= " AND Category IN (" . implode(",", array_fill(0, count($preferred_categories), "?")) . ")";
+}
 $total_stmt = $conn->prepare($total_query);
-$total_stmt->bind_param(str_repeat("s", count($preferred_tags)), ...$preferred_tags);
+
+if (!empty($preferred_categories)) {
+    $total_stmt->bind_param(str_repeat("s", count($preferred_categories)), ...$preferred_categories);
+}
+
 $total_stmt->execute();
 $total_result = $total_stmt->get_result();
 $total_row = $total_result->fetch_assoc();
 $total_articles = $total_row['total'];
 $total_pages = ceil($total_articles / $articles_per_page);
 
-// Query articles NOT in the user's preferred tags for the ASIDE bar
+$total_stmt->close();
+
+// Query articles NOT in the user's preferred categories for the ASIDE bar
 $non_recommended_result = null;
-if (!empty($preferred_tags)) {
-    $placeholders = implode(",", array_fill(0, count($preferred_tags), "?"));
+if (!empty($preferred_categories)) {
+    $placeholders = implode(",", array_fill(0, count($preferred_categories), "?"));
     $query = "SELECT b.id, b.title, b.datePublished, u.username AS Author 
               FROM tbl_blogs b
               JOIN users u ON b.user_id = u.user_id
-              WHERE b.Tags NOT IN ($placeholders) AND b.Private = 0
+              WHERE b.Category NOT IN ($placeholders) AND b.Private = 0
               ORDER BY b.datePublished DESC LIMIT 5";
     $stmt = $conn->prepare($query);
 
@@ -112,13 +131,15 @@ if (!empty($preferred_tags)) {
         die("Error preparing non-recommended query: " . $conn->error);
     }
 
-    $stmt->bind_param(str_repeat("s", count($preferred_tags)), ...$preferred_tags);
+    $stmt->bind_param(str_repeat("s", count($preferred_categories)), ...$preferred_categories);
     $stmt->execute();
     $non_recommended_result = $stmt->get_result();
 
     if (!$non_recommended_result) {
         die("Error fetching non-recommended blogs: " . $stmt->error);
     }
+
+    $stmt->close();
 } else {
     $query = "SELECT b.id, b.title, b.datePublished, u.username AS Author 
               FROM tbl_blogs b
@@ -133,26 +154,28 @@ if (!empty($preferred_tags)) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Query topics (tags) NOT in the user's preferred tags for the ASIDE Bar
+// Query topics (categories) NOT in the user's preferred categories for the ASIDE Bar
 $non_recommended_topics_result = null;
-if (!empty($preferred_tags)) {
-    $placeholders = implode(",", array_fill(0, count($preferred_tags), "?"));
-    $query = "SELECT DISTINCT Tags FROM tbl_blogs WHERE Category NOT IN ($placeholders) AND Private = 0";
+if (!empty($preferred_categories)) {
+    $placeholders = implode(",", array_fill(0, count($preferred_categories), "?"));
+    $query = "SELECT DISTINCT Category FROM tbl_blogs WHERE Category NOT IN ($placeholders) AND Private = 0";
     $stmt = $conn->prepare($query);
 
     if (!$stmt) {
         die("Error preparing non-recommended topics query: " . $conn->error);
     }
 
-    $stmt->bind_param(str_repeat("s", count($preferred_tags)), ...$preferred_tags);
+    $stmt->bind_param(str_repeat("s", count($preferred_categories)), ...$preferred_categories);
     $stmt->execute();
     $non_recommended_topics_result = $stmt->get_result();
 
     if (!$non_recommended_topics_result) {
         die("Error fetching non-recommended topics: " . $stmt->error);
     }
+
+    $stmt->close();
 } else {
-    $query = "SELECT DISTINCT Tags FROM tbl_blogs WHERE Private = 0";
+    $query = "SELECT DISTINCT Category FROM tbl_blogs WHERE Private = 0";
     $non_recommended_topics_result = $conn->query($query);
 
     if (!$non_recommended_topics_result) {
@@ -160,7 +183,7 @@ if (!empty($preferred_tags)) {
     }
 }
 
-// Mapping of tags to category file names
+// Mapping of categories to category file names
 $category_map = [
     "Lifestyle" => "lifestyle.php",
     "Writing Craft" => "writing-craft.php",
@@ -175,85 +198,91 @@ $category_map = [
     "Health & Fitness" => "health.php",
     "Sports" => "sports.php",
     "Food & Drink" => "food-and-drink.php",
-    ];
+];
+
 ?>
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Articles Home | Narrative</title>
-        <link rel="stylesheet" href="public/css/styles-forYou-homepage.css">
-        <link rel="stylesheet" href="public/css/pagination.css">
-        <link rel="stylesheet" href="public/css/articleLayouts/styles-default-article-formation.css">
-        <style>
-            .tag-link {
-                color: firebrick;
-                text-decoration: none;
-            }
-            .tag-link:hover {
-                text-decoration: underline;
-                color: firebrick;
-            }
-        </style>
-    </head>
-    <body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Articles Home | Narrative</title>
+    <link rel="stylesheet" href="public/css/styles-forYou.css">
+    <link rel="stylesheet" href="features/pagination/css/pagination.css">
+    <link rel="stylesheet" href="explore/articleLayouts/styles-default-article-formation.css">
+    <style>
+        .tag-link {
+            color: firebrick;
+            text-decoration: none;
+        }
 
-    <main class="main-container">
-        <div class="main-content">
-            <div class="flex-container">
-                <h1 class="main-content-title">
-                    <?php echo empty($preferred_tags) ? "Latest Blogs" : "Recommended for You"; ?>
-                </h1>
+        .tag-link:hover {
+            text-decoration: underline;
+            color: firebrick;
+        }
+    </style>
+</head>
+<body>
 
-                <ul class="preferred_tags">
-                    <?php if (!empty($preferred_tags)): ?>
-                    <?php foreach ($preferred_tags as $tag): ?>
-                    <li id="preferred_tag">
-                        <?php
-                        $file_name = $category_map[$tag] ?? null; // Check if the tag exists in the map
-                        if ($file_name): ?>
-                            <a href="<?php echo BASE_URL;?>explore/<?php echo htmlspecialchars($file_name);?>" class="tag-link">
-                                <?php echo htmlspecialchars($tag); ?>
-                            </a>
-                        <?php else: ?>
-                            <span><?php echo htmlspecialchars($tag); ?></span>
-                        <?php endif; ?>
-                    </li>
-                    <?php endforeach; ?>
-                        <a class="changeTopics" href="settings/recommendations.php">+ Change Recommendations</a>
-                    <?php else: ?>
-                        <li>No preferred tags selected. <a href="settings/recommendations.php">Update Preferences</a></li>
-                    <?php endif; ?>
-                </ul>
+<main class="main-container">
+    <div class="main-content">
+        <div class="flex-container">
+            <h1 class="main-content-title">
+                <?php echo empty($preferred_categories) ? "Latest Blogs" : "Recommended for You"; ?>
+            </h1>
 
-                <?php if ($blogs_result->num_rows > 0): ?>
-                    <?php $i = 0;
-                    while ($row = $blogs_result->fetch_assoc()): ?>
-                        <div class="flex-item">
-                            <div class="article-author-and-topic">
-                                <a href="<?php echo BASE_URL; ?>layouts/pages/articles/user-profile-feed.php?username=<?php echo urlencode($row['Author']); ?>" class="aa" id="author-name">
-                                    <?php echo htmlspecialchars($row['Author']); ?>
+            <ul class="preferred_tags">
+                <?php if (!empty($preferred_categories)): ?>
+                    <?php foreach ($preferred_categories as $category): ?>
+                        <li id="preferred_tag">
+                            <?php
+                            $file_name = $category_map[$category] ?? null; // Check if the tag exists in the map
+                            if ($file_name): ?>
+                                <a href="<?php echo BASE_URL; ?>explore/<?php echo htmlspecialchars($file_name); ?>"
+                                   class="tag-link">
+                                    <?php echo htmlspecialchars($category); ?>
                                 </a>
-                                <span class="aa" id="writing-about">is writing about</span>
-                                <span class="aa" id="blog-tags">
-                                <?php
-                                // Get the tags for the current blog
-                                $tags = explode(",", $row['Tags']);
-                                foreach ($tags as $tag):
-                                    $tag = trim($tag); // Remove whitespace
-                                    $file_name = $category_map[$tag] ?? null; // Check if the tag exists in the map
-                                    if ($file_name): ?>
-                                        <a href="<?php echo BASE_URL;?>explore/<?php echo htmlspecialchars($file_name);?>" class="tag-link"><?php echo htmlspecialchars($tag); ?></a>
-                                    <?php else: ?>
-                                        <span><?php echo htmlspecialchars($tag); ?></span>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                            </span>
+                            <?php else: ?>
+                                <span><?php echo htmlspecialchars($category); ?></span>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                    <a class="changeTopics" href="settings/recommendations.php">+ Change Recommendations</a>
+                <?php else: ?>
+                    <li>No preferred tags selected. <a href="settings/recommendations.php">Update Preferences</a></li>
+                <?php endif; ?>
+            </ul>
+
+            <?php if ($blogs_result->num_rows > 0): ?>
+                <?php $i = 0;
+                while ($row = $blogs_result->fetch_assoc()): ?>
+                    <div class="flex-item">
+                        <div class="article-author-and-topic">
+                            <a href="<?php echo BASE_URL; ?>feed.php?username=<?php echo urlencode($row['Author']); ?>" class="aa" id="author-name">
+                                <?php echo htmlspecialchars($row['Author']); ?>
+                            </a>
+                            <span class="aa" id="writing-about">is writing about</span>
+                            <span class="aa" id="blog-tags">
+                    <?php
+                    if (!empty($row['Tags'])) {
+                        // Explode tags by comma and trim whitespace
+                        $tags = explode(",", $row['Tags']);
+                        $first_tag = trim($tags[0]); // Get the first tag
+?>
+<!--                   <a href="--><?php //echo BASE_URL;?><!--explore/--><?php //echo htmlspecialchars($file_name);?><!--" class="tag-link">--><?php //echo htmlspecialchars($tag); ?><!--</a>-->
+
+                        <span class='tag-link'><?php echo htmlspecialchars($first_tag);?></span>
+                    <?php
+                    } else {
+                        echo "<span>Uncategorized</span>";
+                    }
+                    ?>
+                </span>
                         </div>
 
-                        <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>" class="article-main-link">
+                        <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>"
+                           class="article-main-link">
                             <div class="blog-body">
                                 <div class="blog-details">
                                     <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?></h2>
@@ -291,13 +320,18 @@ $category_map = [
                                     $article_liked = $result->num_rows > 0 ? true : false;
                                     ?>
                                     <!-- Like button with form -->
-                                    <form action="layouts/pages/articles/like.php" method="POST" class="like-form">
+                                    <form action="features/likes/like.php" method="POST" class="like-form">
                                         <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
                                         <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
                                         <!-- Show filled icon if the article is liked -->
-                                        <button type="submit" class="like-btn" name="bookmark_action" value="<?php echo $article_liked ? 'remove' : 'add'; ?>">
-                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg" alt="Add Like" class="like-icon" style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
-                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-solid.svg" alt="Remove Like" class="like-icon" style="display: <?php echo $article_liked ? 'block' : 'none'; ?>"/>
+                                        <button type="submit" class="like-btn" name="bookmark_action"
+                                                value="<?php echo $article_liked ? 'remove' : 'add'; ?>">
+                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
+                                                 alt="Add Like" class="like-icon"
+                                                 style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
+                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-solid.svg"
+                                                 alt="Remove Like" class="like-icon"
+                                                 style="display: <?php echo $article_liked ? 'block' : 'none'; ?>"/>
                                         </button>
                                     </form>
                                     <?php
@@ -314,7 +348,7 @@ $category_map = [
 
 
                                 <div class="comment">
-                                <!--Comments Backend-->
+                                    <!--Comments Backend-->
                                     <?php
                                     // Get the number of comments for this article
                                     $article_id = $row['id']; // Get article ID
@@ -326,13 +360,14 @@ $category_map = [
                                     $comment_stmt->fetch();
                                     $comment_stmt->close();
                                     ?>
-                                    <a href="<?php echo BASE_URL;?>user/article.php?id=<?php echo $row['id']?>" class="comments-link">
-                                    <img src="<?php echo BASE_URL ?>public/images/article-layout-img/comments-regular.svg"
-                                         alt="Comments">
-                                    <p class="comments-count"><?php echo $comment_count; ?></p> <!-- Display comment count -->
+                                    <a href="<?php echo BASE_URL; ?>user/article.php?id=<?php echo $row['id'] ?>"
+                                       class="comments-link">
+                                        <img src="<?php echo BASE_URL ?>public/images/article-layout-img/comments-regular.svg"
+                                             alt="Comments">
+                                        <p class="comments-count"><?php echo $comment_count; ?></p>
+                                        <!-- Display comment count -->
                                     </a>
                                 </div>
-
 
 
                                 <?php
@@ -347,13 +382,19 @@ $category_map = [
 
                                 <div class="bookmark">
                                     <!-- Bookmark button with form -->
-                                    <form action="layouts/pages/articles/bookmark.php" method="POST" class="bookmark-form">
+                                    <form action="features/bookmarks/bookmark.php" method="POST"
+                                          class="bookmark-form">
                                         <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
                                         <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
                                         <!-- Show filled icon if the article is bookmarked -->
-                                        <button type="submit" class="bookmark-btn" name="bookmark_action" value="<?php echo $article_bookmarked ? 'remove' : 'add'; ?>">
-                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg" alt="Add to Bookmarks" class="bookmark-icon" style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>
-                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus-fill.svg" alt="Remove from Bookmarks" class="bookmark-icon" style="display: <?php echo $article_bookmarked ? 'block' : 'none'; ?>"/>
+                                        <button type="submit" class="bookmark-btn" name="bookmark_action"
+                                                value="<?php echo $article_bookmarked ? 'remove' : 'add'; ?>">
+                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg"
+                                                 alt="Add to Bookmarks" class="bookmark-icon"
+                                                 style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>
+                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus-fill.svg"
+                                                 alt="Remove from Bookmarks" class="bookmark-icon"
+                                                 style="display: <?php echo $article_bookmarked ? 'block' : 'none'; ?>"/>
                                         </button>
                                     </form>
                                     <p class="bookmark-status"></p>
@@ -367,7 +408,7 @@ $category_map = [
 
             <?php else: ?>
                 <p>No Articles Found. Publish your First Article <a
-                            href="<?php echo BASE_URL?>includes/createArticle.php">Here</a>.</p>
+                            href="<?php echo BASE_URL ?>includes/createArticle.php">Here</a>.</p>
             <?php endif; ?>
 
 
@@ -386,12 +427,14 @@ $category_map = [
 
 
         <aside class="aside-links">
-<!--            <aside class="aside-writing-link">-->
-<!--                <a href="--><?php //echo BASE_URL?><!--includes/createArticle.php" class="write-link">-->
-<!--                    <img src="--><?php //echo BASE_URL?><!--public/images/article-layout-img/pencil-square.svg" alt="Write Icon">-->
-<!--                    <h3 class="aside-write">Write</h3>-->
-<!--                </a>-->
-<!--            </aside>-->
+            <!--            <aside class="aside-writing-link">-->
+            <!--                <a href="-->
+            <?php //echo BASE_URL?><!--includes/createArticle.php" class="write-link">-->
+            <!--                    <img src="-->
+            <?php //echo BASE_URL?><!--public/images/article-layout-img/pencil-square.svg" alt="Write Icon">-->
+            <!--                    <h3 class="aside-write">Write</h3>-->
+            <!--                </a>-->
+            <!--            </aside>-->
 
 
             <aside class="non-recommended-articles">
@@ -432,7 +475,8 @@ $category_map = [
                                     $file_name = $category_map[$firstTag] ?? null; // Check if the tag exists in the map
 
                                     if ($file_name): ?>
-                                        <a href="<?php echo BASE_URL; ?>layouts/pages/articles/categories/<?php echo htmlspecialchars($file_name); ?>" class="tag-link">
+                                        <a href="<?php echo BASE_URL; ?>layouts/pages/articles/categories/<?php echo htmlspecialchars($file_name); ?>"
+                                           class="tag-link">
                                             <?php echo htmlspecialchars($firstTag); ?>
                                         </a>
                                     <?php else: ?>
@@ -449,6 +493,6 @@ $category_map = [
         </aside>
     </div>
 </main>
-<script src="<?php echo BASE_URL . 'public/js/save-page-position.js'?>"></script>
+<script src="<?php echo BASE_URL . 'public/js/save-page-position.js' ?>"></script>
 </body>
 </html>

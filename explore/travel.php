@@ -11,8 +11,9 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="../public/css/articleLayouts/layoutOne_7_12_Item.css">
-    <title>Live & Learn | Narrative</title>
+    <link rel="stylesheet" href="articleLayouts/layoutOne_7_12_Item.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL;?>features/carousel/css/carousel.css">
+    <title>Travel | Narrative</title>
     <style>
     </style>
 </head>
@@ -41,7 +42,9 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
                 <div class="grid-item p<?php echo $i; ?>">
                     <a href="<?php echo BASE_URL?>user/article.php?id=<?php echo $row['id']; ?>">
                         <div class="image-container">
-                            <img src="<?php echo BASE_URL . 'public/images/users/' . htmlspecialchars($row['user_id']) . '/' . htmlspecialchars($row['Image']); ?>" alt="Article Image">
+                            <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
+                                ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
+                                : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
                         </div>
                         <div class="blog-details">
                             <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?>
@@ -69,49 +72,9 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
         <div class="featured-author-section"> <!-- Added a parent div with a specific class -->
             <h4 class="main-content-title featured-author">Featured Author</h4>
 
-            <div class="carousel-container">
-                <button class="carousel-button left" onclick="scrollCarousel(-1)">&#10094;</button>
-                <div class="carousel">
-                    <div class="carousel-grid">
-                        <?php
-                        $sql = "SELECT id, title, datePublished, Tags, Image, user_id 
-                FROM tbl_blogs 
-                WHERE Tags = 'Travel' AND title LIKE '%Workaway%' 
-                AND featured = 0 
-                AND Private = 0 
-                ORDER BY datePublished DESC";
-                        $result = $conn->query($sql);
-
-                        while ($row = $result->fetch_assoc()) {
-                            ?>
-                            <div class="carousel-grid-item">
-                                <a href="<?php echo BASE_URL?>user/article.php?id=<?php echo $row['id']; ?>">
-                                    <div class="image-container">
-                                        <img src="<?php echo BASE_URL . 'public/images/users/' . htmlspecialchars($row['user_id']) . '/' . htmlspecialchars($row['Image']); ?>"
-                                             alt="Article Image">
-                                    </div>
-                                    <div class="carousel-blog-details">
-                                        <h2 id="carousel-blog-title"><?php echo htmlspecialchars($row['title']); ?></h2>
-                                        <p id="carousel-blog-content"><?php echo htmlspecialchars($row['summary']); ?>...</p>
-                                    </div>
-                                </a>
-                            </div>
-                            <?php
-                        }
-                        ?>
-                    </div>
-                </div>
-                <button class="carousel-button right" onclick="scrollCarousel(1)">&#10095;</button>
-            </div>
+            <?php include BASE_PATH . "features/carousel/carousel.php"; ?>
         </div>
 
-        <script>
-            function scrollCarousel(direction) {
-                const carousel = document.querySelector('.carousel-grid');
-                const itemWidth = document.querySelector('.carousel-grid-item').offsetWidth + 15; // Include gap
-                carousel.scrollBy({ left: direction * itemWidth, behavior: 'smooth' });
-            }
-        </script>
 
 
 
@@ -135,12 +98,12 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
                 <div class="grid-item p<?php echo $i; ?>">
                     <a href="<?php echo BASE_URL?>user/article.php?id=<?php echo $row['id']; ?>">
                         <div class="image-container">
-                            <img src="<?php echo BASE_URL . 'public/images/users/' . htmlspecialchars($row['user_id']) . '/' . htmlspecialchars($row['Image']); ?>"
-                                 alt="Article Image">
+                            <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
+                                ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
+                                : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
                         </div>
                         <div class="blog-details">
                             <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?>
-
                             </h2>
                             <p id="blog-content"><?php echo htmlspecialchars($row['summary']); ?>...</p>
                         </div>
@@ -166,5 +129,6 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 
     </div>
 </main>
+<script src="<?php echo BASE_URL; ?>features/carousel/carousel.js"></script>
 </body>
 </html>
