@@ -1,13 +1,16 @@
-document.getElementById('deleteLink').addEventListener('click', function() {
-    // Get the article ID from the data attribute of the delete link
-    var articleId = this.getAttribute('data-article-id');
+document.querySelectorAll('.delete-link').forEach(function(deleteButton) {
+    deleteButton.addEventListener('click', function() {
+        // Get the article ID from the clicked button
+        var articleId = this.getAttribute('data-article-id');
 
-    // Show the confirmation modal
-    document.getElementById('deleteModal').style.display = 'flex';
+        // Show the confirmation modal
+        document.getElementById('deleteModal').style.display = 'flex';
 
-    // Add the article ID to the confirm delete button
-    document.getElementById('confirmDelete').setAttribute('data-article-id', articleId);
+        // Add the article ID to the confirm delete button
+        document.getElementById('confirmDelete').setAttribute('data-article-id', articleId);
+    });
 });
+
 
 document.getElementById('cancelDelete').addEventListener('click', function() {
     // Hide the confirmation modal without deleting

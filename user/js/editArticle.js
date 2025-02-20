@@ -28,7 +28,6 @@ cancelSave.addEventListener('click', function () {
 });
 
 
-
 document.addEventListener('DOMContentLoaded', () => {
     const textareas = document.querySelectorAll('textarea.blog-content');
 
@@ -49,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
         textarea.addEventListener('input', () => adjustHeight(textarea));
     });
 });
-
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -112,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Display suggestions
-        matches.slice(0, 5).forEach(match => {
+        matches.slice(0, 10).forEach(match => {
             const suggestion = document.createElement("div");
             suggestion.classList.add("suggestion-item");
             suggestion.innerHTML = `<strong>${match.sub}</strong> <small>(${match.category})</small>`;

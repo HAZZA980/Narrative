@@ -56,10 +56,10 @@ if ($result->num_rows > 0) {
 // Debug fetched user data
 error_log("Fetched User Data: " . print_r($user, true));
 // Query to count articles by category (Tags) for the current user
-$query = "SELECT Tags, COUNT(*) AS article_count
+$query = "SELECT Category, COUNT(*) AS article_count
           FROM tbl_blogs
           WHERE user_id = ?
-          GROUP BY Tags"; // Assuming 'user_id' is the correct column
+          GROUP BY Category"; // Assuming 'user_id' is the correct column
 $stmt = $conn->prepare($query);
 if (!$stmt) {
     error_log("Error preparing articles query: " . $conn->error);
@@ -216,7 +216,7 @@ if ($result->fetch_assoc()['early_comments'] >= 10) {
 }
 
 // Top Contributor
-$query = "SELECT COUNT(DISTINCT Tags) AS category_count FROM tbl_blogs WHERE user_id = ?";
+$query = "SELECT COUNT(DISTINCT Category) AS category_count FROM tbl_blogs WHERE user_id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -226,7 +226,7 @@ if ($result->fetch_assoc()['category_count'] >= 3) {
 }
 
 // Loyal Reader
-$query = "SELECT COUNT(DISTINCT tags) AS tag_count FROM user_bookmarks ub
+$query = "SELECT COUNT(DISTINCT Category) AS tag_count FROM user_bookmarks ub
           JOIN tbl_blogs tb ON ub.article_id = tb.id
           WHERE ub.user_id = ?";
 $stmt = $conn->prepare($query);
@@ -238,10 +238,10 @@ if ($result->fetch_assoc()['tag_count'] >= 5) {
 }
 
 // Topic Enthusiast
-$query = "SELECT Tags, COUNT(*) AS article_count 
+$query = "SELECT Category, COUNT(*) AS article_count 
           FROM tbl_blogs 
           WHERE user_id = ? 
-          GROUP BY Tags 
+          GROUP BY Category 
           HAVING article_count >= 10";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $user_id);
@@ -289,7 +289,7 @@ if ($weekly_data && $weekly_data['weeks_active'] >= 4) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Homepage</title>
-    <link rel="stylesheet" href="public/css/styles-account-homepage.css">
+    <link rel="stylesheet" href="account/css/styles-account-homepage.css">
     <style>
         /* Professional Styling for Horizontal Table with Wrapping */
         .overview-container {
@@ -480,40 +480,10 @@ if ($weekly_data && $weekly_data['weeks_active'] >= 4) {
 
 
 
-        /*.aside-writing-link {*/
-        /*    display: flex; !* Aligns the items in a row *!*/
-        /*    align-items: center; !* Vertically centers the content *!*/
-        /*    justify-content: flex-start; !* Aligns the content to the left *!*/
-        /*}*/
-
-        /*!* Style for the anchor tag inside aside-writing-link *!*/
-        /*.write-link {*/
-        /*    display: flex; !* Aligns the children (img and h3) in a row *!*/
-        /*    align-items: center; !* Vertically centers the children *!*/
-        /*    text-decoration: none; !* Removes underline for the link *!*/
-        /*    padding-left: 20px;*/
-        /*    margin-right: 5rem;*/
-        /*    gap: 10px; !* Adds spacing between the image and text *!*/
-        /*}*/
-
-        /*!* Style for the image *!*/
-        /*.write-link img {*/
-        /*    width: 24px; !* Adjust size of the image *!*/
-        /*    height: 24px; !* Ensure image is square *!*/
-        /*}*/
-
-        /*!* Style for the text *!*/
-        /*.aside-write {*/
-        /*    color: #333; !* Text color *!*/
-        /*    font-size: 1rem; !* Adjust text size *!*/
-        /*    font-weight: bold; !* Make the text bold *!*/
-        /*    margin: 0; !* Remove default margin *!*/
-        /*}*/
-
     </style>
 </head>
 <body>
-<?php include BASE_PATH . "layouts/mastheads/articles/account-masthead.php"; ?>
+<?php include BASE_PATH . "account/account-masthead.php"; ?>
 
 <div class="overview-container">
     <main class="overview-main-container">
@@ -557,8 +527,13 @@ if ($weekly_data && $weekly_data['weeks_active'] >= 4) {
         <div class="insights-grid">
             <?php if (!empty($article_counts)): ?>
                 <?php foreach ($article_counts as $count): ?>
-                    <div><?php echo htmlspecialchars($count['Tags']); ?><br>
-                        <strong><?php echo htmlspecialchars($count['article_count']); ?></strong>
+                    <div>
+                        <?php
+                        // Check if 'Category' is NULL and replace it with 'Uncategorized'
+                        $category = !empty($count['Category']) ? htmlspecialchars($count['Category']) : 'Miscellaneous';
+                        ?>
+                        <?php echo $category; ?><br>
+                        <strong><?php echo htmlspecialchars($count['article_count'] ?? 0); ?></strong>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>

@@ -10,8 +10,8 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="../public/css/articleLayouts/layoutOne_7_12_Item.css">
-    <title>Modern History | Narrative</title>
+    <link rel="stylesheet" href="articleLayouts/layoutOne_7_12_Item.css">
+    <title>History | Narrative</title>
 </head>
 <body>
 

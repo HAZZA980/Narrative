@@ -1,6 +1,5 @@
 <?php
 ob_start();
-session_start();  // Ensure session is started at the beginning
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 
 // Check if article ID is provided

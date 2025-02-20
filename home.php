@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="public/css/styles-index.css">
+    <link rel="stylesheet" href="public/css/styles-home.css">
     <title>Home | Narrative</title>
     <style>
     </style>
@@ -45,9 +45,10 @@
 </div>
 
 <script>
+    BASE_URL = '<?php echo BASE_URL?>'
     // Button click function
     function explore() {
-        window.location.href = "layouts/pages/articles/article-home.php";
+        window.location.href = BASE_URL + "explore/home.php";
     }
 </script>
 </body>

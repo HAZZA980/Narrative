@@ -9,9 +9,9 @@ include BASE_PATH . 'features/search/search-logic.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Content | Narrative Learn</title>
-    <link rel="stylesheet" href="public/css/pagination.css">
-    <link rel="stylesheet" href="public/css/styles-search.css">
-    <link rel="stylesheet" href="public/css/articleLayouts/styles-default-article-formation.css">
+    <link rel="stylesheet" href="features/pagination/css/pagination.css">
+    <link rel="stylesheet" href="features/search/css/styles-search.css">
+    <link rel="stylesheet" href="explore/articleLayouts/styles-default-article-formation.css">
 </head>
 <body>
 
@@ -71,10 +71,7 @@ include BASE_PATH . 'features/search/search-logic.php';
                                         <a href="javascript:void(0);" class="admin-action-link" id="deleteLink"
                                            data-article-id="<?php echo $row['id']; ?>">Delete Article</a>
                                     </li>
-                                    <?php
-                                    include BASE_PATH . "layouts/pages/user/delete-article-modal.html";
-                                    include BASE_PATH . "layouts/pages/user/delete-modal-js.php";
-                                    ?>
+
                                 </ul>
                             </div>
                         </div>
@@ -130,7 +127,7 @@ include BASE_PATH . 'features/search/search-logic.php';
                                 $article_liked = $result->num_rows > 0 ? true : false;
                                 ?>
                                 <!-- Like button with form -->
-                                <form action="<?php echo BASE_URL; ?>layouts/pages/articles/like.php" method="POST"
+                                <form action="<?php echo BASE_URL; ?>features/likes/like.php" method="POST"
                                       class="like-form">
                                     <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
                                     <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
@@ -191,7 +188,7 @@ include BASE_PATH . 'features/search/search-logic.php';
 
                             <div class="bookmark">
                                 <!-- Bookmark button with form -->
-                                <form action="<?php echo BASE_URL; ?>layouts/pages/articles/bookmark.php" method="POST"
+                                <form action="<?php echo BASE_URL; ?>features/bookmarks/bookmark.php" method="POST"
                                       class="bookmark-form">
                                     <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
                                     <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
@@ -261,7 +258,7 @@ include BASE_PATH . 'features/search/search-logic.php';
                                 $article_liked = $result->num_rows > 0 ? true : false;
                                 ?>
                                 <!-- Like button with form -->
-                                <form action="<?php echo BASE_URL ?>/layouts/pages/articles/like.php"
+                                <form action="<?php echo BASE_URL ?>/features/likes/like.php"
                                       method="POST" class="like-form">
                                     <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
                                     <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
@@ -322,7 +319,7 @@ include BASE_PATH . 'features/search/search-logic.php';
 
                             <div class="bookmark">
                                 <!-- Bookmark button with form -->
-                                <form action="<?php echo BASE_URL ?>/layouts/pages/articles/bookmark.php"
+                                <form action="<?php echo BASE_URL ?>/features/bookmarks/bookmark.php"
                                       method="POST" class="bookmark-form">
                                     <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
                                     <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">

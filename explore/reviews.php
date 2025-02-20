@@ -10,46 +10,10 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="../public/css/articleLayouts/layoutOne_7_12_Item.css">
-    <title>Live & Learn | Narrative</title>
+    <link rel="stylesheet" href="articleLayouts/layoutOne_7_12_Item.css">
+    <title>Reviews | Narrative</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <style>
-        .tabs {
-            display: flex;
-            justify-content: center;
-            gap: 30px; /* Adjust spacing between tabs */
-            margin: 2em;
-        }
-
-        .tab {
-            font-size: 16px;
-            font-weight: 500;
-            padding: 10px 0;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: color 0.3s ease, border-bottom 0.3s ease;
-            color: #555; /* Neutral text color */
-        }
-
-        .tab:hover {
-            color: #000; /* Slightly darker text on hover */
-        }
-
-        .tab.active {
-            color: #000; /* Dark color for active tab */
-            border-bottom: 2px solid #000; /* Border bottom to indicate active tab */
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-    </style>
 </head>
 <body>
 
@@ -141,8 +105,9 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
                 <div class="grid-item p<?php echo $i; ?>">
                     <a href="<?php echo BASE_URL?>user/article.php?id=<?php echo $row['id']; ?>">
                         <div class="image-container">
-                            <img src="<?php echo BASE_URL . 'public/images/users/' . htmlspecialchars($row['user_id']) . '/' . htmlspecialchars($row['Image']); ?>"
-                                 alt="Article Image">
+                            <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
+                                ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
+                                : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
                         </div>
                         <div class="blog-details">
                             <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?>
@@ -189,8 +154,9 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
                 <div class="grid-item p<?php echo $i; ?>">
                     <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>">
                         <div class="image-container">
-                            <img src="<?php echo BASE_URL . 'public/images/users/' . htmlspecialchars($row['user_id']) . '/' . htmlspecialchars($row['Image']); ?>"
-                                 alt="Article Image">
+                            <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
+                                ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
+                                : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
                         </div>
                         <div class="blog-details">
                             <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?></h2>
