@@ -88,7 +88,7 @@ include BASE_PATH . 'includes/model/header_file_mapping.php';
                 </div>
                 <?php endif; ?>
             <?php else: ?>
-                <a href="<?php echo BASE_URL; ?>signIn_register.php" class="orb-nav orb-nav-logout">
+                <a href="<?php echo BASE_URL; ?>user_auth.php" class="orb-nav orb-nav-logout">
                     <li class="header-account-name">Sign In</li>
                 </a>
             <?php endif; ?>

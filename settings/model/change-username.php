@@ -2,7 +2,7 @@
 
 // Check if the user is logged in
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: " . BASE_URL . "layouts/pages/users/signIn_register.php");
+    header("Location: " . BASE_URL . "layouts/pages/users/user_auth.php");
     exit;
 }
 

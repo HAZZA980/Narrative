@@ -5,7 +5,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 // Check if the user is logged in
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     // Redirect the user to the login page if not logged in
-    header("Location: " . BASE_URL . "signIn_register.php");
+    header("Location: " . BASE_URL . "user_auth.php");
     exit;
 }
 
