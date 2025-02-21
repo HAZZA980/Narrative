@@ -15,6 +15,18 @@
     align-items: center;
 }
 
+.bookmark-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: inline-block;
+}
+
+.bookmark-icon {
+    width: 24px; /* Adjust size as necessary */
+    height: auto;
+}
 
 .search {
     height: 3rem;
