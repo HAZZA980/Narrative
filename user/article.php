@@ -133,7 +133,7 @@ include BASE_PATH . "user/model/article-logic.php";
                             // Check if the user is logged in
                             if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
                                 // Redirect to login page if not logged in
-                                echo '<form action="' . BASE_URL . 'signIn_register.php" method="GET">';
+                                echo '<form action="' . BASE_URL . 'user_auth.php" method="GET">';
                                 echo '<button type="submit" class="bookmark-btn">';
                                 echo '<img src="' . BASE_URL . 'public/images/article-layout-img/file-earmark-plus.svg" alt="Add to Bookmarks" class="bookmark-icon"/>';
                                 echo '</button>';
@@ -287,7 +287,7 @@ include BASE_PATH . "user/model/article-logic.php";
 
                         <?php if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                             <!-- If not logged in, use the button to redirect to the login/register page -->
-                            <button type="button" class="redirect-to-login-btn" onclick="window.location.href='<?php echo BASE_URL; ?>signIn_register.php'">Log in to comment</button>
+                            <button type="button" class="redirect-to-login-btn" onclick="window.location.href='<?php echo BASE_URL; ?>user_auth.php'">Log in to comment</button>
                         <?php else: ?>
                             <!-- If logged in, show the submit button -->
                             <button type="submit">Post Comment</button>
