@@ -125,31 +125,97 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
 
                 <form action="<?php echo BASE_URL ?>profile/model/submit_profile.php" method="POST"
                       enctype="multipart/form-data" class="details-container">
-                    <div class="user-info">
+                    <?php
+                    // Fetch user details from the database
+                    $user_id = $_SESSION['user_id'] ?? null;
+                    $dob = null;
 
+                    if ($user_id) {
+                        $query = "SELECT dob FROM user_details WHERE user_id = ?";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bind_param("i", $user_id);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+
+                        if ($result->num_rows > 0) {
+                            $row = $result->fetch_assoc();
+                            $dob = $row['dob']; // Store the dob value from the database
+                        }
+                    }
+                    ?>
+
+                    <div class="user-info">
                         <label for="dob">Date of Birth:</label>
-                        <input type="date" id="dob" name="dob" required><br><br>
+                        <?php if ($dob): ?>
+                            <!-- If dob exists, show the dob in the input field -->
+                            <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($dob); ?>" required><br><br>
+                        <?php else: ?>
+                            <!-- If dob doesn't exist, show the empty date input field -->
+                            <input type="date" id="dob" name="dob" required><br><br>
+                        <?php endif; ?>
                     </div>
+
             </div>
 
             <div class="right-section">
+
+
+                <?php
+                // Fetch user details from the database
+                $user_id = $_SESSION['user_id'] ?? null;
+                $profile_picture = null;
+
+                if ($user_id) {
+                    $query = "SELECT profile_picture FROM user_details WHERE user_id = ?";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("i", $user_id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+
+                    if ($result->num_rows > 0) {
+                        $row = $result->fetch_assoc();
+                        $profile_picture = $row['profile_picture'];
+                    }
+                }
+
+                // Define the profile picture path
+                $profilePicturePath = null;
+                if (!empty($profile_picture)) {
+                    // Check if the file exists in the directory
+                    $profilePicturePath = BASE_PATH . "public/images/users/$user_id/" . $profile_picture;
+                    if (!file_exists($profilePicturePath)) {
+                        $profilePicturePath = null; // If the file doesn't exist, reset the path
+                    }
+                }
+
+                // If a valid path exists, use that in the image tag
+                $profilePictureURL = $profilePicturePath ? BASE_URL . "public/images/users/$user_id/" . htmlspecialchars($profile_picture) : null;
+                ?>
+
+
+
                 <div class="profile-section">
                     <!-- Clickable Profile Picture Display -->
                     <div id="profile-placeholder" class="profile-placeholder">
-                        <span id="profile-initial"><?php echo strtoupper(substr($username, 0, 1)); ?></span>
-                        <img id="profile-img" src="#" alt="Profile Picture" style="display: none;">
-                        <!-- Hover Icon (+ or X) -->
-                        <div class="hover-icon" id="hover-icon">+</div>
+                        <!-- If there's already an image stored in the database, show it -->
+                        <img id="profile-img" src="<?php echo $profilePictureURL; ?>" alt="Profile Picture" style="display: <?php echo ($profilePictureURL) ? 'block' : 'none'; ?>;">
+                        <!-- Initials if there's no profile picture -->
+                        <span id="profile-initial" style="display: <?php echo ($profilePictureURL) ? 'none' : 'block'; ?>;"><?php echo strtoupper(substr($username, 0, 1)); ?></span>
+                        <div class="remove-overlay" id="remove-overlay" style="display: <?php echo ($profilePictureURL) ? 'block' : 'none'; ?>;"><br>X</div>
                     </div>
-                    <label for="profile-pic">Profile Picture:</label>
-                    <input type="file" id="profile-pic" name="profile-pic" accept="image/*"><br><br>
+
+                    <input type="file" id="profile-pic" name="profile-pic" accept="image/*" hidden>
+                    <label for="profile-pic-input" class="file-label">Profile Picture</label>
+                    <input type="file" id="profile-pic-input" name="profile-pic" accept="image/*" class="file-input">
+
                 </div>
+
             </div>
         </div>
 
         <div class="nav-buttons">
             <!--        <button type="button" id="next-btn" onclick="navigateTab('next')">Next</button>-->
-            <button type="button" id="prev-btn" onclick="navigateTab('prev')">Previous</button>
+            <button type="button" id="prev-btn" onclick="navigateTab('prev')" style="visibility: hidden">Previous</button>
             <button type="submit" id="next-btn">Next</button>
             </form>
         </div>
@@ -290,12 +356,22 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
 <div id="overview" class="tab-content <?php echo ($tab === 4) ? 'active' : ''; ?>">
 
     <ul class="profile-details">
-        <li class="profile-image-container">
-            <img src="<?php echo $profilePicturePath; ?>" alt="Profile Picture" class="profile-image">
-        </li>
-        <li class="profile-info">
+        <div class="overview-image-section">
+            <!-- Clickable Profile Picture Display -->
+            <div id="profile-placeholder" class="profile-placeholder">
+                <!-- If there's already an image stored in the database, show it -->
+                <img id="profile-img" src="<?php echo $profilePictureURL; ?>" alt="Profile Picture" style="display: <?php echo ($profilePictureURL) ? 'block' : 'none'; ?>;">
+                <!-- Initials if there's no profile picture -->
+                <span id="profile-initial" style="display: <?php echo ($profilePictureURL) ? 'none' : 'block'; ?>;"><?php echo strtoupper(substr($username, 0, 1)); ?></span>
+            </div>
+
             <h3><strong><?php echo $username; ?></strong></h3>
-            <p><strong>Date of Birth:</strong> <?php echo !empty($dob) ? htmlspecialchars($dob) : 'Not provided'; ?></p>
+            <p><strong>D.O.B:</strong> <?php echo !empty($dob) ? htmlspecialchars($dob) : 'Not provided'; ?></p>
+        </div>
+
+
+        <li class="profile-info">
+
             <p><strong>Bio:</strong> <?php echo !empty($bio) ? nl2br(htmlspecialchars($bio)) : 'Not provided'; ?></p>
             <p class="user-preference">Reading Preferences:</p>
             <ul class="profile-category-list">
@@ -323,7 +399,54 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
 <!--    </div>-->
 
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const profilePicInput = document.getElementById("profile-pic-input");
+        const profileImg = document.getElementById("profile-img");
+        const profileInitial = document.getElementById("profile-initial");
+        const profilePlaceholder = document.getElementById("profile-placeholder");
+        const removeOverlay = document.getElementById("remove-overlay");
 
+        // Open file picker when clicking placeholder if no image is set
+        profilePlaceholder.addEventListener("click", function () {
+            if (profileImg.style.display === "none") {
+                profilePicInput.click(); // Trigger file input click
+            }
+        });
+
+        // Handle image selection
+        profilePicInput.addEventListener("change", function (event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    // Set the image source and make it visible
+                    profileImg.src = e.target.result;
+                    profileImg.style.display = "block"; // Show the selected image
+                    profileInitial.style.display = "none"; // Hide the initials
+                    removeOverlay.style.display = "block"; // Show the "X" button
+                };
+
+                reader.readAsDataURL(file); // Read the image file as a data URL
+            }
+        });
+
+        // Remove image when "X" is clicked
+        removeOverlay.addEventListener("click", function (event) {
+            event.stopPropagation(); // Prevent triggering file input when clicking "X"
+
+            // Reset the UI
+            profileImg.src = ""; // Remove image source
+            profileImg.style.display = "none"; // Hide the image
+            profileInitial.style.display = "block"; // Show initials
+            removeOverlay.style.display = "none"; // Hide the "X" button
+            profilePicInput.value = ""; // Clear file input
+        });
+    });
+
+</script>
 <script>
     function navigateTab(direction) {
         let currentTab = <?php echo $tab; ?>;

@@ -459,6 +459,10 @@ $category_map = [
                     <p>No other articles available at the moment.</p>
                 <?php endif; ?>
 
+                <div>
+                    <h3 class="aside-title">Latest From Your Followed Authors</h3>
+                </div>
+
                 <div class="aside-recommended-topics">
                     <h2 class="aside-title">Topics You May Like</h2>
                     <?php if ($non_recommended_topics_result->num_rows > 0): ?>

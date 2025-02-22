@@ -21,7 +21,7 @@ $user_id = $_SESSION['user_id'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Interests</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo BASE_URL ?>user/css/set-up-account.css"><!-- Link to external stylesheet -->
+<!--    <link rel="stylesheet" href="--><?php //echo BASE_URL ?><!--user/css/set-up-account.css"><!-- Link to external stylesheet -->-->
     <style>
         .profile-placeholder, .profile-section img {
             width: 120px;
@@ -160,6 +160,7 @@ $user_id = $_SESSION['user_id'];
             </div>
         </form>
 
+
         <!-- Next button -->
         <div class="form-footer">
             <button type="button" class="finish-btn next-btn">Next</button>
@@ -174,8 +175,8 @@ $user_id = $_SESSION['user_id'];
             <p id="word-count">0 / 150 words</p>
 
             <div class="navigation-buttons">
-                <button type="button" class="finish-btn previous-btn" onclick="previousTab('personal-details')">
-                    Previous
+<!--                <button type="button" class="finish-btn previous-btn" onclick="previousTab('personal-details')">-->
+<!--                    Previous-->
                 </button>
                 <button type="button" class="finish-btn next-btn" onclick="nextTab('recommendations')">Next</button>
             </div>
@@ -272,7 +273,6 @@ $user_id = $_SESSION['user_id'];
     </div>
 
 
-
     <!-- Progress Bar -->
     <div class="progress-bar-container">
         <div id="progress-bar" class="progress-bar"></div>
@@ -347,28 +347,6 @@ $user_id = $_SESSION['user_id'];
 
 
 
-    //Image viewer
-    document.addEventListener("DOMContentLoaded", function () {
-        const profilePicInput = document.getElementById("profile-pic");
-        const profileImg = document.getElementById("profile-img");
-
-        profilePicInput.addEventListener("change", function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-
-                reader.onload = function (event) {
-                    // Set the image src to the loaded file's data URL
-                    profileImg.src = event.target.result;
-                    // Show the profile image after upload
-                    profileImg.style.display = "block";
-                };
-
-                // Read the file as a Data URL (base64)
-                reader.readAsDataURL(file);
-            }
-        });
-    });
 
 
 
@@ -418,22 +396,52 @@ $user_id = $_SESSION['user_id'];
         let categories = JSON.parse(document.getElementById("categories-input").value || "[]");
         document.getElementById("final-preferences-list").textContent = categories.length > 0 ? categories.join(", ") : "No preferences selected.";
 
-        // Handle profile picture preview
-        let profileImg = document.getElementById("profile-img");
-        let finalProfileImg = document.getElementById("final-profile-img");
-        let finalProfilePlaceholder = document.getElementById("final-profile-placeholder");
-
-        if (profileImg.src && profileImg.style.display !== "none") {
-            finalProfileImg.src = profileImg.src;
-            finalProfileImg.style.display = "block";
-            finalProfilePlaceholder.style.display = "none";
-        } else {
-            finalProfileImg.style.display = "none";
-            finalProfilePlaceholder.style.display = "flex";
         }
-    });
-
 
 </script>
+
+
+<script>document.addEventListener("DOMContentLoaded", function () {
+        const profilePicInput = document.getElementById("profile-pic");
+        const profilePlaceholder = document.getElementById("profile-placeholder");
+        const profileImg = document.getElementById("profile-img");
+        const profileInitial = document.getElementById("profile-initial");
+        const hoverIcon = document.getElementById("hover-icon");
+
+        // Clickable placeholder triggers file input
+        profilePlaceholder.addEventListener("click", function () {
+            profilePicInput.click();
+        });
+
+        // Handle file selection
+        profilePicInput.addEventListener("change", function (event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    profileImg.src = e.target.result;
+                    profileImg.style.display = "block"; // Show the image
+                    profileInitial.style.display = "none"; // Hide initial
+                    hoverIcon.textContent = "✖"; // Change to remove icon
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Remove image on clicking "X"
+        hoverIcon.addEventListener("click", function (event) {
+            event.stopPropagation(); // Prevent triggering file input
+            profilePicInput.value = ""; // Clear file input
+            profileImg.src = "#";
+            profileImg.style.display = "none"; // Hide image
+            profileInitial.style.display = "block"; // Show initial
+            hoverIcon.textContent = "+"; // Reset icon
+        });
+    });
+</script>
+
 </body>
 </html>

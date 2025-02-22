@@ -170,7 +170,8 @@ if ($result->num_rows == 0) {
     die("User not found.");
 }
 
-$stmt1 = $conn->prepare("SELECT user_id, profile_picture, bio  FROM user_details WHERE user_id = ?");
+// Prepare and execute the query
+$stmt1 = $conn->prepare("SELECT user_id, profile_picture, bio FROM user_details WHERE user_id = ?");
 if (!$stmt1) {
     die("Error preparing statement: " . $conn->error);
 }
@@ -178,12 +179,11 @@ $stmt1->bind_param("i", $user_id);
 $stmt1->execute();
 $result = $stmt1->get_result();
 
-
 // Fetch user details
 $user = $result->fetch_assoc();
-$user_id = $user['user_id'];
-$profilePic = $user['profile_picture'];
-$bio = $user['bio'];
+$user_id = $user['user_id'] ?? null;
+$profilePic = $user['profile_picture'] ?? null;  // Default to null if not found
+$bio = $user['bio'] ?? null; // Default to null if not found
 
 $stmt->close();
 
@@ -227,6 +227,20 @@ if (empty($preferred_categories)) {
             padding: 10px;
         }
 
+        /* Profile initial style */
+        .profile-initial {
+            width: 100px;   /* Same size as the profile image container */
+            height: 100px;  /* Same size as the profile image container */
+            border-radius: 50%;  /* Makes the div circular */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;   /* Text color */
+            font-size: 40px; /* Adjust font size as needed */
+            font-weight: bold;
+            text-transform: uppercase;  /* Ensures the initial is uppercase */
+        }
+
         /* Profile Image */
         .profile-image-container img {
             display: block;
@@ -241,6 +255,7 @@ if (empty($preferred_categories)) {
         .profile-header {
             text-align: left;
             margin: 20px 0;
+            margin-top: 3rem;
         }
 
         .profile-header h1 {
@@ -479,36 +494,36 @@ if (empty($preferred_categories)) {
             <aside class="non-recommended-articles">
                 <section class="profile-header-container">
                     <div class="profile-image-container">
-                        <img src="<?php echo BASE_URL . 'public/images/users/' . $user_id . '/' . htmlspecialchars($profilePic); ?>"
-                             alt="Profile Picture">
+                        <?php
+                        // Check if the profile picture is null or empty
+                        if (!empty($profilePic) && file_exists(BASE_PATH . 'public/images/users/' . $user_id . '/' . htmlspecialchars($profilePic))) {
+                            // Display the profile picture if it exists
+                            echo '<img src="' . BASE_URL . 'public/images/users/' . $user_id . '/' . htmlspecialchars($profilePic) . '" alt="Profile Picture">';
+                        } else {
+                            // If the profile picture is null, display the user's initial with a random background color
+                            $initial = strtoupper(substr($username, 0, 1));  // Get the first letter of the username
+                            $randomColor = '#' . substr(md5(rand()), 0, 6); // Generate a random hex color
+                            echo '<div class="profile-initial" style="background-color: ' . $randomColor . ';">' . $initial . '</div>';
+                        }
+                        ?>
                     </div>
                 </section>
 
                 <div class="aside-user-profile">
                     <div class="user-info">
                         <h2 class="user-info-title"><?php echo htmlspecialchars($username); ?></h2>
-                        <p class="user-info-bio"><em><?php echo htmlspecialchars($bio); ?></em></p>
-
+                        <p class="user-info-bio">
+                            <?php
+                            // Check if the bio is null and avoid passing null to htmlspecialchars
+                            echo !empty($bio) ? htmlspecialchars($bio) : 'No bio available.';
+                            ?>
+                        </p>
                     </div>
                 </div>
 
 
-                <div class="aside-recommended-topics">
-                    <h2 class="aside-title">Topics You May Like</h2>
-                    <?php if ($non_recommended_topics_result->num_rows > 0): ?>
-                        <ul>
-                            <?php while ($topic_row = $non_recommended_topics_result->fetch_assoc()): ?>
-                                <li>
-                                    <a href="#?tag=<?php echo urlencode($topic_row['Tags']); ?>">
-                                        <?php echo htmlspecialchars($topic_row['Tags']); ?>
-                                    </a>
-                                </li>
-                            <?php endwhile; ?>
-                        </ul>
-                    <?php else: ?>
-                        <p>No topics available at the moment.</p>
-                    <?php endif; ?>
-                </div>
+
+
             </aside>
         </aside>
     </div>

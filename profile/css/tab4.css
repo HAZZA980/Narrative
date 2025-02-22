@@ -80,3 +80,9 @@
     list-style: none;
     white-space: nowrap; /* Prevents text inside the items from wrapping */
 }
+
+.overview-image-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

@@ -2,7 +2,7 @@
 $categories = [
     "Business" => ["file" => "business.php", "image" => "public/images/header-icons/business.png"],
     "Entertainment" => ["file" => "entertainment.php", "image" => "public/images/header-icons/entertainment.png"],
-    "Food & Drink" => ["file" => "food-and-drink.php", "image" => "public/images/header-icons/food-and-drink.png"],
+    "Food" => ["file" => "food.php", "image" => "public/images/header-icons/food-and-drink.png"],
     "Health & Fitness" => ["file" => "health.php", "image" => "public/images/header-icons/healthcare.png"],
     "History & Culture" => ["file" => "history.php", "image" => "public/images/header-icons/history.png"],
     "Lifestyle" => ["file" => "lifestyle.php", "image" => "public/images/header-icons/lifestyles.png"],
