@@ -211,18 +211,7 @@ $category_map = [
     <link rel="stylesheet" href="public/css/styles-forYou.css">
     <link rel="stylesheet" href="features/pagination/css/pagination.css">
     <link rel="stylesheet" href="explore/articleLayouts/styles-default-article-formation.css">
-    <style>
-        .tag-link {
-            color: firebrick;
-            text-decoration: none;
-        }
-
-        .tag-link:hover {
-            text-decoration: underline;
-            color: firebrick;
-        }
-    </style>
-</head>
+ </head>
 <body>
 
 <main class="main-container">
@@ -270,9 +259,10 @@ $category_map = [
                         $tags = explode(",", $row['Tags']);
                         $first_tag = trim($tags[0]); // Get the first tag
 ?>
-<!--                   <a href="--><?php //echo BASE_URL;?><!--explore/--><?php //echo htmlspecialchars($file_name);?><!--" class="tag-link">--><?php //echo htmlspecialchars($tag); ?><!--</a>-->
-
-                        <span class='tag-link'><?php echo htmlspecialchars($first_tag);?></span>
+                        <!-- Tag link to feed.php with tag query -->
+                        <a href="<?php echo BASE_URL; ?>tag.php?tag=<?php echo urlencode($first_tag); ?>" class="tag-link">
+                    <?php echo htmlspecialchars($first_tag); ?>
+                </a>
                     <?php
                     } else {
                         echo "<span>Uncategorized</span>";
@@ -427,17 +417,7 @@ $category_map = [
 
 
         <aside class="aside-links">
-            <!--            <aside class="aside-writing-link">-->
-            <!--                <a href="-->
-            <?php //echo BASE_URL?><!--includes/createArticle.php" class="write-link">-->
-            <!--                    <img src="-->
-            <?php //echo BASE_URL?><!--public/images/article-layout-img/pencil-square.svg" alt="Write Icon">-->
-            <!--                    <h3 class="aside-write">Write</h3>-->
-            <!--                </a>-->
-            <!--            </aside>-->
-
-
-            <aside class="non-recommended-articles">
+               <aside class="non-recommended-articles">
                 <h2 class="aside-title">Other Articles</h2>
                 <?php if ($non_recommended_result->num_rows > 0): ?>
                     <ul>

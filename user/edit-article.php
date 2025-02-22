@@ -25,6 +25,10 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     <title>Edit Article</title>
     <link rel="stylesheet" href="<?php echo BASE_URL?>user/css/styles-edit-article.css">
     <link rel="stylesheet" href="<?php echo BASE_URL?>user/css/delete-article-modal.css">
+    <style>
+
+
+    </style>
 </head>
 <body>
 
@@ -59,28 +63,59 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
                         <textarea class="blog-content" id="content" name="content" rows="6"
                                   required><?php echo htmlspecialchars($article['Content']); ?></textarea>
                     </div>
-                    <div class="edit-category-container">
-                        <label for="tags">Tags:</label>
-                        <div id="selected-tags">
-                            <?php
-                            $tagsArray = explode(',', $article['Tags']);
-                            foreach ($tagsArray as $tag) {
-                                $trimmedTag = trim($tag);
-                                if ($trimmedTag !== '') {
-                                    echo "<span class='tag'>$trimmedTag <span class='remove-tag'>&times;</span></span>";
-                                }
+
+                    <div id="selected-tags">
+                        <?php
+                        $tagsArray = explode(',', $article['Tags']);
+                        foreach ($tagsArray as $tag) {
+                            $trimmedTag = trim($tag);
+                            if ($trimmedTag !== '') {
+                                echo "<span class='tag'>$trimmedTag <span class='remove-tag'>&times;</span></span>";
                             }
-                            ?>
-                        </div>
+                        }
+                        ?>
+                    </div>
+
+                    <div class="edit-category-container">
+                        <label class="input-tags-label" for="tags">Tags:</label>
+                        <div class="suggestion-dropdown">
                         <input type="text" id="tags-input" placeholder="Enter tags" autocomplete="off">
+                            <input type="hidden" name="tags" id="tags-hidden" value="<?php echo htmlspecialchars($article['Tags']); ?>">
                         <div id="suggestions"></div>
-                        <input type="hidden" name="tags" id="tags-hidden" value="<?php echo htmlspecialchars($article['Tags']); ?>">
+                        </div>
                     </div>
 
 
+                    <?php
+                    // Check if an article image exists
+                    $imageUrl = null;
+                    if ($article['Image']) {
+                        // Construct the image URL if it exists
+                        $imageUrl = BASE_URL . 'public/images/users/' . $article['user_id'] . '/' . $article['Image'];
+                    }
+
+                    // In your form, check if the image URL is set and display the image
+                    ?>
+
+                    <!-- HTML part inside edit-article.php -->
                     <div class="edit-image-container">
-                        <label for="image">Upload Image (optional):</label>
-                        <input type="file" id="image" name="image" accept="image/*">
+                        <label for="image" class="upload-image-label">UPLOAD IMAGE</label>
+                        <input type="file" id="image" name="image" accept="image/*" class="image-input" onchange="previewImage(event)">
+
+                        <!-- Image Preview Container -->
+                        <div id="image-preview-container" class="image-preview-container">
+                            <!-- Display the pre-existing image (if any) -->
+                            <?php if ($imageUrl): ?>
+                                <img id="image-preview" src="<?= $imageUrl ?>" alt="" class="image-preview">
+                                <span id="remove-image" class="remove-image">×</span> <!-- X button for removing image -->
+                            <?php else: ?>
+                                <p>No image uploaded yet.</p>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Hidden input holding the existing image URL, for updating/removing -->
+                        <input type="hidden" id="existing-image-url" value="<?= $imageUrl ?>">
+
                     </div>
 
             </div>

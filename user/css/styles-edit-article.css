@@ -361,25 +361,19 @@ input#blog-title {
 }
 
 
-.suggestions {
-    position: absolute;
-    background: white;
-    border: 1px solid #ccc;
-    bottom: 5rem;
-    left: 16rem;
-    max-height: 200px;
-    overflow-y: auto;
-    width: 220px;
-}
 .suggestion-item {
     padding: 8px;
     cursor: pointer;
 
 }
+
+.input-tags-label {
+    margin-right: 3rem;
+}
 .suggestion-item:hover {
     background-color: #f0f0f0;
 }
-.selected-tag {
+.selected-tag, #selected-tags .tag {
     display: inline-block;
     background: #007BFF;
     color: white;
@@ -391,4 +385,273 @@ input#blog-title {
 .remove-tag {
     cursor: pointer;
     padding-left: 5px;
+}
+
+
+
+
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.2s ease-in-out;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0; /* Light hover effect */
+}
+
+.suggestion-item.active {
+    background-color: #007bff; /* Highlight selected item */
+    color: white; /* White text on active item */
+}
+
+/* Show the suggestions box when input is focused */
+#tags-input:focus + #suggestions {
+    display: block;
+}
+
+/* When there's only one suggestion, adjust the height of the container */
+#suggestions.one-item {
+    height: auto; /* Let it shrink to the size of the single item */
+    max-height: unset; /* Remove any max-height */
+}
+
+/* For two items, display them properly */
+#suggestions.two-items {
+    height: auto;
+}
+
+/* If there are more than two items, keep it at a set max height with scrolling */
+#suggestions.three-or-more-items {
+    max-height: 200px; /* Optional: limit the height */
+}
+
+
+/* General Styles for Form Containers */
+.edit-category-container,
+.edit-image-container {
+    margin-bottom: 20px; /* Add some space between the containers */
+    padding: 10px;
+    border-radius: 8px; /* Rounded corners for the containers */
+    background-color: #f9f9f9; /* Light background color for the containers */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Label Styles */
+.edit-category-container label,
+.edit-image-container label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px; /* Space between label and input */
+    color: #333; /* Dark text color for the labels */
+    font-size: 14px;
+}
+
+/* Input Field Styles */
+#tags-input,
+#image {
+    width: 100%; /* Make input fields fill the container */
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd; /* Light gray border */
+    border-radius: 4px; /* Rounded corners for inputs */
+    box-sizing: border-box; /* Prevent padding from increasing input width */
+    transition: border-color 0.2s ease;
+}
+
+/* Input Focus Styles */
+#tags-input:focus,
+#image:focus {
+    border-color: #007bff; /* Change border color to blue when focused */
+    outline: none; /* Remove the default outline */
+}
+
+/* Placeholder Text Style */
+#tags-input::placeholder {
+    color: #aaa; /* Lighter color for placeholder */
+}
+
+/* File Input Styling */
+#image {
+    padding: 6px 10px; /* Adjust padding for file input */
+    cursor: pointer; /* Change cursor to indicate clickability */
+}
+
+/* Hover Effects for File Input */
+#image:hover {
+    background-color: #f0f0f0; /* Light background color on hover */
+}
+
+/* Hidden Tags Input Style */
+#tags-hidden {
+    display: none; /* Hide the hidden input field */
+}
+
+
+
+
+
+
+/* General Styles for Form Containers */
+.edit-category-container {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Label Styles */
+.input-tags-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 14px;
+}
+
+/* Suggestion Dropdown Container */
+.suggestion-dropdown {
+    position: relative; /* Make this relative to position suggestions inside */
+    width: 100%; /* Ensures the suggestions box matches the input width */
+}
+
+/* Input Field Styles */
+#tags-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+/* Focus Styles for Input */
+#tags-input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Suggestions Box Styling */
+.suggestions {
+    position: absolute;
+    top: 100%; /* Places the suggestions directly beneath the input field */
+    left: 0;
+    width: 100%; /* Make sure suggestions box is the same width as input */
+    background: white;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensure it's on top of other elements */
+    display: none; /* Hidden by default */
+}
+
+/* Suggestion Item Styling */
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Hover Effect for Suggestion Items */
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* Active Item Styling */
+.suggestion-item.active {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Placeholder Styling for Input */
+#tags-input::placeholder {
+    color: #aaa;
+}
+
+/* Show the suggestions box when input is focused */
+#tags-input:focus + .suggestions {
+    display: block;
+}
+
+
+/* Container for the image upload */
+.edit-image-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed #007bff; /* Dashed border for the upload area */
+    border-radius: 10px; /* Rounded corners for a modern look */
+    cursor: pointer; /* Indicate that it's clickable */
+    overflow: hidden;
+}
+
+/* Label text for the upload area */
+.upload-image-label {
+    font-size: 16px;
+    color: #007bff;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* File input styles (hidden but functional) */
+.image-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0; /* Hide the actual file input */
+    cursor: pointer; /* Show pointer cursor to indicate that it's clickable */
+}
+
+/* Preview container that will hold the image */
+.image-preview-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none; /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Optional: Add a dark overlay for better contrast */
+}
+
+/* Image Preview */
+.image-preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Ensure the image fits inside the container without distortion */
+}
+
+/* Show the image preview container when a file is selected */
+.image-preview-container.show {
+    display: flex;
+}
+/* Add to existing CSS */
+
+/* X button styles for removing the image */
+.remove-image {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    font-size: 20px;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark background for contrast */
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+    z-index: 10; /* Ensure it's above the image */
+    transition: background-color 0.2s ease;
+}
+
+/* Change color when hovering over the "X" */
+.remove-image:hover {
+    background-color: rgba(0, 0, 0, 0.8); /* Darker background on hover */
 }

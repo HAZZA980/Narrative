@@ -15,7 +15,10 @@ include BASE_PATH . 'user/model/createArticle.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Article</title>
-    <link rel="stylesheet" href="<?php echo BASE_URL?>user/css/styles-edit-article.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL ?>user/css/styles-edit-article.css">
+    <style>
+
+    </style>
 </head>
 <body>
 
@@ -47,18 +50,28 @@ include BASE_PATH . 'user/model/createArticle.php';
                                   placeholder="Write your article content here..." required></textarea>
                     </div>
 
+                    <div id="selected-tags"></div>
+
                     <div class="edit-category-container">
-                        <label for="tags">Tags:</label>
-                        <input type="text" id="tags-input" placeholder="Type a tag..." autocomplete="off">
-                        <div id="suggestions" class="suggestions"></div>
-                        <div id="selected-tags"></div>
-                        <input type="hidden" name="tags" id="tags-hidden">
+                        <label class="input-tags-label" for="tags">Tags:</label>
+                        <div class="suggestion-dropdown">
+                            <input type="text" id="tags-input" placeholder="Type a tag..." autocomplete="off">
+                            <input type="hidden" name="tags" id="tags-hidden">
+                            <div id="suggestions" class="suggestions"></div>
+
+                        </div>
                     </div>
 
                     <div class="edit-image-container">
-                        <label for="image">Upload Image (optional):</label>
-                        <input type="file" id="image" name="image" accept="image/*">
+                        <label for="image" class="upload-image-label">UPLOAD IMAGE</label>
+                        <input type="file" id="image" name="image" accept="image/*" class="image-input" onchange="previewImage(event)">
+                        <div id="image-preview-container" class="image-preview-container">
+                            <img id="image-preview" src="" alt="Image Preview" class="image-preview">
+                            <span id="remove-image" class="remove-image">×</span> <!-- X button for removing image -->
+                        </div>
                     </div>
+
+
 
             </div>
         </div>
@@ -69,10 +82,13 @@ include BASE_PATH . 'user/model/createArticle.php';
                     <h2 class="aside-title">Admin Actions</h2>
                     <ul class="admin-action-list">
                         <li class="admin-action-item">
-                            <button type="submit" name="submit_article" value="draft" id="submit-article">Save in Drafts</button>
+                            <button type="submit" name="submit_article" value="draft" id="submit-article">Save Draft
+                            </button>
                         </li>
                         <li class="admin-action-item">
-                            <button type="submit" name="submit_article" value="create" id="submit-article">Create Article</button>
+                            <button type="submit" name="submit_article" value="create" id="submit-article">Publish
+                                Article
+                            </button>
                         </li>
                     </ul>
                 </aside>
@@ -81,8 +97,11 @@ include BASE_PATH . 'user/model/createArticle.php';
         </aside>
     </div>
 </main>
-<script src="<?php echo BASE_URL?>model/subcategories.js"></script>
-<script src="<?php echo BASE_URL?>user/js/createArticle.js"></script>
+<script src="<?php echo BASE_URL ?>model/subcategories.js"></script>
+<script src="<?php echo BASE_URL ?>user/js/createArticle.js"></script>
+<script>
+
+</script>
 </body>
 </html>
 

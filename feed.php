@@ -3,10 +3,6 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 
-// Check if the user is logged in
-if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
-    die("User not logged in. Redirecting...");
-}
 
 if (isset($_GET['username'])) {
     $username = htmlspecialchars($_GET['username']);
@@ -332,10 +328,9 @@ if (empty($preferred_categories)) {
 <main class="main-container">
     <div class="main-content">
         <div class="flex-container">
-            <div class="profile-header">
-                <h1><?php echo htmlspecialchars($username); ?>'s Articles</h1>
-                <p>Explore all articles written by <?php echo htmlspecialchars($username); ?>.</p>
-            </div>
+            <h1 class="main-content-title">
+                <?php echo "Latest by " . htmlspecialchars($username); ?></h1>
+            <p>Explore all articles written by <?php echo htmlspecialchars($username); ?>.</p>
 
             <?php if ($blogs_result->num_rows > 0): ?>
                 <?php while ($row = $blogs_result->fetch_assoc()): ?>
@@ -345,7 +340,22 @@ if (empty($preferred_categories)) {
                                 <?php echo $username ?>
                             </a>
                             <span class="aa" id="writing-about">is writing about</span>
-                            <span class="aa" id="blog-tags"><?php echo htmlspecialchars($row['Tags']); ?></span>
+                            <?php
+                            if (!empty($row['Tags'])) {
+                                // Explode tags by comma and trim whitespace
+                                $tags = explode(",", $row['Tags']);
+                                $first_tag = trim($tags[0]); // Get the first tag
+                                ?>
+                                <!-- Tag link to feed.php with tag query -->
+                                <a href="<?php echo BASE_URL; ?>tag.php?tag=<?php echo urlencode($first_tag); ?>" class="tag-link">
+                                    <?php echo htmlspecialchars($first_tag); ?>
+                                </a>
+                                <?php
+                            } else {
+                                echo "<span>Uncategorized</span>";
+                            }
+                            ?>
+                            </span>
                         </div>
 
                         <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>"

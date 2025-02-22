@@ -39,7 +39,11 @@ include BASE_PATH . "user/model/article-logic.php";
                         ? BASE_URL . 'public/images/users/' . $blog['user_id'] . '/' . $blog['Image']
                         : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
                 </div>
-                <p class="date-author"><strong>By <?php echo htmlspecialchars($author); ?></strong>
+                <p class="date-author"><strong>By                     <a href="<?php echo BASE_URL; ?>feed.php?username=<?php echo urlencode($author); ?>">
+                            <?php echo htmlspecialchars($author); ?></a></strong>
+
+
+
                     <small><?php echo date('F j, Y', strtotime($blog['datePublished'])); ?></small></p>
                 <div class="blog-content">
                     <p id="blog"><?php echo nl2br(htmlspecialchars($blog['content'])); ?></p>
@@ -180,9 +184,11 @@ include BASE_PATH . "user/model/article-logic.php";
                     foreach ($tagsArray as $tag) {
                         $trimmedTag = trim($tag); // Trim whitespace
                         if (!empty($trimmedTag)) {
-                            echo "<a href='tag.php?tag=" . urlencode($trimmedTag) . "' class='tag'>$trimmedTag</a>";
+                            echo '<a href="' . BASE_URL . 'tag.php?tag=' . urlencode($trimmedTag) . '" class="tag">' . htmlspecialchars($trimmedTag) . '</a>';
+
                         }
                     }
+
                     ?>
                 </div>
 

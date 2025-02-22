@@ -59,7 +59,7 @@ include $_SERVER["DOCUMENT_ROOT"] . "/phpProjects/narrative/config/config.php";
                 $sql = "SELECT Id, Title, LEFT(Content, 270) AS summary, DatePublished, Tags, Image, user_id 
                         FROM tbl_blogs 
                         WHERE Featured = '1' 
-                        ORDER BY DatePublished DESC LIMIT 12";
+                        ORDER BY DatePublished DESC LIMIT 13";
                 $result = $conn->query($sql);
 
                 $i = 1; // Counter to track grid items
@@ -121,7 +121,7 @@ include $_SERVER["DOCUMENT_ROOT"] . "/phpProjects/narrative/config/config.php";
             }
             ?>
         </div>
-        <h4 class="main-content-title">Latest Blogs</h4>
+        <h4 class="main-content-title">Latest</h4>
 
         <div class="latest-container">
             <?php

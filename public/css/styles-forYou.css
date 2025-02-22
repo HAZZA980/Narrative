@@ -84,7 +84,15 @@
 /*    font-weight: bold; !* Make the text bold *!*/
 /*    margin: 0; !* Remove default margin *!*/
 /*}*/
+.tag-link {
+    color: firebrick;
+    text-decoration: none;
+}
 
+.tag-link:hover {
+    text-decoration: underline;
+    color: firebrick;
+}
 
 .non-recommended-articles {
     border-left: 1px solid #ddd;
