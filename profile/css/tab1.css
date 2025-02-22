@@ -26,21 +26,6 @@
     justify-content: center;
 }
 
-.profile-placeholder {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%; /* Make the container circular */
-    background-color: #ddd; /* Random color background for placeholder */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-    font-size: 3rem;
-    color: #fff;
-    text-transform: uppercase;
-    font-weight: bold;
-}
 
 #profile-initial {
     display: block;
@@ -50,24 +35,8 @@
     width: 100%;
     height: 100%;
     object-fit: cover; /* Ensure image covers the entire container */
-    display: none; /* Hide image initially */
 }
 
-.hover-icon {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    padding: 5px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: none; /* Initially hidden */
-}
-
-.profile-placeholder:hover .hover-icon {
-    display: block; /* Show hover icon on hover */
-}
 
 input[type="file"] {
     margin-top: 10px;
@@ -85,23 +54,174 @@ input[type="file"] {
     text-align: center;
 }
 
-/* Profile Picture Styling */
-.profile-picture-container {
-    width: 150px;
-    height: 150px;
+.profile-placeholder {
+    position: relative;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
-    overflow: hidden;
+    background-color: #ccc;
     display: flex;
-    justify-content: center;
     align-items: center;
-    margin: auto;
-    border: 3px solid #ccc;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
 }
 
-.profile-picture-container img {
+/* Ensure profile image is visible */
+.profile-placeholder img {
     width: 100%;
     height: 100%;
+    border-radius: 50%;
     object-fit: cover;
+    display: block; /* Ensure the image is visible */
+}
+
+/* Overlay "X" button */
+.remove-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dim the image */
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0; /* Hidden initially */
+    transition: opacity 0.3s ease;
+}
+
+/* Show overlay only when hovering over an image */
+.profile-placeholder:hover .remove-overlay {
+    opacity: 1;
+}
+
+/* Hide the overlay when no image is present */
+.profile-placeholder img:not([src]) + .remove-overlay {
+    display: none;
 }
 
 
+/* Style for the label */
+.file-label {
+    margin-top: 4rem;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+    cursor: pointer;
+    transition: color 0.3s ease-in-out;
+}
+
+.file-label:hover {
+    color: #007BFF; /* Change color on hover */
+}
+
+/* Style for the file input */
+.file-input {
+    display: none; /* Hide default file input */
+}
+
+/* Custom button styling for file input */
+.file-label {
+    background-color: #007BFF; /* Blue background */
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    text-align: center;
+
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.file-label:hover {
+    background-color: #0056b3; /* Darker blue when hovered */
+}
+
+.file-label:active {
+    background-color: #004085; /* Even darker blue on active state */
+}
+
+/* Optional: Add some spacing between the file input and other elements */
+.file-label + .file-input {
+    margin-top: 10px;
+}
+
+.profile-section input[type="file"] {
+    font-size: 14px;
+    cursor: pointer;
+    opacity: 0; /* Hide default file input */
+}
+
+
+
+
+
+
+
+/* User Info Form Container */
+.details-container {
+    background-color: #fff;
+    padding: 30px;
+    margin: 20px auto;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Elements */
+.user-info {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+input[type="date"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+}
+
+input[type="date"]:focus {
+    outline: none;
+    border-color: #0056b3;
+    background-color: #fff;
+}
+
+input[type="date"]:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+
+/* Form Section Header */
+.details-container h2 {
+    font-size: 22px;
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+/* Tooltip or Instruction Text */
+.details-container p {
+    font-size: 14px;
+    color: #777;
+    margin-top: 0;
+    margin-bottom: 20px;
+}

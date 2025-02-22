@@ -9,6 +9,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 // Get the current file name from the URL
 $current_file = basename($_SERVER['PHP_SELF']);
 
+$username = $_SESSION['username'];
 // Define an array of tabs and their corresponding files
 $tabs = [
     'overview' => 'account.php',
@@ -50,7 +51,11 @@ $isAdmin = $user_row['isAdmin']; // Fetch the isAdmin status
 </html>
 <main class="account-header-tabs">
     <div class="account-tabs-container">
-        <h3 class="account-username"><?php echo htmlspecialchars($username); ?></h3>
+        <h3 class="account-username">
+            <a href="feed.php?username=<?php echo urlencode($username); ?>">
+                <?php echo htmlspecialchars($username); ?>
+            </a>
+        </h3>
         <div class="account-tabs">
             <a href="<?php echo BASE_URL ?>account.php"
                class="account-tab overview <?php echo $active_tab === 'overview' ? 'active' : ''; ?>">

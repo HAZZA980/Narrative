@@ -40,7 +40,7 @@ include BASE_PATH . "account/account-masthead.php";
                     <li><a href="<?php echo BASE_URL; ?>model/feed.php" class="settings-link">Edit Your Articles</a>
                     </li>
                     <li><a href="<?php echo BASE_URL; ?>model/feed.php" class="settings-link">Delete an Article</a></li>
-                    <li><a href="<?php echo BASE_URL; ?>layouts/pages/user/settings/recommendations.php"
+                    <li><a href="<?php echo BASE_URL; ?>settings/recommendation-preferences.php"
                            class="settings-link">Update Your Recommended Topics</a></li>
                 </ul>
             </div>
