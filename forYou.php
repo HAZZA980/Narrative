@@ -248,9 +248,9 @@ $category_map = [
                             <?php endif; ?>
                         </li>
                     <?php endforeach; ?>
-                    <a class="changeTopics" href="settings/recommendations.php">+ Change Recommendations</a>
+                    <a class="changeTopics" href="profile/model/recommendations.php">+ Change Recommendations</a>
                 <?php else: ?>
-                    <li>No preferred tags selected. <a href="settings/recommendations.php">Update Preferences</a></li>
+                    <li>No preferred tags selected. <a href="profile/model/recommendations.php">Update Preferences</a></li>
                 <?php endif; ?>
             </ul>
 

@@ -1,0 +1,107 @@
+/* Flex container for layout */
+.personal-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+#personal-container{
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+.personal-detail-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-placeholder {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* Make the container circular */
+    background-color: #ddd; /* Random color background for placeholder */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    font-size: 3rem;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+#profile-initial {
+    display: block;
+}
+
+#profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure image covers the entire container */
+    display: none; /* Hide image initially */
+}
+
+.hover-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none; /* Initially hidden */
+}
+
+.profile-placeholder:hover .hover-icon {
+    display: block; /* Show hover icon on hover */
+}
+
+input[type="file"] {
+    margin-top: 10px;
+}
+
+
+/* Left Section (Welcome + DOB) */
+.left-section {
+    width: 50%;
+}
+
+/* Right Section (Profile Picture) */
+.right-section {
+    width: 50%;
+    text-align: center;
+}
+
+/* Profile Picture Styling */
+.profile-picture-container {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    border: 3px solid #ccc;
+}
+
+.profile-picture-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+

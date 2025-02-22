@@ -12,7 +12,7 @@ include BASE_PATH . "account/account-masthead.php";
     <title>Account Settings</title>
 </head>
 <body>
-<?php include "../layouts/mastheads/articles/account-masthead.php"; ?>
+<?php include BASE_PATH . "acount/account-masthead.php"; ?>
 
 <div class="settings-outer-container">
     <div class="settings-inner-container">
@@ -57,7 +57,7 @@ include BASE_PATH . "account/account-masthead.php";
                     <li><a href="<?php echo BASE_URL; ?>model/feed.php" class="settings-link">Delete an Article</a></li>
                     <li><a href="<?php echo BASE_URL; ?>settings/recommendations.php"
                            class="settings-link">Update Your Recommended Topics</a></li>
-                    <li><a href="<?php echo BASE_URL; ?>layouts/pages/user/settings/faqs.php" class="settings-link">More
+                    <li><a href="<?php echo BASE_URL; ?>settings/faqs.php" class="settings-link">More
                             FAQs</a></li>
                 </ul>
             </div>

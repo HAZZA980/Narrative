@@ -15,7 +15,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     error_log("User not logged in. Redirecting to login page.");
-    header("Location: " . BASE_URL . "login.php");
+    header("Location: " . BASE_URL . "user_auth.php");
     exit;
 }
 

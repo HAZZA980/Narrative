@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['sign_in'])) {
                 $tag_data = $result_pref->fetch_assoc();
 
                 if ($tag_data['tag_count'] == 0) {
-                    header("Location: " . BASE_URL . "settings/recommendations.php");
+                    header("Location: " . BASE_URL . "profile/set-up-profile.php");
                 } else {
                     header("Location: " . BASE_URL . "forYou.php");
                 }

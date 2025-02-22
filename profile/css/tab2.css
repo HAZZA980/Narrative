@@ -1,0 +1,113 @@
+/* Bio Tab Container */
+#bio {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+/* Heading */
+#bio h3 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Subheading (description) */
+#bio p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* Label */
+#bio label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+/* Textarea Styling */
+#bio-text {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: vertical;
+    min-height: 120px;
+    max-height: 300px;
+    margin-bottom: 15px;
+}
+
+/* Textarea Placeholder */
+#bio-text::placeholder {
+    color: #aaa;
+}
+
+/* Submit Button */
+#bio button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Button Hover Effect */
+#bio button:hover {
+    background-color: #45a049;
+}
+
+#bio-text {
+    resize: none; /* Prevents resizing the textarea */
+    width: 100%; /* Ensures the textarea takes full available width */
+    max-width: 900px; /* Limits width to a fixed size */
+    height: 150px; /* Fixed height for the textarea */
+}
+
+#word-count {
+    font-size: 14px;
+    color: #666;
+}
+
+#save-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#save-button:hover:enabled {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #bio {
+        padding: 15px;
+    }
+
+    #bio h3 {
+        font-size: 20px;
+    }
+
+    #bio p {
+        font-size: 14px;
+    }
+
+    #bio-text {
+        font-size: 14px;
+    }
+
+    #bio button {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+}
