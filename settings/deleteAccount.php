@@ -1,5 +1,6 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
+include BASE_PATH . 'features/write/write-icon-fixed.php';
 
 // Ensure user_id exists in the session
 if (!isset($_SESSION['user_id'])) {

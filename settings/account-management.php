@@ -2,6 +2,7 @@
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 include BASE_PATH . "account/account-masthead.php";
 include BASE_PATH . "settings/model/update_dob.php";
+include BASE_PATH . 'features/write/write-icon-fixed.php';
 
 // Ensure the user is verified before accessing settings
 if (!isset($_SESSION['verified_user'])) {

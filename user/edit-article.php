@@ -7,6 +7,7 @@ ob_start();
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 include BASE_PATH . "user/view/delete-article-modal.html";
 include BASE_PATH . "user/model/edit-article.php";
+include BASE_PATH . 'features/write/write-icon-fixed.php';
 
 // Ensure the user is logged in
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {

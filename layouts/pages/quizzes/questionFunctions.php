@@ -1,11 +1,12 @@
-x<?php
+<?php
 session_start(); // Start the session to store score data
 // Check if the score is sent
 if (isset($_POST['score'])) {
     // Save the score in the session
     $_SESSION['score_percentage'] = $_POST['score'];
 }
-include "../../../config/config.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/narrative/config/config.php';
+
 include "../../../layouts/mastheads/quizzes/quiz-masthead.php";
 
 // Get category from URL query string, if available

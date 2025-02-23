@@ -1,6 +1,7 @@
 <?php
 // Avoid starting the session again by using require_once
 require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
+include BASE_PATH . 'features/write/write-icon-fixed.php';
 
 // Now you can access the session variables and constants defined in config.php
 $user_id = $_SESSION['user_id'];

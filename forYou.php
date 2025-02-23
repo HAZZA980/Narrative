@@ -1,9 +1,8 @@
 <?php
 session_start();
-
 //BASE_PATH won't work because it's in the config file that we're trying to import.
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
-
+include BASE_PATH . 'features/write/write-icon-fixed.php';
 // Check if the user is logged in
 if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
     die("User not logged in. Redirecting...");

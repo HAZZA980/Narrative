@@ -4,6 +4,8 @@ include $_SERVER["DOCUMENT_ROOT"] . "/phpProjects/Narrative/config/config.php";
 include BASE_PATH . "user/model/delete.article.php";
 include BASE_PATH . "user/view/delete-article-modal.html";
 include BASE_PATH . "user/model/article-logic.php";
+include BASE_PATH . 'features/write/write-icon-fixed.php';
+
 ?>
 
 <!DOCTYPE html>

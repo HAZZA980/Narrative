@@ -2,6 +2,7 @@
 // Start the session and connect to the database
 session_start();
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
+include BASE_PATH . 'features/write/write-icon-fixed.php';
 
 // Get the tag from the URL (if set)
 $tag = isset($_GET['tag']) ? trim($_GET['tag']) : null;

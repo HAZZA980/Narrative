@@ -46,9 +46,7 @@ include "quiz-functions/quiz-links.php"
     <div class="generalKnowledge">
         <a class="genKnowledgeQuiz" href="questionFunctions.php?category=generalKnowledge">General Knowledge Questions</a>
     </div>
-    <div>
-        <a href="<?php echo BASE_URL?>layouts/pages/quizzes/createQuiz.php">Create your quizzes here</a>
-    </div>
+
 
     <div class="category-container">
         <h3 class="category-title">Choose a Quiz Category</h3>
@@ -160,22 +158,22 @@ include "quiz-functions/quiz-links.php"
 
         <?php
 
-//        // Dynamically set $currentQuizKey based on the URL parameter 'category'
-//        $currentQuizKey = isset($_GET['category']) ? $_GET['category'] : null; // Get the category from URL
-//
-//        if ($currentQuizKey) {
-//            // Update score based on the quiz being taken
-//            $newScore = 75.00; // Example score, replace with actual quiz result
-//
-//            // Update session with the new score for the specific quiz
-//            $_SESSION['scores'][$currentQuizKey] = $newScore;
-//
-//            // Update the lastUpdated timestamp
-//            $_SESSION['lastUpdated'][$currentQuizKey] = time(); // Current timestamp
-//        } else {
-//            // Handle the case when no category is provided, maybe show an error or default
-//            echo "No category Provided";
-//        }
+        //        // Dynamically set $currentQuizKey based on the URL parameter 'category'
+        //        $currentQuizKey = isset($_GET['category']) ? $_GET['category'] : null; // Get the category from URL
+        //
+        //        if ($currentQuizKey) {
+        //            // Update score based on the quiz being taken
+        //            $newScore = 75.00; // Example score, replace with actual quiz result
+        //
+        //            // Update session with the new score for the specific quiz
+        //            $_SESSION['scores'][$currentQuizKey] = $newScore;
+        //
+        //            // Update the lastUpdated timestamp
+        //            $_SESSION['lastUpdated'][$currentQuizKey] = time(); // Current timestamp
+        //        } else {
+        //            // Handle the case when no category is provided, maybe show an error or default
+        //            echo "No category Provided";
+        //        }
 
         // Step 1: Gather all the quizzes and their associated scores from the session
         $improveScores = [];

@@ -1,5 +1,7 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
+include BASE_PATH . 'features/write/write-icon-fixed.php';
+
 ?>
 
 <!doctype html>

@@ -1,4 +1,6 @@
-<?php include "config/config.php" ?>
+<?php include "config/config.php";
+include BASE_PATH . 'features/write/write-icon-fixed.php';
+?>
 <!doctype html>
 <html lang="en">
 <head>
