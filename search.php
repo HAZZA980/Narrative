@@ -40,7 +40,24 @@ include BASE_PATH . 'features/search/search-logic.php';
                     <div class="article-author-and-topic">
                         <div class="inter">
                             <span class="aa" id="writing-about">You are writing about </span>
-                            <span class="aa" id="blog-tags"><?php echo htmlspecialchars($row['Tags']); ?></span>
+                            <span>
+                            <?php
+                            if (!empty($row['Tags'])) {
+                                // Explode tags by comma and trim whitespace
+                                $tags = explode(",", $row['Tags']);
+                                $first_tag = trim($tags[0]); // Get the first tag
+                                ?>
+                                <!-- Tag link to feed.php with tag query -->
+                                <a href="<?php echo BASE_URL; ?>tag.php?tag=<?php echo urlencode($first_tag); ?>" class="tag-link" style="color: firebrick">
+                                    <?php echo htmlspecialchars($first_tag); ?>
+                                </a>
+                                <?php
+                            } else {
+                                echo "<span>Uncategorized</span>";
+                            }
+                            ?>
+                            </span>
+
                         </div>
                         <!-- Edit Article Icon and Dropdown Menu -->
                         <?php
@@ -214,9 +231,37 @@ include BASE_PATH . 'features/search/search-logic.php';
                 <!-- User is NOT the author of the article -->
                 <div class="flex-item">
                     <div class="article-author-and-topic">
-                        <span class="aa" id="author-name"><?php echo htmlspecialchars($row['username']) ?></span>
+
+                        <?php
+                        // Example of how you might be fetching blog posts
+                        $sql = "
+                            SELECT tbl_blogs.id, tbl_blogs.title, tbl_blogs.user_id, tbl_blogs.datePublished, 
+                                   tbl_blogs.Tags, tbl_blogs.Image, Users.username 
+                            FROM tbl_blogs 
+                            LEFT JOIN Users ON tbl_blogs.user_id = Users.user_id
+                            ORDER BY tbl_blogs.datePublished DESC";?>
+                        <a href="<?php echo BASE_URL; ?>feed.php?username=<?php echo urlencode($row['username']); ?>" class="aa" id="author-name">
+                            <?php echo htmlspecialchars($row['username']); ?>
+                        </a>
                         <span class="aa" id="writing-about">is writing about</span>
-                        <span class="aa" id="blog-tags"><?php echo htmlspecialchars($row['Tags']); ?></span>
+                        <span>
+                               <?php
+                               if (!empty($row['Tags'])) {
+                                   // Explode tags by comma and trim whitespace
+                                   $tags = explode(",", $row['Tags']);
+                                   $first_tag = trim($tags[0]); // Get the first tag
+                                   ?>
+                                   <!-- Tag link to feed.php with tag query -->
+                                   <a href="<?php echo BASE_URL; ?>tag.php?tag=<?php echo urlencode($first_tag); ?>" class="tag-link" style="color: firebrick">
+                                    <?php echo htmlspecialchars($first_tag); ?>
+                                </a>
+                                   <?php
+                               } else {
+                                   echo "<span>Uncategorized</span>";
+                               }
+                               ?>
+
+                        </span>
                     </div>
 
                     <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>"

@@ -39,7 +39,7 @@ include BASE_PATH . "user/model/article-logic.php";
                         ? BASE_URL . 'public/images/users/' . $blog['user_id'] . '/' . $blog['Image']
                         : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
                 </div>
-                <p class="date-author"><strong>By                     <a href="<?php echo BASE_URL; ?>feed.php?username=<?php echo urlencode($author); ?>">
+                <p class="date-author"><strong>By<a href="<?php echo BASE_URL; ?>feed.php?username=<?php echo urlencode($author); ?>">
                             <?php echo htmlspecialchars($author); ?></a></strong>
 
 
@@ -242,19 +242,19 @@ include BASE_PATH . "user/model/article-logic.php";
                                         <p class="comment-username"><strong><?php echo htmlspecialchars($comment['username']); ?>:</strong> </p>
                                         <?php if ($is_comment_author): ?>
                                             <span class="comment-actions">
-                            <!-- Inline Edit and Delete Links -->
-                            <a href="javascript:void(0)" class="edit-comment-toggle">
-                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/edit-comment.svg"></a> |
-                            <a href="<?php echo BASE_URL; ?>features/comments/delete-comment.php?comment_id=<?php echo $comment['id']; ?>&article_id=<?php echo $article_id; ?>"
-                               onclick="return confirm('Are you sure you want to delete this comment?');">
-                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/trash.svg"></a>
-                        </span>
+                                            <!-- Inline Edit and Delete Links -->
+                                            <a href="javascript:void(0)" class="edit-comment-toggle">
+                                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/edit-comment.svg"></a> |
+                                            <a href="<?php echo BASE_URL; ?>features/comments/delete-comment.php?comment_id=<?php echo $comment['id']; ?>&article_id=<?php echo $article_id; ?>"
+                                               onclick="return confirm('Are you sure you want to delete this comment?');">
+                                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/trash.svg"></a>
+                                            </span>
                                         <?php endif; ?>
                                     </div>
 
                                     <!-- Comment Body -->
                                     <div class="comment-display">
-                                        <p class="comment-content"><?php echo htmlspecialchars($comment['comment']); ?></p>
+                                        <p class="comment-content"><?php echo nl2br(htmlspecialchars($comment['comment'], ENT_QUOTES, 'UTF-8')); ?></p>
                                         <p class="comment-date">
                                             <small>Posted on <?php echo date('F j, Y, g:i a', strtotime($comment['commented_at'])); ?></small>
                                         </p>
@@ -264,12 +264,8 @@ include BASE_PATH . "user/model/article-logic.php";
                                     <form action="<?php echo BASE_URL; ?>features/comments/edit-comment.php"
                                           method="POST"
                                           class="edit-comment-form" style="display: none;">
-                        <textarea
-                                name="comment"
-                                placeholder="Write your comment here..."
-                                class="auto-resizing-textarea"
-                                required
-                        ><?php echo htmlspecialchars($comment['comment']); ?></textarea>
+                                        <textarea name="comment" placeholder="Write your comment here..." class="auto-resizing-textarea" required>
+                                            <?php echo htmlspecialchars($comment['comment']); ?></textarea>
                                         <input type="hidden" name="comment_id" value="<?php echo $comment['id']; ?>">
                                         <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
                                         <div class="hidden-update-cancel-buttons">

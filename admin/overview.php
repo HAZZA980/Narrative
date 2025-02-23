@@ -112,7 +112,7 @@ include BASE_PATH . "admin/model/overview.php";
     </style>
 </head>
 <body>
-<?php include "../layouts/mastheads/articles/account-masthead.php"; ?>
+<?php include BASE_PATH . "account/account-masthead.php"; ?>
 
 <div class="feed-outer-container">
     <div class="top-container">
@@ -120,9 +120,9 @@ include BASE_PATH . "admin/model/overview.php";
         <!-- Insights Section -->
         <div class="insights-container">
             <div class="insight-box">
-                <h2>Total Users</h2>
+                <h2><a href="<?php echo BASE_URL; ?>admin/user-management.php">Total Users</a></h2>
                 <p><?php echo $user_count; ?></p>
-                <h2>Total Articles</h2>
+                <h2><a href="<?php echo BASE_URL; ?>admin/article-analysis.php">Total Articles</a></h2>
                 <p><?php echo $total_articles; ?></p>
                 <h2>Total Likes</h2>
                 <p><?php echo $total_likes; ?></p>

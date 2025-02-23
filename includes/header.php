@@ -109,10 +109,7 @@ include BASE_PATH . 'includes/model/header_file_mapping.php';
                 </a>
 
                 <div class="dropdown-menu">
-
-
                     <h3 class="dropdown-header-3">Categories</h3>
-
                     <?php foreach ($categories as $category => $data): ?>
                         <div>
                         <a href="<?php echo BASE_URL; ?>explore/<?php echo $data['file']; ?>"

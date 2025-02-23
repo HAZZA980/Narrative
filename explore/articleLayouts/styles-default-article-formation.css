@@ -357,7 +357,7 @@
 
 /* The modal overlay */
 .private-overlay {
-    display: none; /* Hidden by default */
+    display: flex; /* Hidden by default */
     position: absolute;
     top: 0;
     left: 0;

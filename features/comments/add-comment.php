@@ -14,20 +14,12 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit;
 }
 
-echo "<!-- Debug: POST data: " . json_encode($_POST) . " -->";
 // Check if the form data is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $article_id = isset($_POST['article_id']) ? (int)$_POST['article_id'] : 0;
 
-    // Debugging: Check the submitted POST data
-    echo "<!-- Debug: POST data: " . json_encode($_POST) . " -->";
-
     // Retrieve and sanitize input data
-    $article_id = isset($_POST['article_id']) ? (int)$_POST['article_id'] : 0;
-    $comment = isset($_POST['comment']) ? trim(htmlspecialchars($_POST['comment'])) : '';
-
-    // Debugging: Check the sanitized inputs
-    echo "<!-- Debug: article_id = $article_id, comment = '$comment' -->";
+    $comment = isset($_POST['comment']) ? $_POST['comment'] : '';
 
     // Validate input data
     if (empty($article_id) || empty($comment)) {
@@ -38,28 +30,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the logged-in user's ID
     $user_id = $_SESSION['user_id'];
 
-    // Debugging: Check the logged-in user's ID
-    echo "<!-- Debug: user_id = $user_id -->";
+    // Sanitize the comment by escaping special characters for SQL safety
+    $comment = $conn->real_escape_string($comment); // Escape only for SQL
 
     // Prepare and execute the SQL query to insert the comment
     $query = "INSERT INTO article_comments (article_id, user_id, comment, commented_at) VALUES (?, ?, ?, NOW())";
     $stmt = $conn->prepare($query);
 
-    // Debugging: Check if the statement was prepared successfully
     if (!$stmt) {
         echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $conn->error]);
         exit;
     }
 
-    echo "<!-- Debug: SQL prepared successfully -->";
-
+    // Bind parameters for the SQL statement
     $stmt->bind_param("iis", $article_id, $user_id, $comment);
-
-    // Debugging: Check if the parameters were bound correctly
-    if (!$stmt->bind_param("iis", $article_id, $user_id, $comment)) {
-        echo json_encode(['status' => 'error', 'message' => 'Error binding parameters: ' . $stmt->error]);
-        exit;
-    }
 
     if ($stmt->execute()) {
         // Comment added successfully

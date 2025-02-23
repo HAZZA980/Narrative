@@ -155,7 +155,22 @@ include BASE_PATH . "account/account-masthead.php";
                             <div class="article-author-and-topic">
                                 <div class="inter">
                                     <span class="aa" id="writing-about">You are writing about </span>
-                                    <span class="aa" id="blog-tags"><?php echo htmlspecialchars($row['Tags']); ?></span>
+                                    <?php
+                                    if (!empty($row['Tags'])) {
+                                        // Explode tags by comma and trim whitespace
+                                        $tags = explode(",", $row['Tags']);
+                                        $first_tag = trim($tags[0]); // Get the first tag
+                                        ?>
+                                        <!-- Tag link to feed.php with tag query -->
+                                        <a href="<?php echo BASE_URL; ?>tag.php?tag=<?php echo urlencode($first_tag); ?>" class="tag-link">
+                                            <?php echo htmlspecialchars($first_tag); ?>
+                                        </a>
+                                        <?php
+                                    } else {
+                                        echo "<span>Uncategorized</span>";
+                                    }
+                                    ?>
+                                    </span>
                                 </div>
                                 <!-- Edit Article Icon and Dropdown Menu -->
                                 <div class="edit-article">
@@ -327,7 +342,22 @@ include BASE_PATH . "account/account-masthead.php";
                             <div class="article-author-and-topic">
                                 <span class="aa" id="author-name"><?php echo htmlspecialchars($row['Author']) ?></span>
                                 <span class="aa" id="writing-about">is writing about</span>
-                                <span class="aa" id="blog-tags"><?php echo htmlspecialchars($row['Tags']); ?></span>
+                                <?php
+                                if (!empty($row['Tags'])) {
+                                    // Explode tags by comma and trim whitespace
+                                    $tags = explode(",", $row['Tags']);
+                                    $first_tag = trim($tags[0]); // Get the first tag
+                                    ?>
+                                    <!-- Tag link to feed.php with tag query -->
+                                    <a href="<?php echo BASE_URL; ?>tag.php?tag=<?php echo urlencode($first_tag); ?>" class="tag-link">
+                                        <?php echo htmlspecialchars($first_tag); ?>
+                                    </a>
+                                    <?php
+                                } else {
+                                    echo "<span>Uncategorized</span>";
+                                }
+                                ?>
+                                </span>
                             </div>
 
                             <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>"
