@@ -529,6 +529,8 @@ if (empty($preferred_categories)) {
                             ?>
                         </p>
                     </div>
+                    <h6>Social Media Links</h6>
+                    <a href="www.facebook.com">Facebook/user/persyWest</a>
                 </div>
 
 

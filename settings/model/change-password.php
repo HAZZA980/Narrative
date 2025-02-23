@@ -1,38 +1,36 @@
 <?php
-
-// Start output buffering to prevent premature output
-ob_start();
-
 session_start(); // Ensure session is started
+include_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php'; // Include DB connection
 
-
-// Debug: Check if session variables are set correctly
+// Check if user is logged in
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    die("Debug: User not logged in. Redirecting...");
-    header("Location: " . BASE_URL . "signIn_Register.php");
+    header("Location: " . BASE_URL . "layouts/pages/users/user_auth.php");
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Debug: Check if form data is being received
-    if (!isset($_POST['current_password']) || !isset($_POST['new_password'])) {
-        die("Debug: Password fields missing.");
+    // Check if the necessary form fields are present
+    if (!isset($_POST['current-password']) || !isset($_POST['password']) || !isset($_POST['confirm_password'])) {
+        die("Debug: Missing required password fields.");
     }
 
-    $current_password = $_POST['current_password'];
-    $new_password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+    // Get form values
+    $current_password = $_POST['current-password'];
+    $new_password = $_POST['password'];  // 'password' from the form
+    $confirm_password = $_POST['confirm_password'];  // 'confirm_password' from the form
     $user_id = $_SESSION['user_id'];
 
-    // Debug: Check if user_id is set correctly
-    if (!$user_id) {
-        die("Debug: User ID is not set in session.");
+    // Check if new password and confirm password match
+    if ($new_password !== $confirm_password) {
+        die("Debug: New password and confirm password do not match.");
     }
 
-    // Debug: Verify database connection
-    if (!$conn) {
-        die("Debug: Database connection failed.");
+    // Validate the new password strength (basic check: length should be at least 8 characters)
+    if (strlen($new_password) < 8) {
+        die("Debug: Password must be at least 8 characters long.");
     }
 
+    // Fetch current password from the database
     $query = "SELECT password FROM users WHERE user_id = ?";
     $stmt = $conn->prepare($query);
     if (!$stmt) {
@@ -40,46 +38,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $stmt->bind_param("i", $user_id);
-    if (!$stmt->execute()) {
-        die("Debug: Execute statement failed: " . $stmt->error);
-    }
-
+    $stmt->execute();
     $result = $stmt->get_result();
-    if (!$result) {
-        die("Debug: Fetching result failed.");
-    }
-
     $user = $result->fetch_assoc();
-    if (!$user) {
-        die("Debug: No user found with this ID.");
-    }
 
-    // Debug: Check if password matches
+    // Check if current password matches the stored password
     if (!password_verify($current_password, $user['password'])) {
         die("Debug: Incorrect current password.");
     }
 
-    $query = "UPDATE users SET password = ? WHERE user_id = ?";
-    $stmt = $conn->prepare($query);
-    if (!$stmt) {
-        die("Debug: Prepare statement for update failed: " . $conn->error);
+    // Hash the new password before saving it
+    $new_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
+
+    // Update the password in the database
+    $update_query = "UPDATE users SET password = ? WHERE user_id = ?";
+    $update_stmt = $conn->prepare($update_query);
+    if (!$update_stmt) {
+        die("Debug: Prepare update statement failed: " . $conn->error);
     }
 
-    $stmt->bind_param("si", $new_password, $user_id);
-    if (!$stmt->execute()) {
-        die("Debug: Execute update statement failed: " . $stmt->error);
+    $update_stmt->bind_param("si", $new_password_hash, $user_id);
+    if (!$update_stmt->execute()) {
+        die("Debug: Update query execution failed: " . $update_stmt->error);
     }
 
-    // Debug: Check if headers are already sent before redirect
-    if (headers_sent($file, $line)) {
-        die("Debug: Headers already sent in $file on line $line.");
-    }
+    // Store success message in session
+    $_SESSION['password_success'] = "Password updated successfully!";
 
-    echo "Debug: Password updated successfully. Redirecting...";
-// Redirect with success message
-    header("Location: " . BASE_URL . "account/settings.php?success=password_changed");
+    // Redirect back to the settings page with the success message
+    header("Location: " . BASE_URL . "settings/account-management.php?accountManagement=password");
     exit;
 }
-
-ob_end_flush();
 ?>

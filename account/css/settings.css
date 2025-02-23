@@ -28,6 +28,16 @@ h3.settings-section-title {
     padding-bottom: 5px;
 }
 
+
+.settings-section {
+    flex: 1 1 calc(33.33% - 30px);
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
 .settings-quick-links {
     display: flex;
     flex-wrap: wrap;
@@ -90,3 +100,5 @@ h3.settings-section-title {
         flex: 1 1 calc(25% - 40px);
     }
 }
+
+

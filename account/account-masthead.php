@@ -52,7 +52,7 @@ $isAdmin = $user_row['isAdmin']; // Fetch the isAdmin status
 <main class="account-header-tabs">
     <div class="account-tabs-container">
         <h3 class="account-username">
-            <a href="feed.php?username=<?php echo urlencode($username); ?>">
+            <a href="<?php echo BASE_URL?>feed.php?username=<?php echo urlencode($username); ?>">
                 <?php echo htmlspecialchars($username); ?>
             </a>
         </h3>

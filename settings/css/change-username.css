@@ -1,74 +1,68 @@
-/* Main parent container */
+/* Parent Container */
 .change-username-parent-containerr {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     width: 100%;
-    height: 34vh; /* Full viewport height */
-    font-family: Arial, sans-serif; /* Clean font style */
+    max-width: 450px;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Section container */
+/* Section Styling */
 .change-username-section-container {
-    width: 73%;
-    max-width: 600px; /* Limit the width for better responsiveness */
-    padding: 20px;
-    background-color: #ffffff; /* White background for form */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    border-radius: 8px; /* Rounded corners */
     text-align: center;
 }
 
-/* Form elements */
-.change-username-form label {
-    display: block;
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #333; /* Darker text for contrast */
+/* Form Styling */
+.change-username-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.change-username-form input[type="text"] {
+/* Label Styling */
+.change-username-form label {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+}
+
+/* Input Field */
+.change-username-form input {
     width: 100%;
     padding: 10px;
-    font-size: 14px;
+    font-size: 16px;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-bottom: 15px;
-    outline: none;
+    border-radius: 5px;
     transition: border-color 0.3s ease;
 }
 
-.change-username-form input[type="text"]:focus {
-    border-color: #007bff; /* Highlighted border color on focus */
+.change-username-form input:focus {
+    border-color: #007bff;
+    outline: none;
 }
 
+/* Submit Button */
 .change-username-form button {
-    display: inline-block;
-    background-color: #007bff; /* Primary button color */
-    color: #ffffff; /* White text color */
-    border: none;
-    border-radius: 4px;
-    padding: 10px 20px;
-    font-size: 14px;
+    padding: 12px;
+    font-size: 16px;
     font-weight: bold;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .change-username-form button:hover {
-    background-color: #0056b3; /* Darker shade on hover */
+    background-color: #0056b3;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-    .change-username-section-container {
-        width: 90%; /* Reduce width on smaller screens */
+/* Responsive Design */
+@media (max-width: 480px) {
+    .change-username-parent-containerr {
+        width: 90%;
         padding: 15px;
-    }
-
-    .change-username-form label, .change-username-form input[type="text"], .change-username-form button {
-        font-size: 13px; /* Adjust font sizes */
     }
 }

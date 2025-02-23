@@ -1,0 +1,249 @@
+/* Outer container for centering */
+.settings-outer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+/* Inner container for layout */
+.settings-inner-container {
+    width: 73%; /* Adjusted width for a balanced layout */
+    display: flex;
+    padding: 1rem;
+    flex-direction: column;
+    background-color: #f9f9f9; /* Clean white background */
+    border-radius: 10px; /* Soft rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+}
+
+.account-tab.settings {
+    background-color: #f9f9f9;
+    border-top: 2px solid black;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    border-radius: 8px 8px 0 0;
+}
+
+/* Parent Container */
+.change-username-parent-containerr {
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Section Styling */
+.change-username-section-container {
+    text-align: center;
+}
+
+/* Form Styling */
+.change-username-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Label Styling */
+.change-username-form label {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+}
+
+/* Input Field */
+.change-username-form input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+}
+
+.change-username-form input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Submit Button */
+.change-username-form button {
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.change-username-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .change-username-parent-containerr {
+        width: 90%;
+        padding: 15px;
+    }
+}
+
+
+.settings-container {
+    display: flex;
+}
+
+
+/* Container */
+/* Sidebar Container */
+.settings-sidebar {
+    width: 280px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-right: 20px;
+}
+
+/* Sidebar Title */
+.settings-sidebar .settings-section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #4c4c4c;
+    text-transform: uppercase;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+/* Sidebar Menu */
+.settings-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.settings-menu li {
+    margin-bottom: 10px;
+}
+
+.settings-menu a {
+    display: block;
+    padding: 12px 15px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #4c4c4c;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.settings-menu a:hover,
+.settings-menu a.active {
+    background-color: navy;
+    color: #ffffff;
+}
+
+/* Responsive Sidebar */
+@media (max-width: 768px) {
+    .settings-sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .settings-menu a {
+        text-align: center;
+        padding: 10px;
+    }
+}
+
+
+/* Main Content */
+.settings-content {
+    flex: 1;
+    padding: 30px;
+}
+
+/* Sections */
+.settings-section {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.settings-section h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Forms */
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.settings-form label {
+    font-weight: bold;
+}
+
+.settings-form input,
+.settings-form textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.settings-form button {
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 500; /* Reduced boldness */
+    color: #fff;
+    background-color: navy;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+/* Hover Effect */
+.settings-form button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 3px 6px rgba(0, 91, 187, 0.2);
+}
+
+/* Optional: Button Press Effect */
+.settings-form button:active {
+    background-color: #004494;
+    transform: scale(0.98);
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .settings-container {
+        flex-direction: column;
+    }
+
+    .settings-sidebar {
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .settings-menu a {
+        display: inline-block;
+        padding: 10px 15px;
+    }
+}

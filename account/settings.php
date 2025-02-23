@@ -21,10 +21,9 @@ include BASE_PATH . "account/account-masthead.php";
             <div class="settings-section">
                 <h3 class="settings-section-title">Account Management</h3>
                 <ul class="settings-list">
-                    <li><a href="<?php echo BASE_URL; ?>settings/view/changeUsername.php" class="settings-link">Change Username</a></li>
-                    <li><a href="<?php echo BASE_URL; ?>settings/view/changePassword.php" class="settings-link">Change Password</a></li>
-                    <li><a href="<?php echo BASE_URL; ?>settings/view/changeDOB.php" class="settings-link">Change Date of Birth</a></li>
-                    <li><a href="<?php echo BASE_URL; ?>settings/view/updateBio.php" class="settings-link">Update Biography</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>settings/account-management.php?accountManagement=username" class="settings-link">Change Username</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>settings/account-management.php?accountManagement=password" class="settings-link">Change Password</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>settings/account-management.php?accountManagement=dob" class="settings-link">Change Date of Birth</a></li>
                 </ul>
             </div>
 
@@ -32,7 +31,7 @@ include BASE_PATH . "account/account-masthead.php";
                 <h3 class="settings-section-title">Profile Settings</h3>
                 <ul class="settings-list">
                     <li><a href="<?php echo BASE_URL; ?>settings/view/updateProfilePic.php" class="settings-link">Update Profile Picture</a></li>
-                    <li><a href="<?php echo BASE_URL; ?>settings/view/updateCoverPhoto.php" class="settings-link">Update Cover Photo</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>settings/account-management.php?accountManagement=bio" class="settings-link">Update Biography</a></li>
                     <li><a href="<?php echo BASE_URL; ?>settings/view/updateSocialLinks.php" class="settings-link">Update Social Media Links</a></li>
                 </ul>
             </div>
