@@ -30,18 +30,18 @@ include BASE_PATH . "account/account-masthead.php";
             <div class="settings-section">
                 <h3 class="settings-section-title">Profile Settings</h3>
                 <ul class="settings-list">
-                    <li><a href="<?php echo BASE_URL; ?>settings/view/updateProfilePic.php" class="settings-link">Update Profile Picture</a></li>
-                    <li><a href="<?php echo BASE_URL; ?>settings/account-management.php?accountManagement=bio" class="settings-link">Update Biography</a></li>
-                    <li><a href="<?php echo BASE_URL; ?>settings/view/updateSocialLinks.php" class="settings-link">Update Social Media Links</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>settings/profile-settings.php?profileSettings=profile_picture" class="settings-link">Update Profile Picture</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>settings/profile-settings.php?profileSettings=bio" class="settings-link">Update Biography</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>settings/profile-settings.php?profileSettings=media_links" class="settings-link">Update Social Media Links</a></li>
                 </ul>
             </div>
 
             <div class="settings-section">
                 <h3 class="settings-section-title">Content Preferences</h3>
                 <ul class="settings-list">
-                    <li><a href="<?php echo BASE_URL; ?>settings/view/updateTopics.php" class="settings-link">Update Your Recommended Topics</a></li>
-                    <li><a href="<?php echo BASE_URL; ?>settings/view/updateNotifications.php" class="settings-link">Notification Preferences</a></li>
-                    <li><a href="<?php echo BASE_URL; ?>settings/view/updateLanguage.php" class="settings-link">Language Preferences</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>settings/content-preferences.php?accountManagement=update-topics" class="settings-link">Update Your Recommended Topics</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>settings/content-preferences.php?accountManagement=notification-preferences" class="settings-link">Notification Preferences</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>settings/content-preferences.php?accountManagement=language-preferences" class="settings-link">Language Preferences</a></li>
                 </ul>
             </div>
 

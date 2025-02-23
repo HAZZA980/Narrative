@@ -93,9 +93,6 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
             text-align: left;
         }
 
-        .arrow-btns {
-            display: ;
-        }
 
 
     </style>
@@ -309,49 +306,6 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
 </div>
 
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let selectedCategories = [];
-        const categoryButtons = document.querySelectorAll(".category-button");
-        const finishButton = document.querySelector(".finish-btn");
-        const categoriesInput = document.querySelector("#categories-input");
-        const tabButtons = document.querySelectorAll(".tab-button");
-        const tabContents = document.querySelectorAll(".tab-content");
-
-        // Switch between tabs
-        tabButtons.forEach(button => {
-            button.addEventListener("click", () => {
-                const tabName = button.getAttribute("data-tab");
-
-                tabButtons.forEach(b => b.classList.remove("active"));
-                button.classList.add("active");
-
-                tabContents.forEach(content => {
-                    content.classList.remove("active");
-                    if (content.id === tabName) {
-                        content.classList.add("active");
-                    }
-                });
-            });
-        });
-
-        // Category selection logic
-        categoryButtons.forEach(button => {
-            button.addEventListener("click", () => {
-                const category = button.dataset.category;
-                if (selectedCategories.includes(category)) {
-                    selectedCategories = selectedCategories.filter(c => c !== category);
-                    button.classList.remove("selected");
-                } else {
-                    selectedCategories.push(category);
-                    button.classList.add("selected");
-                }
-                categoriesInput.value = JSON.stringify(selectedCategories);
-                finishButton.disabled = selectedCategories.length === 0;
-            });
-        });
-    });
-</script>
 
 <div id="overview" class="tab-content <?php echo ($tab === 4) ? 'active' : ''; ?>">
 
@@ -400,51 +354,6 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
 
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const profilePicInput = document.getElementById("profile-pic-input");
-        const profileImg = document.getElementById("profile-img");
-        const profileInitial = document.getElementById("profile-initial");
-        const profilePlaceholder = document.getElementById("profile-placeholder");
-        const removeOverlay = document.getElementById("remove-overlay");
-
-        // Open file picker when clicking placeholder if no image is set
-        profilePlaceholder.addEventListener("click", function () {
-            if (profileImg.style.display === "none") {
-                profilePicInput.click(); // Trigger file input click
-            }
-        });
-
-        // Handle image selection
-        profilePicInput.addEventListener("change", function (event) {
-            const file = event.target.files[0];
-
-            if (file) {
-                const reader = new FileReader();
-
-                reader.onload = function (e) {
-                    // Set the image source and make it visible
-                    profileImg.src = e.target.result;
-                    profileImg.style.display = "block"; // Show the selected image
-                    profileInitial.style.display = "none"; // Hide the initials
-                    removeOverlay.style.display = "block"; // Show the "X" button
-                };
-
-                reader.readAsDataURL(file); // Read the image file as a data URL
-            }
-        });
-
-        // Remove image when "X" is clicked
-        removeOverlay.addEventListener("click", function (event) {
-            event.stopPropagation(); // Prevent triggering file input when clicking "X"
-
-            // Reset the UI
-            profileImg.src = ""; // Remove image source
-            profileImg.style.display = "none"; // Hide the image
-            profileInitial.style.display = "block"; // Show initials
-            removeOverlay.style.display = "none"; // Hide the "X" button
-            profilePicInput.value = ""; // Clear file input
-        });
-    });
 
 </script>
 <script>
@@ -461,6 +370,8 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
 
 <script src="<?php echo BASE_URL ?>profile/js/profile-details.js"></script>
 <script src="<?php echo BASE_URL ?>profile/js/bio.js"></script>
+<script src="<?php echo BASE_URL ?>profile/js/image-functions.js"></script>
+<script src="<?php echo BASE_URL; ?>profile/js/recommendations.js"></script>
 
 </body>
 </html>

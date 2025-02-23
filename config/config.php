@@ -1,5 +1,11 @@
 <?php
-session_start();  // Always start the session at the very top
+// config.php
+
+// Start the session if it hasn't been started already
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Database connection
 $conn = new mysqli("localhost", "root", "", "db_narrative");
 if ($conn->connect_error) {
