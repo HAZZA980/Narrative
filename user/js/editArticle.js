@@ -154,7 +154,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-
 document.addEventListener("DOMContentLoaded", function () {
     // Function to preview the selected image
     function previewImage(event) {
@@ -164,6 +163,20 @@ document.addEventListener("DOMContentLoaded", function () {
         const removeButton = document.getElementById("remove-image");
 
         if (file) {
+            // Define the allowed file types (e.g., image/jpeg, image/png)
+            const allowedFileTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+            // Check if the selected file is of the allowed type
+            if (!allowedFileTypes.includes(file.type)) {
+                alert('Please upload a valid image file (JPEG, PNG, or GIF).');
+                // Clear the input value and stop further processing
+                event.target.value = "";
+                previewContainer.classList.remove("show");
+                previewImage.src = "";
+                removeButton.style.display = "none";
+                return;
+            }
+
             // Create a URL for the selected file and set it as the source for the image preview
             const reader = new FileReader();
             reader.onload = function (e) {
