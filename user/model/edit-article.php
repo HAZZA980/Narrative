@@ -1,7 +1,6 @@
 <?php
 $message = '';
 $redirect = false; // Add a flag for redirection
-
 // Get article ID from URL (if provided)
 $article_id = $_GET['id'] ?? '';
 
