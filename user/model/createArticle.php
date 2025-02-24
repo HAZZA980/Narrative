@@ -28,18 +28,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Handle image upload
+    // Handle image upload securely
     if (!empty($_FILES['image']['name']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $imageName = basename($_FILES['image']['name']);
-        $imagePath = $userDirectory . "/" . $imageName;
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $imagePath)) {
-            $image = $imageName;
+        $imageName = basename($_FILES['image']['name']);
+        $imageTmpName = $_FILES['image']['tmp_name'];
+        $imageSize = $_FILES['image']['size'];
+        $imageType = mime_content_type($imageTmpName); // Get actual MIME type
+        $imageExtension = strtolower(pathinfo($imageName, PATHINFO_EXTENSION));
+
+        // Validate file extension
+        if (!in_array($imageExtension, $allowedExtensions)) {
+            die("Invalid file extension! Only JPG, PNG, GIF, and WEBP are allowed.");
+        }
+
+        // Validate MIME type
+        if (!in_array($imageType, $allowedMimeTypes)) {
+            die("Invalid file type! Please upload a valid image.");
+        }
+
+        // Restrict file size (2MB limit)
+        if ($imageSize > 2 * 1024 * 1024) {
+            die("File size too large! Max size allowed is 2MB.");
+        }
+
+        // Generate a unique filename to prevent overwriting
+        $newImageName = uniqid("img_", true) . "." . $imageExtension;
+        $imagePath = $userDirectory . "/" . $newImageName;
+
+        if (move_uploaded_file($imageTmpName, $imagePath)) {
+            $image = $newImageName; // Store this in the database
         } else {
-            $message = "Failed to upload the image.";
+            die("Failed to upload the image.");
         }
     } else {
         $image = 'narrative-logo-big.png';
     }
+
 
     // Ensure that tags are provided
     $category = 'Uncategorized'; // Default if no match found

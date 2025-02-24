@@ -71,7 +71,42 @@ include BASE_PATH . 'user/model/createArticle.php';
                         </div>
                     </div>
 
+                    <script>
+                        function previewImage(event) {
+                            const file = event.target.files[0];
+                            const previewContainer = document.getElementById('image-preview-container');
+                            const preview = document.getElementById('image-preview');
+                            const removeButton = document.getElementById('remove-image');
 
+                            if (!file) return;
+
+                            // Allowed image types
+                            const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+                            if (!allowedTypes.includes(file.type)) {
+                                alert("Invalid file type! Please upload a JPG, PNG, GIF, or WebP image.");
+                                event.target.value = ""; // Clear input
+                                return;
+                            }
+
+                            if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                                alert("File is too large! Maximum allowed size is 2MB.");
+                                event.target.value = ""; // Clear input
+                                return;
+                            }
+
+                            // Display the image preview
+                            preview.src = URL.createObjectURL(file);
+                            previewContainer.style.display = "block";
+
+                            removeButton.addEventListener("click", function () {
+                                preview.src = "";
+                                previewContainer.style.display = "none";
+                                event.target.value = "";
+                            });
+                        }
+
+                    </script>
 
             </div>
         </div>
