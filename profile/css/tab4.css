@@ -15,7 +15,9 @@
     padding: 0;
     margin: 0;
 }
-
+.profile-placeholder {
+    margin-bottom: 3rem;
+}
 .profile-image-container {
     width: 25%;  /* Image container will take up 35% of the width */
     height: 0;
@@ -85,4 +87,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.set-up-profile-bio-review{
+    /*padding: 0 1rem 1rem 1rem;*/
 }

@@ -30,7 +30,6 @@ include "quiz-functions/quiz-links.php";
         <div class="menu-item" data-category="literature">Literature</div>
         <div class="menu-item" data-category="science">Science</div>
         <div class="menu-item" data-category="geography">Geography</div>
-        <div class="menu-item" data-category="compScience">Computer Science</div>
     </div>
 
     <!-- Main Content -->

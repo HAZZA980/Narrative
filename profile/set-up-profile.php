@@ -94,7 +94,6 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
         }
 
 
-
     </style>
 </head>
 <body>
@@ -145,7 +144,8 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
                         <label for="dob">Date of Birth:</label>
                         <?php if ($dob): ?>
                             <!-- If dob exists, show the dob in the input field -->
-                            <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($dob); ?>" required><br><br>
+                            <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($dob); ?>"
+                                   required><br><br>
                         <?php else: ?>
                             <!-- If dob doesn't exist, show the empty date input field -->
                             <input type="date" id="dob" name="dob" required><br><br>
@@ -190,15 +190,18 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
                 ?>
 
 
-
                 <div class="profile-section">
                     <!-- Clickable Profile Picture Display -->
                     <div id="profile-placeholder" class="profile-placeholder">
                         <!-- If there's already an image stored in the database, show it -->
-                        <img id="profile-img" src="<?php echo $profilePictureURL; ?>" alt="Profile Picture" style="display: <?php echo ($profilePictureURL) ? 'block' : 'none'; ?>;">
+                        <img id="profile-img" src="<?php echo $profilePictureURL; ?>" alt="Profile Picture"
+                             style="display: <?php echo ($profilePictureURL) ? 'block' : 'none'; ?>;">
                         <!-- Initials if there's no profile picture -->
-                        <span id="profile-initial" style="display: <?php echo ($profilePictureURL) ? 'none' : 'block'; ?>;"><?php echo strtoupper(substr($username, 0, 1)); ?></span>
-                        <div class="remove-overlay" id="remove-overlay" style="display: <?php echo ($profilePictureURL) ? 'block' : 'none'; ?>;"><br>X</div>
+                        <span id="profile-initial"
+                              style="display: <?php echo ($profilePictureURL) ? 'none' : 'block'; ?>;"><?php echo strtoupper(substr($username, 0, 1)); ?></span>
+                        <div class="remove-overlay" id="remove-overlay"
+                             style="display: <?php echo ($profilePictureURL) ? 'block' : 'none'; ?>;"><br>X
+                        </div>
                     </div>
 
                     <input type="file" id="profile-pic" name="profile-pic" accept="image/*" hidden>
@@ -212,7 +215,8 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
 
         <div class="nav-buttons">
             <!--        <button type="button" id="next-btn" onclick="navigateTab('next')">Next</button>-->
-            <button type="button" id="prev-btn" onclick="navigateTab('prev')" style="visibility: hidden">Previous</button>
+            <button type="button" id="prev-btn" onclick="navigateTab('prev')" style="visibility: hidden">Previous
+            </button>
             <button type="submit" id="next-btn">Next</button>
             </form>
         </div>
@@ -225,132 +229,145 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
 
         <p>Tell your readers a bit about yourself: hobbies, interests, why you write...</p>
 
-        <form action="<?php echo BASE_URL ?>profile/model/bio.php" method="POST">
+        <?php
+        // Fetch existing bio from the database
+        $user_id = $_SESSION['user_id']; // Ensure user ID is set
+        $bio = '';
 
+        $query = "SELECT bio FROM user_details WHERE user_id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $bio = htmlspecialchars($row['bio']); // Prevent XSS attacks
+        }
+
+        $stmt->close();
+        ?>
+
+        <form action="<?php echo BASE_URL ?>profile/model/bio.php" method="POST">
             <!-- Fixed size textarea -->
-            <textarea id="bio-text" name="bio-text" rows="4" cols="50" maxlength="1000"
-                      placeholder="Write a short bio about yourself" oninput="countWords()"></textarea><br><br>
+            <textarea id="bio-text" name="bio-text" rows="4" cols="50"
+                      placeholder="Write a short bio about yourself"
+                      oninput="countWords()"><?php echo html_entity_decode($bio, ENT_QUOTES, 'UTF-8'); ?></textarea>
+            <br><br>
 
             <!-- Word Count Display -->
             <div id="word-count">Words: 0 / 100</div>
             <br><br>
 
             <div class="nav-buttons">
-                <!--        <button type="button" id="next-btn" onclick="navigateTab('next')">Next</button>-->
                 <button type="button" id="prev-btn" onclick="navigateTab('prev')">Previous</button>
                 <button type="submit" id="next-btn">Next</button>
+            </div>
         </form>
     </div>
-</div>
 
-<!-- JavaScript to handle word counting -->
-<script>
-    // Function to count words in the textarea and update word count
-    function countWords() {
-        var textarea = document.getElementById('bio-text');
-        var wordCountDisplay = document.getElementById('word-count');
-        var saveButton = document.getElementById('save-button');
+    <!-- Recommendations Tab (Placeholder) -->
+    <?php
+    // Assuming you're fetching the selected categories from the database
+    $user_id = $_SESSION['user_id']; // Example session-based user ID
 
-        // Split the text by spaces and filter out empty strings to count actual words
-        var words = textarea.value.trim().split(/\s+/).filter(function (word) {
-            return word.length > 0;
-        });
+    // Query to get the selected categories for the user
+    $query = "SELECT Tag FROM user_preferences WHERE user_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-        // Get the word count
-        var wordCount = words.length;
-
-        // Update the word count display
-        wordCountDisplay.textContent = "Words: " + wordCount + " / 100";
-
-        // Ensure the user can't exceed 100 words
-        if (wordCount > 100) {
-            // Limit the input to the first 100 words
-            textarea.value = words.slice(0, 100).join(' ');
-            wordCount = 100;
-        }
-
-        // Enable the save button if there are words
-        saveButton.disabled = wordCount === 0;
+    // Assuming the 'Tag' field contains the comma-separated categories
+    $selectedCategories = [];
+    while ($row = $result->fetch_assoc()) {
+        // For each row, assume multiple categories are stored in the 'Tag' field
+        $selectedCategories = array_merge($selectedCategories, explode(',', $row['Tag']));
     }
-</script>
 
+    // Remove extra whitespace from each category
+    $selectedCategories = array_map('trim', $selectedCategories);
+    ?>
 
-<!-- Recommendations Tab (Placeholder) -->
-<div id="recommendations" class="tab-content <?php echo ($tab === 3) ? 'active' : ''; ?>">
-    <h3>Select Your Interests</h3>
-    <h5>(We'll recommend articles based on your reading history)</h5>
-    <div class="categories">
+    <div id="recommendations" class="tab-content <?php echo ($tab === 3) ? 'active' : ''; ?>">
+        <h3>Select Your Interests</h3>
+        <h5>(We'll recommend articles based on your reading history)</h5>
+        <div class="categories">
+            <?php
+            // Define all possible categories
+            $categories = ["Lifestyle", "Writing Craft", "Travel", "Reviews", "History & Culture", "Entertainment", "Business", "Technology",
+                "Politics", "Science", "Sports", "Health & Fitness", "Food & Drink", "Gaming", "Philosophy"];
 
-        <?php
-        $categories = ["Lifestyle", "Writing Craft", "Travel", "Reviews", "History & Culture", "Entertainment", "Business", "Technology",
-            "Politics", "Science", "Sports", "Health & Fitness", "Food & Drink"];
-
-        foreach ($categories as $category): ?>
-            <button type="button" class="category-button"
-                    data-category="<?php echo htmlspecialchars($category); ?>">
-                <?php echo htmlspecialchars($category); ?>
-            </button>
-        <?php endforeach; ?>
+            // Loop through the categories and check if they are selected
+            foreach ($categories as $category):
+                // Check if this category is selected
+                $isSelected = in_array($category, $selectedCategories) ? 'selected' : '';
+                ?>
+                <button type="button" class="category-button <?php echo $isSelected; ?>"
+                        data-category="<?php echo htmlspecialchars($category); ?>">
+                    <?php echo htmlspecialchars($category); ?>
+                </button>
+            <?php endforeach; ?>
+        </div>
+        <form id="category-form" method="POST" action="<?php echo BASE_URL; ?>profile/model/recommendations.php">
+            <input type="hidden" name="categories" id="categories-input" value="">
+            <div class="nav-buttons">
+                <button type="button" id="prev-btn" onclick="navigateTab('prev')">Previous</button>
+                <button type="submit" id="next-btn">Next</button>
+            </div>
+        </form>
     </div>
-    <form id="category-form" method="POST" action="<?php echo BASE_URL; ?>profile/model/recommendations.php">
-        <input type="hidden" name="categories" id="categories-input" value="">
-<!--        <button type="submit" class="finish-btn" disabled>Finish</button>-->
-<!--    </form>-->
+
+
+
+    <div id="overview" class="tab-content <?php echo ($tab === 4) ? 'active' : ''; ?>">
+
+        <ul class="profile-details">
+            <div class="overview-image-section">
+                <!-- Clickable Profile Picture Display -->
+                <div id="profile-placeholder" class="profile-placeholder">
+                    <!-- If there's already an image stored in the database, show it -->
+                    <img id="profile-img" src="<?php echo $profilePictureURL; ?>" alt="Profile Picture"
+                         style="display: <?php echo ($profilePictureURL) ? 'block' : 'none'; ?>;">
+                    <!-- Initials if there's no profile picture -->
+                    <span id="profile-initial"
+                          style="display: <?php echo ($profilePictureURL) ? 'none' : 'block'; ?>;"><?php echo strtoupper(substr($username, 0, 1)); ?></span>
+                </div>
+
+                <h3><strong><?php echo $username; ?></strong></h3>
+                <p><strong>D.O.B:</strong> <?php echo !empty($dob) ? htmlspecialchars($dob) : 'Not provided'; ?></p>
+            </div>
+
+
+            <li class="profile-info">
+
+                <p class="set-up-profile-bio-review">
+                    <strong>Bio:</strong> <?php echo !empty($bio) ? nl2br(html_entity_decode($bio, ENT_QUOTES, 'UTF-8')) : 'Not provided'; ?>
+                </p>
+                <p class="user-preference">Reading Preferences:</p>
+                <ul class="profile-category-list">
+                    <?php foreach ($preferred_categories as $category): ?>
+                        <li class="user-preferences"><?php echo htmlspecialchars($category); ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </li>
+        </ul>
+
 
         <div class="nav-buttons">
             <!--        <button type="button" id="next-btn" onclick="navigateTab('next')">Next</button>-->
             <button type="button" id="prev-btn" onclick="navigateTab('prev')">Previous</button>
-            <button type="submit" id="next-btn">Next</button>
-    </form>
-</div>
-</div>
+            <!--        <button type="submit" id="next-btn">Next</button>-->
+            <button onclick="window.location.href='<?php echo BASE_URL ?>forYou.php'">Finish</button>
 
-
-
-<div id="overview" class="tab-content <?php echo ($tab === 4) ? 'active' : ''; ?>">
-
-    <ul class="profile-details">
-        <div class="overview-image-section">
-            <!-- Clickable Profile Picture Display -->
-            <div id="profile-placeholder" class="profile-placeholder">
-                <!-- If there's already an image stored in the database, show it -->
-                <img id="profile-img" src="<?php echo $profilePictureURL; ?>" alt="Profile Picture" style="display: <?php echo ($profilePictureURL) ? 'block' : 'none'; ?>;">
-                <!-- Initials if there's no profile picture -->
-                <span id="profile-initial" style="display: <?php echo ($profilePictureURL) ? 'none' : 'block'; ?>;"><?php echo strtoupper(substr($username, 0, 1)); ?></span>
-            </div>
-
-            <h3><strong><?php echo $username; ?></strong></h3>
-            <p><strong>D.O.B:</strong> <?php echo !empty($dob) ? htmlspecialchars($dob) : 'Not provided'; ?></p>
+            </form>
         </div>
-
-
-        <li class="profile-info">
-
-            <p><strong>Bio:</strong> <?php echo !empty($bio) ? nl2br(htmlspecialchars($bio)) : 'Not provided'; ?></p>
-            <p class="user-preference">Reading Preferences:</p>
-            <ul class="profile-category-list">
-                <?php foreach ($preferred_categories as $category): ?>
-                    <li class="user-preferences"><?php echo htmlspecialchars($category); ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </li>
-    </ul>
-
-
-    <div class="nav-buttons">
-        <!--        <button type="button" id="next-btn" onclick="navigateTab('next')">Next</button>-->
-        <button type="button" id="prev-btn" onclick="navigateTab('prev')">Previous</button>
-<!--        <button type="submit" id="next-btn">Next</button>-->
-        <button onclick="window.location.href='<?php echo BASE_URL?>forYou.php'">Finish</button>
-
-        </form>
     </div>
-</div>
 
-<!---->
-<!--    <div class="nav-buttons">-->
-<!--        <button type="button" id="prev-btn" onclick="navigateTab('prev')">Previous</button>-->
-<!--    </div>-->
+    <!---->
+    <!--    <div class="nav-buttons">-->
+    <!--        <button type="button" id="prev-btn" onclick="navigateTab('prev')">Previous</button>-->
+    <!--    </div>-->
 
 </div>
 <script>

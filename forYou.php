@@ -196,7 +196,9 @@ $category_map = [
     "Science" => "science.php",
     "Health & Fitness" => "health.php",
     "Sports" => "sports.php",
-    "Food & Drink" => "food-and-drink.php",
+    "Food & Drink" => "food.php",
+    "Gaming" => "gaming.php",
+    "Philosophy" => "philosophy.php",
 ];
 
 ?>

@@ -129,7 +129,7 @@ if ($section === 'notification-preferences') {
 
                     <div class="categories">
                         <?php
-                        $categories = ["Lifestyle", "Writing Craft", "Travel", "Reviews", "History & Culture", "Entertainment", "Business", "Technology", "Politics", "Science", "Sports", "Health & Fitness", "Food & Drink"];
+                        $categories = ["Lifestyle", "Writing Craft", "Travel", "Reviews", "History & Culture", "Entertainment", "Business", "Technology", "Politics", "Science", "Sports", "Health & Fitness", "Food & Drink", "Gaming", "Philosophy"];
 
                         foreach ($categories as $category): ?>
                             <button type="button" class="category-button"

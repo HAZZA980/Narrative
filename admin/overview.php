@@ -1,7 +1,6 @@
 <?php
 //BASE_PATH won't work because it's in the config file that we're trying to import.
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
-include BASE_PATH . 'features/write/write-icon-fixed.php';
 
 
 include BASE_PATH . "admin/model/overview.php";

@@ -93,14 +93,6 @@ include "quiz-functions/quiz-links.php"
                     <p class="category-text">Science</p>
                 </a>
             </li>
-            <li class="category-item">
-                <a href="quizzes-general-knowledge.php?category=compScience">
-                    <div class="category-image">
-                        <img src="../../../public/images/users/52/compScience.jpg" alt="Computer Science">
-                    </div>
-                    <p class="category-text">Computer Science</p>
-                </a>
-            </li>
         </ul>
     </div>
     <div class="main-content">

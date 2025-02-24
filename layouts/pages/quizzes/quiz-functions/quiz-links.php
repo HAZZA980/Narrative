@@ -38,18 +38,18 @@ $generalKnowledgeCategories = [
     'film_and_tv' => [
         'title' => 'Film and TV',
         'subcategories' => [
-            'film_tv_quiz' => [
-                'title' => 'General Knowledge - Film & TV',
-                'link' => 'questionFunctions.php?category=films',
-                'description' => '20 Random Questions about to test your knowledge on Hollywood\'s Golden Era!',
-                'scoreVar' => $scoreFilms
-            ],
-            'film_year_tv_quiz' => [
-                'title' => 'Guess the Year of these Films!',
-                'link' => 'questionFunctions.php?category=filmsYear',
-                'description' => '20 Random Films every time! Can you guess the year of these Films released before 1970!',
-                'scoreVar' => $scoreYearReleased
-            ],
+//            'film_tv_quiz' => [
+//                'title' => 'General Knowledge - Film & TV',
+//                'link' => 'questionFunctions.php?category=films',
+//                'description' => '20 Random Questions about to test your knowledge on Hollywood\'s Golden Era!',
+//                'scoreVar' => $scoreFilms
+//            ],
+//            'film_year_tv_quiz' => [
+//                'title' => 'Guess the Year of these Films!',
+//                'link' => 'questionFunctions.php?category=filmsYear',
+//                'description' => '20 Random Films every time! Can you guess the year of these Films released before 1970!',
+//                'scoreVar' => $scoreYearReleased
+//            ],
             'caryGrantFilms' => [
                 'title' => 'Cary Grant Filmography',
                 'link' => 'columnQuestionFunctions.php?category=caryGrantFilms',
@@ -73,12 +73,12 @@ $generalKnowledgeCategories = [
     'history' => [
         'title' => 'History',
         'subcategories' => [
-            'history_quiz' => [
-                'title' => 'The Randomness of History',
-                'link' => 'questionFunctions.php?category=history',
-                'description' => 'Random Questions about Wars, Monarchs, Empires and Leaders',
-                'scoreVar' => $scoreHistory
-            ],
+//            'history_quiz' => [
+//                'title' => 'The Randomness of History',
+//                'link' => 'questionFunctions.php?category=history',
+//                'description' => 'Random Questions about Wars, Monarchs, Empires and Leaders',
+//                'scoreVar' => $scoreHistory
+//            ],
             'us_presidents' => [
                 'title' => 'US Presidents',
                 'link' => 'columnQuestionFunctions.php?category=US_Presidents',
@@ -97,29 +97,29 @@ $generalKnowledgeCategories = [
                 'description' => 'How much do you know about Greek Mythology?',
                 'scoreVar' => $scoreGreeks
             ],
-            'years To Remember' => [
-                'title' => 'Historic Dates Years to Remember',
-                'link' => 'questionFunctions.php?category=years_to_remember',
-                'description' => 'Assassinations, Reigns, Surrenders and Dynasties. What year was it?',
-                'scoreVar' => $scoreYearsToRemember
-            ],
-            'Empires To Remember' => [
-                'title' => 'Empires of the Past',
-                'link' => 'questionFunctions.php?category=empires',
-                'description' => 'The Byzantines, Ottomans, Roman, Mongolian and everything in between!?',
-                'scoreVar' => $scoreEmpires
-            ],
+//            'years To Remember' => [
+//                'title' => 'Historic Dates Years to Remember',
+//                'link' => 'questionFunctions.php?category=years_to_remember',
+//                'description' => 'Assassinations, Reigns, Surrenders and Dynasties. What year was it?',
+//                'scoreVar' => $scoreYearsToRemember
+//            ],
+//            'Empires To Remember' => [
+//                'title' => 'Empires of the Past',
+//                'link' => 'questionFunctions.php?category=empires',
+//                'description' => 'The Byzantines, Ottomans, Roman, Mongolian and everything in between!?',
+//                'scoreVar' => $scoreEmpires
+//            ],
         ]
     ],
     'literature' => [
         'title' => 'Literature',
         'subcategories' => [
-            'literature' => [
-                'title' => 'General Knowledge: Literature',
-                'link' => 'questionFunctions.php?category=literature',
-                'description' => 'Test your literature knowledge! Shakespeare, Austen, Bronte, and more!',
-                'scoreVar' => $scoreLiterature
-            ],
+//            'literature' => [
+//                'title' => 'General Knowledge: Literature',
+//                'link' => 'questionFunctions.php?category=literature',
+//                'description' => 'Test your literature knowledge! Shakespeare, Austen, Bronte, and more!',
+//                'scoreVar' => $scoreLiterature
+//            ],
             'shakespearePlays' => [
                 'title' => 'Shakespeare Plays',
                 'link' => 'columnQuestionFunctions.php?category=Shakespeare_Plays',
@@ -137,29 +137,29 @@ $generalKnowledgeCategories = [
     'geography' => [
         'title' => 'Geography',
         'subcategories' => [
-            'geography' => [
-                'title' => 'Test your Geography General Knowledge!',
-                'link' => 'questionFunctions.php?category=geography',
-                'description' => 'Capitals, Countries, Continents and Countless more! 20 Random Questions selected every time!',
-                'scoreVar' => $scoreGeography
-            ],
-            'paris' => [
-                'title' => 'Paris, or Paname as the locals call it',
-                'link' => 'questionFunctions.php?category=paris',
-                'description' => 'How much do you know about the French Captial?!',
-                'scoreVar' => $scoreParis
-            ]
+//            'geography' => [
+//                'title' => 'Test your Geography General Knowledge!',
+//                'link' => 'questionFunctions.php?category=geography',
+//                'description' => 'Capitals, Countries, Continents and Countless more! 20 Random Questions selected every time!',
+//                'scoreVar' => $scoreGeography
+//            ],
+//            'paris' => [
+//                'title' => 'Paris, or Paname as the locals call it',
+//                'link' => 'questionFunctions.php?category=paris',
+//                'description' => 'How much do you know about the French Captial?!',
+//                'scoreVar' => $scoreParis
+//            ]
         ]
     ],
     'science' => [
         'title' => 'Science',
         'subcategories' => [
-            'geography' => [
-                'title' => 'Biology, Physics and (very little) Chemistry',
-                'link' => 'questionFunctions.php?category=science',
-                'description' => 'Test your knowledge on these topics! 20 Random Questions every time!',
-                'scoreVar' => $scoreScience
-            ]
+//            'geography' => [
+//                'title' => 'Biology, Physics and (very little) Chemistry',
+//                'link' => 'questionFunctions.php?category=science',
+//                'description' => 'Test your knowledge on these topics! 20 Random Questions every time!',
+//                'scoreVar' => $scoreScience
+//            ]
         ]
     ],
     'generalKnowledge' => [
@@ -168,17 +168,17 @@ $generalKnowledgeCategories = [
         'description' => 'Test your knowledge on science topics! 20 Random Questions every time!',
         'scoreVar' => $scoreGeneralKnowledge
     ],
-    'compScience' => [
-        'title' => 'Computer Science',
-        'subcategories' => [
-            'methodologies' => [
-                'title' => 'See how many Software Development Methodologies you can name?',
-                'link' => 'questionFunctions.php?category=Software_Development_Methodologies',
-                'description' => 'We\'ve all heard of Agile but how many of the arcane and archaic development methods do you know?',
-                'scoreVar' => $scoreSoftware_Development_Methodologies
-            ],
-        ]
-    ]
+//    'compScience' => [
+//        'title' => 'Computer Science',
+//        'subcategories' => [
+////            'methodologies' => [
+////                'title' => 'See how many Software Development Methodologies you can name?',
+////                'link' => 'questionFunctions.php?category=Software_Development_Methodologies',
+////                'description' => 'We\'ve all heard of Agile but how many of the arcane and archaic development methods do you know?',
+////                'scoreVar' => $scoreSoftware_Development_Methodologies
+////            ],
+//        ]
+//    ]
 ];
 
 ?>

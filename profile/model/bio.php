@@ -8,7 +8,10 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id']; // Fetch user ID from session
+
+// Get bio input & sanitize special characters
 $bio = isset($_POST['bio-text']) ? trim($_POST['bio-text']) : '';
+$bio = htmlspecialchars($bio, ENT_QUOTES, 'UTF-8'); // Convert special characters
 
 // Debugging: Check received values
 error_log("Processing bio update for user_id: $user_id with bio: $bio");
