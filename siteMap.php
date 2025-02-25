@@ -52,7 +52,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                     "Writing Craft" => "writing-craft.php",
                     "Travel" => "travel.php",
                     "Reviews" => "reviews.php",
-                    "History" => "history.php",
+                    "History" => "history-and-culture.php",
                     "Entertainment" => "entertainment.php",
                     "Business" => "business.php",
                     "Technology" => "technology.php",

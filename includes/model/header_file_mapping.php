@@ -5,7 +5,7 @@ $categories = [
     "Food" => ["file" => "food.php", "image" => "public/images/header-icons/food-and-drink.png"],
     "Gaming" => ["file" => "gaming.php", "image" => "public/images/header-icons/gaming.png"],
     "Health & Fitness" => ["file" => "health.php", "image" => "public/images/header-icons/healthcare.png"],
-    "History & Culture" => ["file" => "history.php", "image" => "public/images/header-icons/history.png"],
+    "History & Culture" => ["file" => "history-and-culture.php", "image" => "public/images/header-icons/history.png"],
     "Lifestyle" => ["file" => "lifestyle.php", "image" => "public/images/header-icons/lifestyles.png"],
     "Philosophy" => ["file" => "philosophy.php", "image" => "public/images/header-icons/philosophy.png"],
     "Politics" => ["file" => "politics.php", "image" => "public/images/header-icons/politics.png"],

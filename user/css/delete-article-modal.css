@@ -47,24 +47,28 @@
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-/* Confirm Button */
+
+/* Update Button Specific Styling */
 .btn-confirm {
-    background-color: #28a745; /* Green */
+    background: linear-gradient(to bottom, forestgreen, darkgreen); /* Darker red gradient on hover */
+    box-shadow: 0 5px 10px rgba(178, 34, 34, 0.3); /* Red shadow on hover */
     color: white;
 }
 
 .btn-confirm:hover {
-    background-color: #218838;
-    transform: scale(1.05);
+    background-color: darkgreen; /* Slightly darker green */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Cancel Button */
+/* Cancel Button Specific Styling */
 .btn-cancel {
-    background-color: #dc3545; /* Red */
+    background: linear-gradient(to bottom, #8B0000, #660000); /* Darker red gradient on hover */
+    box-shadow: 0 5px 10px rgba(178, 34, 34, 0.3); /* Red shadow on hover */
     color: white;
+    margin-left: 10px;
 }
 
 .btn-cancel:hover {
-    background-color: #c82333;
-    transform: scale(1.05);
+    background-color: darkred; /* Slightly darker red */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }

@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("updateForm");
-    const titleInput = document.getElementById("blog-title");
+    const titleInput = document.getElementById("edit-article-title");
     const contentInput = document.getElementById("content");
     const tagsInput = document.getElementById("tags-input");
     const hiddenTagsInput = document.getElementById("tags-hidden");

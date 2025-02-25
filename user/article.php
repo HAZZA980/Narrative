@@ -17,6 +17,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
     <link rel="stylesheet" href="<?php echo BASE_URL ?>user/css/styles-article.css">
     <link rel="stylesheet" href="<?php echo BASE_URL ?>explore/articleLayouts/styles-default-article-formation.css">
     <link rel="stylesheet" href="<?php echo BASE_URL ?>user/css/delete-article-modal.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL ?>user/css/author-actions.css">
 
 </head>
 <body>
@@ -41,9 +42,9 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                         ? BASE_URL . 'public/images/users/' . $blog['user_id'] . '/' . $blog['Image']
                         : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
                 </div>
-                <p class="date-author"><strong>By<a href="<?php echo BASE_URL; ?>feed.php?username=<?php echo urlencode($author); ?>">
+                <p class="date-author"><strong>By<a
+                                href="<?php echo BASE_URL; ?>feed.php?username=<?php echo urlencode($author); ?>">
                             <?php echo htmlspecialchars($author); ?></a></strong>
-
 
 
                     <small><?php echo date('F j, Y', strtotime($blog['datePublished'])); ?></small></p>
@@ -241,7 +242,8 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                                 <div class="comment-details" data-comment-id="<?php echo $comment['id']; ?>">
                                     <!-- Original Comment Display -->
                                     <div class="comment-header">
-                                        <p class="comment-username"><strong><?php echo htmlspecialchars($comment['username']); ?>:</strong> </p>
+                                        <p class="comment-username">
+                                            <strong><?php echo htmlspecialchars($comment['username']); ?>:</strong></p>
                                         <?php if ($is_comment_author): ?>
                                             <span class="comment-actions">
                                             <!-- Inline Edit and Delete Links -->
@@ -258,7 +260,8 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                                     <div class="comment-display">
                                         <p class="comment-content"><?php echo nl2br(htmlspecialchars($comment['comment'], ENT_QUOTES, 'UTF-8')); ?></p>
                                         <p class="comment-date">
-                                            <small>Posted on <?php echo date('F j, Y, g:i a', strtotime($comment['commented_at'])); ?></small>
+                                            <small>Posted
+                                                on <?php echo date('F j, Y, g:i a', strtotime($comment['commented_at'])); ?></small>
                                         </p>
                                     </div>
 
@@ -266,7 +269,8 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                                     <form action="<?php echo BASE_URL; ?>features/comments/edit-comment.php"
                                           method="POST"
                                           class="edit-comment-form" style="display: none;">
-                                        <textarea name="comment" placeholder="Write your comment here..." class="auto-resizing-textarea" required>
+                                        <textarea name="comment" placeholder="Write your comment here..."
+                                                  class="auto-resizing-textarea" required>
                                             <?php echo htmlspecialchars($comment['comment']); ?></textarea>
                                         <input type="hidden" name="comment_id" value="<?php echo $comment['id']; ?>">
                                         <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
@@ -285,13 +289,17 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
 
                     <!-- Add a new comment -->
                     <h3 class="post-a-comment">POST A COMMENT</h3>
-                    <form action="<?php echo BASE_URL?>features/comments/add-comment.php" method="POST" class="comment-form">
+                    <form action="<?php echo BASE_URL ?>features/comments/add-comment.php" method="POST"
+                          class="comment-form">
                         <textarea name="comment" placeholder="Write your comment here..." required></textarea>
                         <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
 
                         <?php if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                             <!-- If not logged in, use the button to redirect to the login/register page -->
-                            <button type="button" class="redirect-to-login-btn" onclick="window.location.href='<?php echo BASE_URL; ?>user_auth.php'">Log in to comment</button>
+                            <button type="button" class="redirect-to-login-btn"
+                                    onclick="window.location.href='<?php echo BASE_URL; ?>user_auth.php'">Log in to
+                                comment
+                            </button>
                         <?php else: ?>
                             <!-- If logged in, show the submit button -->
                             <button type="submit">Post Comment</button>
@@ -305,20 +313,19 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
 
 
         <aside class="aside-links">
-
             <aside class="aside-section">
                 <?php if ($is_author): ?>
                     <aside class="aside-admin">
-                        <h2 class="aside-title">Admin Actions</h2>
+                        <h2 class="aside-title">Quick Actions</h2>
                         <ul class="admin-action-list">
                             <li class="admin-action-item">
                                 <a href="<?php echo BASE_URL; ?>user/edit-article.php?id=<?php echo $id; ?>"
-                                   class="admin-action-link">Edit Article</a>
+                                   class="admin-action-link item-class">Edit Article</a>
                             </li>
                             <!-- HTML part for button -->
                             <li class="admin-action-item">
                                 <form action="" method="POST">
-                                    <button class="admin-action-link" type="submit" name="is_private"
+                                    <button class="admin-action-link item-class" type="submit" name="is_private"
                                             value="<?php echo $currentPrivateState == 1 ? 0 : 1; ?>"
                                             id="toggle-private-btn">
                                         <?php echo $currentPrivateState == 1 ? 'Make Public' : 'Make Private'; ?>
@@ -327,71 +334,115 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                             </li>
 
                             <li class="admin-action-item">
-                                <a href="javascript:void(0);" class="admin-action-link delete-link"
+                                <a href="javascript:void(0);"
+                                   class="item-class admin-action-link delete-link delete-class"
                                    data-article-id="<?php echo $id; ?>">Delete Article</a>
                             </li>
                         </ul>
                     </aside>
                 <?php endif; ?>
 
-                <aside class="aside-articles-similar">
-                    <h2 class="aside-title">Other Articles You May Like</h2>
-                    <?php if ($recommended_result->num_rows > 0): ?>
+
+                <aside class="aside-articles-similar" id="similar-articles-section">
+                    <h2 class="aside-title-header">Similar Articles</h2>
+
+                    <?php
+                    // SQL query to fetch similar articles
+                    $sql = "
+        (SELECT id, title, LEFT(content, 250) AS summary, datePublished, Tags, featured, Image, user_id 
+         FROM tbl_blogs 
+         WHERE Tags LIKE '%$get_tag%' 
+           AND id != $id
+           AND datePublished >= (SELECT datePublished FROM tbl_blogs WHERE id = $id)
+         ORDER BY ABS(TIMESTAMPDIFF(SECOND, datePublished, (SELECT datePublished FROM tbl_blogs WHERE id = $id))) ASC, 
+                  datePublished ASC
+         LIMIT 3)
+
+        UNION
+
+        (SELECT id, title, LEFT(content, 250) AS summary, datePublished, Tags, featured, Image, user_id 
+         FROM tbl_blogs 
+         WHERE Tags LIKE '%$get_tag%' 
+           AND id != $id
+         ORDER By datePublished ASC
+         LIMIT 3)
+    ";
+
+                    $result = $conn->query($sql);
+
+                    // Check if there are any results
+                    if ($result->num_rows > 0) {
+                        ?>
+
+                        <!-- Display articles only if there are results -->
                         <ul class="article-list">
-                            <?php while ($row = $recommended_result->fetch_assoc()): ?>
+                            <?php while ($row = $result->fetch_assoc()) { ?>
                                 <li class="article-item">
-                                    <a href="article.php?id=<?php echo $row['id']; ?>" class="article-link">
-                                        <div class="article-summary">
-                                            <?php
-                                            // Get the author's name
-                                            $recommended_author_user_id = $row['user_id'];
-                                            $sql_author_rec = "SELECT username FROM users WHERE user_id = $recommended_author_user_id";
-                                            $recommended_author_result = $conn->query($sql_author_rec);
-                                            $recommended_author = ($recommended_author_result->num_rows > 0) ? $recommended_author_result->fetch_assoc()['username'] : 'Unknown Author';
-                                            ?>
-                                            <p class="author-name"><?php echo htmlspecialchars($recommended_author); ?></p>
-                                            <h3 class="article-title"><?php echo htmlspecialchars($row['title']); ?></h3>
-                                            <p class="article-date">
-                                                <small><?php echo date('F j, Y', strtotime($row['datePublished'])); ?></small>
-                                            </p>
+                                    <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>" class="article-link">
+                                        <div class="aside-article-summary">
+                                            <div class="aside-image-container">
+                                                <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
+                                                    ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
+                                                    : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
+                                            </div>
+
+                                            <h3 class="aside-title"><?php echo htmlspecialchars($row['title'] ?? 'Untitled'); ?></h3>
+                                            <div class="aside-date-container">
+                                                <p class="aside-date">
+                                                    <small><?php echo date('F j, Y', strtotime($row['datePublished'])); ?></small>
+                                                </p>
+                                            </div>
                                         </div>
                                     </a>
                                 </li>
-                            <?php endwhile; ?>
+                            <?php } ?>
                         </ul>
-                    <?php else: ?>
-                        <p class="no-articles-message">No related articles found.</p>
-                    <?php endif; ?>
+
+                        <?php
+                    } else {
+                        // If no articles are found, hide the section by using JavaScript
+                        echo "<script>document.getElementById('similar-articles-section').style.display = 'none';</script>";
+                    }
+                    ?>
+
                 </aside>
 
+
                 <aside class="aside-elsewhere-articles">
-                    <h2 class="aside-title">Elsewhere on Narrative</h2>
-                    <?php if ($elsewhere_result->num_rows > 0): ?>
-                        <ul class="article-list">
-                            <?php while ($row = $elsewhere_result->fetch_assoc()): ?>
-                                <li class="article-item">
-                                    <a href="article.php?id=<?php echo $row['id']; ?>" class="article-link">
-                                        <div class="article-summary">
-                                            <?php
-                                            // Get the author's name for elsewhere articles
-                                            $elsewhere_author_user_id = $row['user_id'];
-                                            $sql_author_elsewhere = "SELECT username FROM users WHERE user_id = $elsewhere_author_user_id";
-                                            $elsewhere_author_result = $conn->query($sql_author_elsewhere);
-                                            $elsewhere_author = ($elsewhere_author_result->num_rows > 0) ? $elsewhere_author_result->fetch_assoc()['username'] : 'Unknown Author';
-                                            ?>
-                                            <p class="author-name"><?php echo htmlspecialchars($elsewhere_author); ?></p>
-                                            <h3 class="article-title"><?php echo htmlspecialchars($row['title']); ?></h3>
-                                            <p class="article-date">
-                                                <small><?php echo date('F j, Y', strtotime($row['datePublished'])); ?></small>
-                                            </p>
-                                        </div>
-                                    </a>
-                                </li>
-                            <?php endwhile; ?>
-                        </ul>
-                    <?php else: ?>
-                        <p class="no-articles-message">No other articles available at the moment.</p>
-                    <?php endif; ?>
+                    <h2 class="aside-title-header">Elsewhere On Narrative</h2>
+                    <?php
+                    // Get the current file name dynamically
+                    $sql = "SELECT id, title, LEFT(content, 250) AS summary, datePublished, Tags, featured, Image, user_id 
+                            FROM tbl_blogs 
+                            WHERE Tags NOT LIKE '%$get_tag%' AND id != $id 
+                            ORDER BY RAND() 
+                            LIMIT 5";
+                    $result = $conn->query($sql);
+
+                    while ($row = $result->fetch_assoc()) {
+                    // Dynamically create grid items for each blog
+                    ?>
+                    <ul class="article-list">
+                        <li class="article-item">
+                            <a href="<?php echo BASE_URL?>user/article.php?id=<?php echo $row['id']; ?>" class="article-link">
+                                <div class="aside-article-summary">
+                                    <div class="aside-image-container">
+                                        <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
+                                            ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
+                                            : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
+                                    </div>
+
+                                    <h3 class="aside-title"><?php echo htmlspecialchars($row['title'] ?? 'Untitled'); ?></h3>
+                                    <div class="aside-date-container">
+                                        <p class="aside-date">
+                                            <small><?php echo date('F j, Y', strtotime($row['datePublished'])); ?></small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <?php };?>
+                    </ul>
                 </aside>
 
             </aside>

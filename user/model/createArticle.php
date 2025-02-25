@@ -49,10 +49,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("Invalid file type! Please upload a valid image.");
         }
 
-        // Restrict file size (2MB limit)
-        if ($imageSize > 2 * 1024 * 1024) {
-            die("File size too large! Max size allowed is 2MB.");
-        }
+//        // Restrict file size (2MB limit)
+//        if ($imageSize > 2 * 1024 * 1024) {
+//            die("File size too large! Max size allowed is 2MB.");
+//        }
 
         // Generate a unique filename to prevent overwriting
         $newImageName = uniqid("img_", true) . "." . $imageExtension;
