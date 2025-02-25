@@ -153,23 +153,22 @@ document.addEventListener("DOMContentLoaded", function () {
     renderTags();
 });
 
-
 document.addEventListener("DOMContentLoaded", function () {
+    const previewContainer = document.getElementById("image-preview-container");
+    const previewImage = document.getElementById("image-preview");
+    const removeButton = document.getElementById("remove-image");
+    const imageInput = document.getElementById("image");
+    const removeImageInput = document.getElementById("remove_image"); // Hidden input field
+
     // Function to preview the selected image
-    function previewImage(event) {
+    function previewImageHandler(event) {
         const file = event.target.files[0];
-        const previewContainer = document.getElementById("image-preview-container");
-        const previewImage = document.getElementById("image-preview");
-        const removeButton = document.getElementById("remove-image");
 
         if (file) {
-            // Define the allowed file types (e.g., image/jpeg, image/png)
-            const allowedFileTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            const allowedFileTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
-            // Check if the selected file is of the allowed type
             if (!allowedFileTypes.includes(file.type)) {
-                alert('Please upload a valid image file (JPEG, PNG, or GIF).');
-                // Clear the input value and stop further processing
+                alert('Please upload a valid image file (JPEG, PNG, GIF, or WEBP).');
                 event.target.value = "";
                 previewContainer.classList.remove("show");
                 previewImage.src = "";
@@ -177,126 +176,116 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // Create a URL for the selected file and set it as the source for the image preview
             const reader = new FileReader();
             reader.onload = function (e) {
                 previewImage.src = e.target.result;
-                previewContainer.classList.add("show"); // Show the preview container
+                previewContainer.classList.add("show");
             };
             reader.readAsDataURL(file);
 
-            // Show the remove button
             removeButton.style.display = "block";
-
-            // Add event listener to remove the image when the "X" is clicked
-            removeButton.onclick = function () {
-                // Clear the image preview and hide the container
-                previewImage.src = "";
-                previewContainer.classList.remove("show");
-                // Optionally reset the input field
-                document.getElementById("image").value = "";
-                removeButton.style.display = "none"; // Hide the remove button
-            };
+            removeImageInput.value = "0"; // Reset removal flag
         } else {
-            // If no file is selected, hide the preview container
             previewContainer.classList.remove("show");
-            previewImage.src = ""; // Clear the image source
-            removeButton.style.display = "none"; // Hide the remove button
+            previewImage.src = "";
+            removeButton.style.display = "none";
         }
     }
 
-    // Check if there's an existing image URL for preloaded image
-    const existingImageUrl = document.getElementById("existing-image-url").value;
-    if (existingImageUrl) {
-        // Show the existing image in the preview container
-        const previewContainer = document.getElementById("image-preview-container");
-        const previewImage = document.getElementById("image-preview");
-        const removeButton = document.getElementById("remove-image");
+    // Function to handle image removal
+    function removeImageHandler() {
+        previewImage.src = "";
+        previewContainer.classList.remove("show");
+        imageInput.value = ""; // Reset file input
+        removeButton.style.display = "none";
 
-        previewImage.src = existingImageUrl;
-        previewContainer.classList.add("show"); // Make the preview container visible
-        removeButton.style.display = "block"; // Show the "X" button
-
-        // Add functionality to the "X" button to remove the image
-        removeButton.onclick = function () {
-            previewImage.src = ""; // Clear the image
-            previewContainer.classList.remove("show"); // Hide the preview container
-            document.getElementById("image").value = ""; // Reset the file input
-            removeButton.style.display = "none"; // Hide the "X" button
-
-            // Optionally, clear the existing image URL in backend data (if you need to update it)
-            document.getElementById("existing-image-url").value = "";
-        };
+        // Set the hidden input value to indicate removal
+        removeImageInput.value = "1"; // 1 means image should be removed
     }
 
-    // Attach the previewImage function to the file input's onchange event
-    const imageInput = document.getElementById("image");
+    // Attach the preview function to the file input's onchange event
     if (imageInput) {
-        imageInput.addEventListener("change", previewImage);
+        imageInput.addEventListener("change", previewImageHandler);
     }
-});
 
-
-
-// Track changes in the form fields
-let isFormDirty = false;
-
-// Flag to prevent beforeunload popup when certain buttons are clicked
-let isSubmitting = false;
-
-const formElements = [
-    document.getElementById('blog-title'),
-    document.getElementById('content'),
-    document.getElementById('tags-input'),
-    document.getElementById('image')
-];
-
-// Function to set isFormDirty flag when changes occur
-function markFormAsDirty() {
-    isFormDirty = true;
-}
-
-// Add event listeners to form elements
-formElements.forEach(element => {
-    if (element) {
-        element.addEventListener('input', markFormAsDirty);
+    // Attach the remove function to the "X" button
+    if (removeButton) {
+        removeButton.addEventListener("click", removeImageHandler);
     }
-});
 
-// If the image is selected or removed, consider the form as dirty
-document.getElementById('image').addEventListener('change', markFormAsDirty);
-document.getElementById('remove-image').addEventListener('click', () => {
-    isFormDirty = true; // Image removal counts as a change
-});
+    // Preload existing image
+    const existingImageUrl = document.getElementById("existing-image-url")?.value;
+    if (existingImageUrl) {
+        previewImage.src = existingImageUrl;
+        previewContainer.classList.add("show");
+        removeButton.style.display = "block";
+    }
 
-// Prevent beforeunload prompt if a submit button is clicked
-document.getElementById('saveButton')?.addEventListener('click', () => {
-    isSubmitting = true;
-});
+    // Track changes in the form fields
+    let isFormDirty = false;
+    let isSubmitting = false;
 
-// Prevent beforeunload prompt when "Publish/Change to Private" button is clicked
-document.querySelector('#toggle-private-btn')?.addEventListener('click', () => {
-    isSubmitting = true;
-});
+    const formElements = [
+        document.getElementById('blog-title'),
+        document.getElementById('content'),
+        document.getElementById('tags-input'),
+        document.getElementById('image')
+    ];
 
-// Prevent beforeunload prompt if delete button is clicked
-document.querySelector('.delete-link')?.addEventListener('click', () => {
-    isSubmitting = true;
-});
+    // Function to set isFormDirty flag when changes occur
+    function markFormAsDirty() {
+        isFormDirty = true;
+    }
 
-// Listen for form submission for "Publish/Change to Private"
-const togglePrivateForm = document.querySelector('form[action=""]');
-if (togglePrivateForm) {
-    togglePrivateForm.addEventListener('submit', () => {
+    // Add event listeners to form elements
+    formElements.forEach(element => {
+        if (element) {
+            element.addEventListener('input', markFormAsDirty);
+        }
+    });
+
+    // If the image is selected or removed, consider the form as dirty
+    document.getElementById('image').addEventListener('change', markFormAsDirty);
+    document.getElementById('remove-image').addEventListener('click', () => {
+        isFormDirty = true; // Image removal counts as a change
+    });
+
+    // Prevent beforeunload prompt if a submit button is clicked
+    document.getElementById('saveButton')?.addEventListener('click', () => {
         isSubmitting = true;
     });
-}
 
-// Listen for beforeunload event to prompt user
-window.addEventListener('beforeunload', (event) => {
-    if (isFormDirty && !isSubmitting) {
-        const message = "Are you sure you want to leave? Changes have not been saved.";
-        event.returnValue = message; // Standard for most browsers
-        return message; // For some browsers (e.g., Safari)
+    // Prevent beforeunload prompt when "Publish/Change to Private" button is clicked
+    document.querySelector('#toggle-private-btn')?.addEventListener('click', () => {
+        isSubmitting = true;
+    });
+
+    // Prevent beforeunload prompt if delete button is clicked
+    document.querySelector('.delete-link')?.addEventListener('click', () => {
+        isSubmitting = true;
+    });
+
+    // Listen for form submission for "Publish/Change to Private"
+    const togglePrivateForm = document.querySelector('form[action=""]');
+    if (togglePrivateForm) {
+        togglePrivateForm.addEventListener('submit', () => {
+            isSubmitting = true;
+        });
     }
+
+    // Listen for beforeunload event to prompt user
+    window.addEventListener('beforeunload', (event) => {
+        if (isFormDirty && !isSubmitting) {
+            const message = "Are you sure you want to leave? Changes have not been saved.";
+            event.returnValue = message; // Standard for most browsers
+            return message; // For some browsers (e.g., Safari)
+        }
+    });
 });
+
+
+
+
+
+
+

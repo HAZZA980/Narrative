@@ -115,6 +115,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 
                         <!-- Hidden input holding the existing image URL, for updating/removing -->
                         <input type="hidden" id="existing-image-url" value="<?= $imageUrl ?>">
+                        <input type="hidden" name="remove_image" id="remove_image" value="0">
 
                     </div>
 

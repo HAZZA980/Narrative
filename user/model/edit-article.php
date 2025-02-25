@@ -1,105 +1,95 @@
 <?php
 $message = '';
-$redirect = false; // Add a flag for redirection
+$redirect = false;
 
 // Get article ID from URL (if provided)
 $article_id = $_GET['id'] ?? '';
 
 if (!is_numeric($article_id)) {
-    $message = "Invalid article ID.";
+    die("Invalid article ID.");
 }
 
-// Retrieve article data if the ID is valid
-if ($article_id) {
-    // Get the article from the database
-    $stmt = $conn->prepare("SELECT * FROM tbl_blogs WHERE id = ?");
-    $stmt->bind_param("i", $article_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $article = $result->fetch_assoc();
-
-    // If article is not found
-    if (!$article) {
-        $message = "Article not found.";
-    }
+// Database connection check (ensure `$conn` exists)
+if (!isset($conn)) {
+    die("Database connection error.");
 }
 
+// Fetch article details
+$stmt = $conn->prepare("SELECT * FROM tbl_blogs WHERE id = ?");
+$stmt->bind_param("i", $article_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$article = $result->fetch_assoc();
 
-// Start processing the form if submitted
+if (!$article) {
+    die("Article not found.");
+}
+
+// Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Handle the "Make Private" functionality (Form 2)
-    if (isset($_POST['is_private'])) {
-        // Ensure the user is logged in
-        if (!isset($_SESSION['user_id'])) {
-            die('User not authenticated');
-        }
-
-        $user_id = $_SESSION['user_id'];
-        $is_private = $_POST['is_private'];
-
-        // Update the 'private' value for the logged-in user's blog post
-        $stmt = $conn->prepare("UPDATE tbl_blogs SET private = ? WHERE user_id = ? AND id = ?");
-        $stmt->bind_param("iii", $is_private, $user_id, $article_id);
-        $stmt->execute();
-        $stmt->close();
-
-        // Redirect back to the same page after the update
-        header("Location: " . $_SERVER['REQUEST_URI']);
-        exit(); // Ensure no further code is executed after redirection
+    if (!isset($_SESSION['user_id'])) {
+        die("User not authenticated");
     }
 
-    // Handle article update logic (title, content, etc.) (Form 1)
-    $title = $_POST['title'] ?? '';
-    $content = $_POST['content'] ?? '';
+    $title = trim($_POST['title'] ?? '');
+    $content = trim($_POST['content'] ?? '');
     $featured = isset($_POST['featured']) ? 1 : 0;
+    $tags = trim($_POST['tags'] ?? '');
+    $removeImage = isset($_POST['remove_image']) && $_POST['remove_image'] == '1';
 
-    // Get the existing image or handle image removal
-    $image = $article['Image']; // Keep the existing image unless a new one is uploaded or removed
+    // Keep existing image unless changed
+    $image = $article['Image'];
 
-    // Check if the image has been removed
-    if (isset($_POST['image_action']) && $_POST['image_action'] === 'delete') {
-        $image = ''; // Set the image to empty or NULL if it was removed
-    }
+    // Ensure required fields are not empty
+    if (empty($title) || empty($content) || empty($tags)) {
+        echo "<script>alert('Error: Title, Content, and Tags cannot be empty.');</script>";
+    } else {
+        // Handle image upload
+        if (!$removeImage && isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
-    // Handle image upload (optional)
-    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $userDirectory = BASE_PATH . "public/images/users/" . $_SESSION['user_id'];
-        if (!is_dir($userDirectory)) {
-            if (!mkdir($userDirectory, 0777, true)) {
+            $fileTmp = $_FILES['image']['tmp_name'];
+            $fileType = mime_content_type($fileTmp);
+            $fileExtension = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+
+            if (!in_array($fileType, $allowedMimeTypes) || !in_array($fileExtension, $allowedExtensions)) {
+                die("Invalid image format. Allowed formats: jpg, png, gif, webp.");
+            }
+
+            if (!exif_imagetype($fileTmp)) {
+                die("Uploaded file is not a valid image.");
+            }
+
+            $userDirectory = BASE_PATH . "public/images/users/" . $_SESSION['user_id'];
+            if (!is_dir($userDirectory) && !mkdir($userDirectory, 0777, true)) {
                 die("Failed to create directory for user images.");
             }
+
+            $imageName = uniqid() . '.' . $fileExtension;
+            $imagePath = $userDirectory . "/" . $imageName;
+
+            if (move_uploaded_file($fileTmp, $imagePath)) {
+                $image = $imageName;
+            } else {
+                die("Failed to upload the image.");
+            }
+        } elseif ($removeImage) {
+            $image = 'narrative-logo-big.png';
         }
 
-        $imageName = basename($_FILES['image']['name']);
-        $imagePath = $userDirectory . "/" . $imageName;
-
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $imagePath)) {
-            $image = $imageName; // Update the image if a new one is uploaded
-        } else {
-            $message = "Failed to upload the image.";
-        }
-    }
-
-    $tags = trim($_POST['tags'] ?? '');  // Get updated tags
-
-    // Ensure all fields are provided
-    if ($title && $content && $tags) {
-        // Prepare the query to update the article
+        // Update the database
         $stmt = $conn->prepare("UPDATE tbl_blogs SET Title = ?, Content = ?, Tags = ?, featured = ?, Image = ? WHERE id = ?");
         $stmt->bind_param("sssisi", $title, $content, $tags, $featured, $image, $article_id);
 
-        // Execute the query
         if ($stmt->execute()) {
             header("Location: " . BASE_URL . "user/article.php?id=" . $article_id);
             exit();
         } else {
             die("Error updating article: " . $stmt->error);
         }
-    } else {
-        $message = "Please fill in all required fields.";
     }
 }
-
 
 // Get blog ID from URL
 $id = intval($_GET['id']);
