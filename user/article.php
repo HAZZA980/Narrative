@@ -18,7 +18,11 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
     <link rel="stylesheet" href="<?php echo BASE_URL ?>explore/articleLayouts/styles-default-article-formation.css">
     <link rel="stylesheet" href="<?php echo BASE_URL ?>user/css/delete-article-modal.css">
     <link rel="stylesheet" href="<?php echo BASE_URL ?>user/css/author-actions.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL ?>user/css/admin-bar.css">
 
+    <style>
+
+    </style>
 </head>
 <body>
 
@@ -26,12 +30,80 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
     <div class="main-content">
         <div class="flex-container">
             <div class="blogs-content">
-                <?php
-                // Check if the article is private (DRAFT)
-                if ($currentPrivateState == 1): ?>
-                    <!-- DRAFT Banner -->
-                    <div class="draft-banner">
-                        DRAFT
+                <!-- Admin Tools Bar (Visible only for admin users) -->
+                <?php if (isset($_SESSION['user_id']) && $_SESSION['isAdmin'] == 1): ?>
+                    <div class="admin-bar">
+                        <p>ADMIN TASKBAR</p>
+
+                        <!-- Edit Icon -->
+                        <?php if (isset($_SESSION['user_id']) && $_SESSION['isAdmin'] == 1): ?>
+                            <div class="img-container">
+                                <a href="<?php echo BASE_URL; ?>user/edit-article.php?id=<?php echo $id; ?>">
+                                    <img src="<?php echo BASE_URL ?>public/images/adminbar/pencil.png" alt="Edit">
+                                </a>
+                            </div>
+                        <?php endif; ?>
+
+
+                            <a href="javascript:void(0);"
+                               class="admin-action-link delete-link"
+                               data-article-id="<?php echo $id; ?>">
+                                <div class="img-container">
+                                    <img src="<?php echo BASE_URL ?>public/images/adminbar/delete.png" alt="Delete">
+                                </div>
+
+                            </a>
+
+
+                        <!-- Category Dropdown -->
+                        <form id="category-form" action="<?php echo BASE_URL ?>user/model/update_category.php" method="POST">
+                            <select id="category-dropdown" name="category" data-article-id="<?php echo $blog['id']; ?>" onchange="updateCategory()">
+
+                            <?php
+                                // List of categories
+                                $categories = [
+                                    "Business", "Entertainment", "Food", "Gaming", "Health & Fitness",
+                                    "History and Culture", "Lifestyle", "Philosophy", "Politics",
+                                    "Reviews", "Science", "Sports", "Technology", "Travel", "Writing Craft"
+                                ];
+
+                                // Fetch the current category for the current article
+                                $article_id = $blog['id'];  // Get the article ID
+                                $sql_category = "SELECT Category FROM tbl_blogs WHERE id = $article_id"; // Fetch the current category using article ID
+                                $result_category = $conn->query($sql_category);
+
+                                // Default category (if not found in db)
+                                $currentCategory = '';
+
+                                if ($result_category->num_rows > 0) {
+                                    $row = $result_category->fetch_assoc();
+                                    $currentCategory = $row['Category'];  // Assuming 'Tags' field stores the category
+                                }
+
+                                // Loop through categories and set the selected attribute to the current category
+                                foreach ($categories as $category) {
+                                    $selected = ($category == $currentCategory) ? 'selected' : ''; // Check if category matches current category
+                                    echo "<option value='$category' $selected>$category</option>"; // Output category options
+                                }
+                                ?>
+                            </select>
+                        </form>
+
+                        <form id="featured-form">
+                            <label>
+                                <input type="checkbox" id="featured" name="featured"
+                                       data-article-id="<?php echo $blog['id']; ?>"
+                                    <?php echo ($blog['featured'] == 1) ? 'checked' : ''; ?>
+                                       onchange="updateFeatured()">
+                                Featured
+                            </label>
+                        </form>
+
+
+                        <!-- Report Article Button -->
+<!--                        <form id="report-form" action="report_article.php" method="POST">-->
+<!--                            <button type="button" id="report-article" onclick="submitForm('report-form')">Report Article</button>-->
+<!--                        </form>-->
                     </div>
                 <?php endif;
 
@@ -498,6 +570,57 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
             textarea.style.height = textarea.scrollHeight + 'px'; // Set to scroll height
         }
     });
+</script>
+
+
+
+
+
+<!-- JavaScript for AJAX submission -->
+<script>
+    function updateCategory() {
+        var category = document.getElementById("category-dropdown").value;
+        var article_id = document.getElementById("category-dropdown").getAttribute("data-article-id"); // Fetch article ID
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "<?php echo BASE_URL ?>user/model/update_category.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    console.log("Response:", xhr.responseText); // Debugging response
+                } else {
+                    console.error("Failed to update category.");
+                }
+            }
+        };
+
+        xhr.send("article_id=" + encodeURIComponent(article_id) + "&category=" + encodeURIComponent(category));
+    }
+
+</script>
+<script>function updateFeatured() {
+        var checkbox = document.getElementById("featured");
+        var isFeatured = checkbox.checked ? 1 : 0; // Convert to 1 or 0
+        var article_id = checkbox.getAttribute("data-article-id"); // Fetch article ID
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "<?php echo BASE_URL ?>user/model/update_featured.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    console.log("Response:", xhr.responseText); // Debugging response
+                } else {
+                    console.error("Failed to update featured status.");
+                }
+            }
+        };
+
+        xhr.send("article_id=" + encodeURIComponent(article_id) + "&featured=" + encodeURIComponent(isFeatured));
+    }
 </script>
 
 </body>

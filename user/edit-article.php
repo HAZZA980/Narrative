@@ -124,7 +124,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 
         <aside class="aside-links">
             <aside class="aside-section">
-                <?php if ($is_author): ?>
+                <?php if ($is_author || $isAdmin): ?>
                     <aside class="aside-admin">
                         <h2 class="admin-actions-title">Admin Actions</h2>
                         <ul class="admin-action-list">

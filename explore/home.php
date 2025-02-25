@@ -59,9 +59,9 @@ include BASE_PATH . 'model/category-file-mapping.php';
             <div class="grid-container">
                 <?php
                 // Query to get featured blogs
-                $sql = "SELECT Id, Title, LEFT(Content, 270) AS summary, DatePublished, Tags, Image, user_id 
+                $sql = "SELECT Id, Title, LEFT(Content, 270) AS summary, DatePublished, Tags, Image, Private, user_id 
                         FROM tbl_blogs 
-                        WHERE Featured = '1' 
+                        WHERE Featured = '1' and Private = '0'
                         ORDER BY DatePublished DESC LIMIT 13";
                 $result = $conn->query($sql);
 
@@ -110,21 +110,15 @@ include BASE_PATH . 'model/category-file-mapping.php';
                                     $tags = explode(",", $row['Tags']);
                                     $first_tag = strtolower(trim($tags[0])); // Normalize the first tag to lowercase
 
-                                    // Debugging: Output the first tag to check what it's set to
-                                    echo "<!-- First Tag: $first_tag -->";
-
                                     // Find the category for the first tag
                                     $category = "Uncategorized"; // Default category if not found
 
+                                    // Now use the original lowercase tag to search for category
                                     foreach ($subcategories as $catName => $catTags) {
                                         // Normalize the category tags and compare (lowercase only)
                                         $normalized_catTags = array_map(function($tag) {
                                             return strtolower(trim($tag)); // Normalize category tags: lowercase and trim
                                         }, $catTags);
-
-                                        // Debugging: Output the normalized category tags
-                                        echo "<!-- Checking Category: $catName -->";
-                                        echo "<!-- Normalized Tags in $catName: " . implode(", ", $normalized_catTags) . " -->";
 
                                         // Check if the normalized first tag matches any of the normalized tags in the category
                                         if (in_array($first_tag, $normalized_catTags)) {
@@ -133,8 +127,10 @@ include BASE_PATH . 'model/category-file-mapping.php';
                                         }
                                     }
 
-                                    // Debugging: Check which category was selected
-                                    echo "<!-- Selected Category: $category -->";
+                                    // Format the tag (capitalize words, except "and")
+                                    $formatted_tag = preg_replace_callback('/\b(?!and\b)\w+/', function ($match) {
+                                        return ucfirst($match[0]);
+                                    }, strtolower(trim($first_tag))); // Lowercase the tag first and capitalize accordingly
 
                                     // If a category is found, get the corresponding file name
                                     if (isset($category_file_map[$category])) {
@@ -147,10 +143,12 @@ include BASE_PATH . 'model/category-file-mapping.php';
                                     $clean_category = str_replace(" ", "-", $category); // Replace spaces with hyphens
 
                                     // Check if the category name is mapped to a file correctly
-                                    echo '<a href="' . BASE_URL . 'explore/' . $clean_category . '.php">' . htmlspecialchars($first_tag) . '</a>';
+                                    echo '<a href="' . BASE_URL . 'explore/' . $clean_category . '.php">' . htmlspecialchars($formatted_tag) . '</a>';
                                 }
                                 ?>
                             </p>
+
+
                             <p id="blog-date"><small><?php echo date('F j, Y', strtotime($row['DatePublished'])); ?></small></p>
                         </div>
                     </div>
@@ -196,8 +194,8 @@ include BASE_PATH . 'model/category-file-mapping.php';
         <div class="latest-container">
             <?php
             // Query to get latest blogs with pagination
-            $sql = "SELECT Id, Title, LEFT(Content, 250) AS summary, DatePublished, Tags, Image, user_id 
-                    FROM tbl_blogs 
+            $sql = "SELECT Id, Title, LEFT(Content, 230) AS summary, DatePublished, Tags, Image, user_id, Private
+                    FROM tbl_blogs where Private = '0'
                     ORDER BY DatePublished DESC 
                     LIMIT $results_per_page OFFSET $start_from";
             $result = $conn->query($sql);
@@ -221,8 +219,71 @@ include BASE_PATH . 'model/category-file-mapping.php';
                                 </div>
                             </div>
                             <div class="latest-grid-container-3">
-                                <p class="latest-blog-tags">
-                                    <a id="latest-tag" href="#"><?php echo htmlspecialchars($row['Tags']); ?></a>
+                                <p id="blog-tags">
+                                    <?php
+                                    // Category to file mapping
+                                    $category_file_map = [
+                                        "Business" => "business.php",
+                                        "Entertainment" => "entertainment.php",
+                                        "Food" => "food.php",
+                                        "Gaming" => "gaming.php",
+                                        "Health & Fitness" => "health.php",
+                                        "History and Culture" => "history-and-culture.php", // Ensure mapping to history-and-culture.php
+                                        "Lifestyle" => "lifestyle.php",
+                                        "Philosophy" => "philosophy.php",
+                                        "Politics" => "politics.php",
+                                        "Reviews" => "reviews.php",
+                                        "Science" => "science.php",
+                                        "Sports" => "sports.php",
+                                        "Technology" => "technology.php",
+                                        "Travel" => "travel.php",
+                                        "Writing Craft" => "writing-craft.php"
+                                    ];
+
+                                    if (!empty($row['Tags'])) {
+                                        // Include the subcategories file for category mapping
+                                        include BASE_PATH . 'model/subcategories.php';
+
+                                        // Explode tags by comma and trim whitespace
+                                        $tags = explode(",", $row['Tags']);
+                                        $first_tag = strtolower(trim($tags[0])); // Normalize the first tag to lowercase
+
+                                        // Find the category for the first tag
+                                        $category = "Uncategorized"; // Default category if not found
+
+                                        // Now use the original lowercase tag to search for category
+                                        foreach ($subcategories as $catName => $catTags) {
+                                            // Normalize the category tags and compare (lowercase only)
+                                            $normalized_catTags = array_map(function($tag) {
+                                                return strtolower(trim($tag)); // Normalize category tags: lowercase and trim
+                                            }, $catTags);
+
+                                            // Check if the normalized first tag matches any of the normalized tags in the category
+                                            if (in_array($first_tag, $normalized_catTags)) {
+                                                $category = $catName;
+                                                break; // Stop searching once we find the category
+                                            }
+                                        }
+
+                                        // Format the tag (capitalize words, except "and")
+                                        $formatted_tag = preg_replace_callback('/\b(?!and\b)\w+/', function ($match) {
+                                            return ucfirst($match[0]);
+                                        }, strtolower(trim($first_tag))); // Lowercase the tag first and capitalize accordingly
+
+                                        // If a category is found, get the corresponding file name
+                                        if (isset($category_file_map[$category])) {
+                                            $category_file = $category_file_map[$category];
+                                        } else {
+                                            $category_file = "uncategorized.php"; // Default to uncategorized if not found
+                                        }
+
+                                        // Replace spaces with hyphens to generate a clean URL (remove url encoding)
+                                        $clean_category = str_replace(" ", "-", $category); // Replace spaces with hyphens
+
+                                        // Check if the category name is mapped to a file correctly
+                                        echo '<a href="' . BASE_URL . 'explore/' . $clean_category . '.php">' . htmlspecialchars($formatted_tag) . '</a>';
+                                    }
+                                    ?>
                                 </p>
                                 <div class="latest-grid-item-3">
                                     <p id="latest-blog-date">

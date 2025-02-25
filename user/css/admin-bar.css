@@ -1,0 +1,72 @@
+/* Admin Bar */
+.admin-bar {
+    display: flex;  /* Use Flexbox for horizontal layout */
+    justify-content: space-between; /* Distribute items evenly with space between */
+    align-items: center; /* Vertically center the items */
+    background-color: #f4f4f4; /* Light background color for the admin bar */
+    padding: 10px 20px; /* Add some padding around the bar */
+    border: 1px solid #ccc; /* Light border for separation */
+    margin-bottom: 20px; /* Space below the admin bar */
+}
+
+/* Each tool inside the admin bar */
+.admin-bar .img-container {
+    margin-right: 15px; /* Space between icons */
+    display: flex;
+    align-items: center;
+}
+
+/* Style the icons (for edit and delete) */
+.admin-bar .img-container img {
+    width: 24px; /* Set fixed width for icons */
+    height: 24px; /* Set fixed height for icons */
+    cursor: pointer; /* Change cursor to pointer for clickable icons */
+    transition: transform 0.3s ease; /* Smooth hover effect */
+}
+
+.admin-bar .img-container img:hover {
+    transform: scale(1.2); /* Slightly enlarge the icons on hover */
+}
+
+/* Category Dropdown */
+#category-dropdown {
+    padding: 5px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+/* Featured Checkbox */
+#featured {
+    margin-right: 15px;
+}
+
+/* Report Article Button */
+#report-article {
+    background-color: #4CAF50; /* Green background for the button */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+#report-article:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+/* Ensure proper alignment and spacing in the admin bar */
+.admin-bar select,
+.admin-bar label {
+    margin-right: 15px;
+}
+
+.admin-bar p {
+    margin-right: 20px; /* Space between the title and tools */
+    font-size: 16px;
+    font-weight: bold;
+}

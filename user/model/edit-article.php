@@ -1,20 +1,24 @@
 <?php
+
 $message = '';
 $redirect = false;
 
-// Get article ID from URL (if provided)
-$article_id = $_GET['id'] ?? '';
 
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    die("Access Denied: Please log in.");
+}
+
+$user_id = $_SESSION['user_id'];
+$isAdmin = $_SESSION['isAdmin'] ?? 0;
+
+// Get article ID from URL
+$article_id = $_GET['id'] ?? '';
 if (!is_numeric($article_id)) {
     die("Invalid article ID.");
 }
 
-// Database connection check (ensure `$conn` exists)
-if (!isset($conn)) {
-    die("Database connection error.");
-}
-
-// Fetch article details
+// Fetch the article
 $stmt = $conn->prepare("SELECT * FROM tbl_blogs WHERE id = ?");
 $stmt->bind_param("i", $article_id);
 $stmt->execute();
@@ -22,15 +26,19 @@ $result = $stmt->get_result();
 $article = $result->fetch_assoc();
 
 if (!$article) {
-    die("Article not found.");
+    die("Error: Article not found or does not exist.");
+}
+
+// Ensure 'Image' exists before using it
+$image = $article['Image'] ?? 'narrative-logo-big.png';
+
+// Check if the user is the author OR an admin
+if ($article['user_id'] != $user_id && !$isAdmin) {
+    die("Access Denied: You are not authorized to edit this article.");
 }
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!isset($_SESSION['user_id'])) {
-        die("User not authenticated");
-    }
-
     $title = trim($_POST['title'] ?? '');
     $content = trim($_POST['content'] ?? '');
     $featured = isset($_POST['featured']) ? 1 : 0;
@@ -152,13 +160,15 @@ if (isset($_POST['is_private'])) {
     exit(); // Ensure no further code is executed after redirection
 }
 
-// Fetch the current 'private' status for the user and article
-$stmt = $conn->prepare("SELECT private FROM tbl_blogs WHERE user_id = ? AND id = ?");
-$stmt->bind_param("ii", $_SESSION['user_id'], $id);
+// Fetch the current 'private' status for the article
+$stmt = $conn->prepare("SELECT private FROM tbl_blogs WHERE id = ?");
+$stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();
 $row = $result->fetch_assoc();
 
-$currentPrivateState = $row['private']; // 0 or 1
+// Check if the row exists before accessing 'private'
+$currentPrivateState = $row ? $row['private'] : 0; // Default to 0 (public) if not found
+
 $stmt->close();
 ?>

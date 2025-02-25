@@ -38,6 +38,22 @@ $current_user = isset($_SESSION['username']) ? $_SESSION['username'] : '';
 // Check if the current user is the author of the article
 $is_author = ($current_user == $author);
 
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+
+    // Fetch the 'isAdmin' field for the user
+    $sql_admin_check = "SELECT isAdmin FROM users WHERE user_id = ?";
+    $stmt = $conn->prepare($sql_admin_check);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        $_SESSION['isAdmin'] = $user['isAdmin']; // Store 'isAdmin' status in session
+    }
+    $stmt->close();
+}
 
 // Start processing the form if submitted
 if (isset($_POST['is_private'])) {
