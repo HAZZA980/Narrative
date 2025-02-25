@@ -9,6 +9,7 @@ include BASE_PATH . "user/view/delete-article-modal.html";
 include BASE_PATH . "user/model/edit-article.php";
 include BASE_PATH . 'features/write/write-icon-fixed.php';
 
+
 // Ensure the user is logged in
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header("Location: " . BASE_URL . "home.php");
@@ -26,10 +27,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     <title>Edit Article</title>
     <link rel="stylesheet" href="<?php echo BASE_URL?>user/css/styles-edit-article.css">
     <link rel="stylesheet" href="<?php echo BASE_URL?>user/css/delete-article-modal.css">
-    <style>
+    <link rel="stylesheet" href="<?php echo BASE_URL ?>user/css/author-actions.css">
 
-
-    </style>
 </head>
 <body>
 
@@ -40,14 +39,14 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
             <div class="modal-content">
                 <h2>Are you sure you want to save the changes?</h2>
                 <div class="modal-actions">
-                    <button id="confirmSave" class="modal-button">Yes</button>
-                    <button id="cancelSave" class="modal-button">No</button>
+                    <button id="confirmSave" class="btn-update">Yes</button>
+                    <button id="cancelSave" class="btn-cancel">No</button>
                 </div>
             </div>
         </div>
 
         <div class="flex-container">
-            <div class="container">
+            <div class="editing-container">
                 <h1 class="edit-article-header">Editing Mode</h1>
 
                 <?php if ($article): ?>
@@ -123,27 +122,25 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
         </div>
 
         <aside class="aside-links">
-
-
             <aside class="aside-section">
                 <?php if ($is_author): ?>
                     <aside class="aside-admin">
-                        <h2 class="aside-title">Admin Actions</h2>
+                        <h2 class="admin-actions-title">Admin Actions</h2>
                         <ul class="admin-action-list">
                             <li class="admin-action-item">
-                                <button type="submit" id="saveButton">Save Changes</button>
+                                <button type="submit" id="saveButton" class="item-publish item-class" >Save Changes</button>
                             </li>
                             <li class="admin-action-item">
                                 <form action="" method="POST">
-                                    <button class="admin-action-link" type="submit" name="is_private"
+                                    <button class="admin-action-link item-class" type="submit" name="is_private"
                                             value="<?php echo $currentPrivateState == 1 ? 0 : 1; ?>"
                                             id="toggle-private-btn">
-                                        <?php echo $currentPrivateState == 1 ? 'Publish' : 'Change to Private'; ?>
+                                        <?php echo $currentPrivateState == 1 ? 'Make Public' : 'Make Private'; ?>
                                     </button>
                                 </form>
                             </li>
                             <li class="admin-action-item">
-                                <a href="javascript:void(0);" class="admin-action-link delete-link"
+                                <a href="javascript:void(0);" class="item-class admin-action-link delete-link delete-class"
                                    data-article-id="<?php echo $id; ?>">Delete Article</a>
                             </li>
                         </ul>

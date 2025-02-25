@@ -1,0 +1,110 @@
+/* --------------------------------------------------------------
+   Admin Action List Styling
+   -------------------------------------------------------------- */
+.admin-action-list {
+    list-style: none;
+    background: linear-gradient(to bottom right, #ffffff, #e6e6e6); /* Soft gradient for the background */
+    display: flex;
+    justify-items: center; /* Centers the list items horizontally */
+    align-items: center; /* Centers the list items vertically */
+    flex-direction: column; /* Stack items vertically */
+    border-radius: 10px; /* Rounded corners */
+    /*padding: 2rem; !* Spacing inside the list *!*/
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    border: 1px solid #d1d1d1; /* Subtle border around the list */
+}
+
+.admin-action-item {
+    padding: 0;
+    margin: 0;
+}
+/* --------------------------------------------------------------
+   General Button Styling
+   -------------------------------------------------------------- */
+.item-class {
+    display: inline-flex; /* Flexbox for inline element */
+    justify-content: center; /* Center text horizontally */
+    align-items: center; /* Center text vertically */
+    width: 13rem; /* Set width of buttons */
+    height: 3rem; /* Set height of buttons */
+    background: linear-gradient(to bottom, #f8f8f8, #e0e0e0); /* Soft gradient background */
+    color: #222222; /* Dark Gray text for contrast */
+    font-size: 1rem; /* Readable font size */
+    margin: 0.8rem;
+    font-weight: 500; /* Medium weight for text */
+    text-align: center; /* Center text within button */
+    text-decoration: none; /* No underline on text */
+    border: none; /* No border */
+    border-radius: 6px; /* Rounded corners for the button */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transition for hover & click effects */
+}
+
+/* Hover & Active Effects for General Buttons */
+.item-class:hover {
+    background: linear-gradient(to bottom, #e0e0e0, #d4d4d4); /* Slightly darker gradient on hover */
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.15); /* Deeper shadow on hover */
+    text-decoration: none;
+    color: black
+}
+
+.item-publish {
+    display: inline-flex; /* Flexbox for inline element */
+    justify-content: center; /* Center text horizontally */
+    align-items: center; /* Center text vertically */
+    width: 13rem; /* Set width of buttons */
+    height: 3rem; /* Set height of buttons */
+    background: linear-gradient(to bottom, #f8f8f8, green); /* Soft gradient background */
+    color: #222222; /* Dark Gray text for contrast */
+    font-size: 1rem; /* Readable font size */
+    font-weight: 500; /* Medium weight for text */
+    text-align: center; /* Center text within button */
+    text-decoration: none; /* No underline on text */
+    border: none; /* No border */
+    border-radius: 6px; /* Rounded corners for the button */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transition for hover & click effects */
+
+}
+
+
+.item-publish:hover {
+    background: darkgreen; /* Soft gradient background */
+    color: #fff; /* Dark Gray text for contrast */
+
+}
+
+
+.item-class:active {
+    transform: scale(0.96); /* Slightly scale down button when clicked */
+}
+
+/* --------------------------------------------------------------
+   Delete Button Styling
+   -------------------------------------------------------------- */
+.delete-class {
+    background: linear-gradient(to bottom, #B22222, #8B0000); /* Firebrick to Dark Red gradient */
+    color: #ffffff; /* White text for contrast */
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transition for hover & click effects */
+}
+
+/* Hover Effect for Delete Button */
+.delete-class:hover {
+    background: linear-gradient(to bottom, #8B0000, #660000); /* Darker red gradient on hover */
+    box-shadow: 0 5px 10px rgba(178, 34, 34, 0.3); /* Red shadow on hover */
+    color: #fff;
+}
+
+/* Active (Click) Effect for Delete Button */
+.delete-class:active {
+    transform: scale(0.96); /* Slightly scale down on click */
+}
+
+.admin-actions-title {
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin-left: 1.2rem;
+    color: firebrick;
+}

@@ -18,12 +18,14 @@
     flex-direction: column;
     justify-content: flex-start;
     align-content: center;
-    gap: 2rem;
-    width: 70%;
+    /*border: #e67e22 solid 2px;*/
+    min-width: 70%;
+    max-width: 70%;
 }
 
 
 .edit-article-header {
+    width: 90%;
     font-family: Arial, sans-serif; /* Sets a clean font */
     font-size: 2rem; /* Adjusts the size of the heading */
     color: #333; /* Sets a dark gray text color */
@@ -45,9 +47,12 @@
     border: none;
 }
 
-.container {
+.editing-container {
     width: 100%;
+    padding-top: 3rem;
+    /*border: purple solid 2px;*/
 }
+
 
 /* Container styles to center content */
 .content-box {
@@ -82,21 +87,19 @@
     font-weight: 700;
 }
 
-.edit-title-container, .edit-content-container, .edit-category-container, .edit-image-container{
+.edit-title-container, .edit-content-container, .edit-category-container, .edit-image-container {
     display: flex;
     flex-direction: row;
     align-items: baseline;
 }
 
-#tag {
-    margin-left: 3.7rem;
-    width: 79%;
-}
+
 #content {
     width: 80%;
     height: auto;
     margin-left: 1rem;
 }
+
 /* Ensure specificity */
 textarea.blog-content {
     border: none !important; /* Overrides any other border rules */
@@ -137,16 +140,6 @@ input#blog-title {
     margin-left: 2.9rem
 }
 
-
-/* Styling for the blog items */
-.blog-item {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 90%;
-    margin: 0.8em;
-}
 
 /* Styling for the form elements */
 #updateForm {
@@ -214,15 +207,13 @@ input#blog-title {
 }
 
 
-
-.aside-section {
-    border-left: 1px solid #ddd;
-    padding-left: 20px;
-    margin-left: 20px;
-    margin-top: 20%;
-    max-width: 320px;
-}
-
+/*.aside-section {*/
+/*    border-left: 1px solid #ddd;*/
+/*    padding-left: 20px;*/
+/*    margin-left: 20px;*/
+/*    margin-top: 20%;*/
+/*    max-width: 320px;*/
+/*}*/
 
 
 /* Green color class for the button when clicked */
@@ -231,87 +222,11 @@ input#blog-title {
 }
 
 
-
-
-.admin-action-item:hover #toggle-private-btn, #saveButton, #submit-article {
-    background-color: #f1f1f1;
-}
-#saveButton,#toggle-private-btn, #submit-article {
-    border: none;
-    background-color: white;
-}
-#saveButton:hover, #toggle-private-btn:hover, #submit-article:hover{
-    background-color: #f1f1f1;
-    cursor: pointer;
-}
-
 .aside-last-updated {
     margin-top: 10em;
 }
-/* Admin Actions Aside Section */
-.aside-admin {
-    background-color: #f8f8f8;
-    width: 20rem;
-    padding: 1.5rem;
-    margin-top: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    border-left: 4px solid #ff5733; /* Distinctive left border color */
-}
 
 
-.aside-admin .aside-title {
-    font-size: 1.6rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 1.5rem;
-    border-bottom: 2px solid #ff5733; /* Border at the bottom of the title */
-    padding-bottom: 0.5rem;
-}
-
-.admin-action-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-.admin-action-item {
-    width: 100%;
-    background-color: #ffffff;
-    margin: 0.8rem 0;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
-}
-
-.admin-action-item:hover {
-    background-color: #f1f1f1;
-}
-
-.admin-action-link, #saveButton {
-    display: block;
-    text-decoration: none;
-    color: #ff5733; /* Link color matching the left border */
-    font-size: 1.1rem;
-    font-weight: bold;
-    transition: color 0.3s ease;
-}
-
-.admin-action-link:hover, #saveButton:hover {
-    color: #cc4526; /* Slightly darker on hover */
-    text-decoration: underline;
-}
-
-
-
-/* General Styles for Aside Sections */
-.aside-title {
-    font-size: 1.6rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 1rem;
-}
 
 .article-list {
     list-style-type: none;
@@ -319,46 +234,71 @@ input#blog-title {
     margin: 0;
 }
 
+.aside-links {
+    margin-top: 7%;
+    /*border: #4CAF50 solid 3px;*/
+    border-left: 1px solid #ddd;
+    padding-left: 20px;
+    min-width: 320px;
+    max-width: 320px;
 
+}
+
+
+/* Modal Background */
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
-    left: 0;
     top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    padding-top: 100px;
+    background-color: rgba(0, 0, 0, 0.3); /* Subtle dark background */
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
 }
+
 
 .modal-content {
     background-color: #fff;
-    margin: auto;
+    margin: 20% 40%;
     padding: 20px;
     border: 1px solid #888;
     width: 30%;
     border-radius: 8px;
 }
 
-.modal-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
 
-.modal-button {
-    padding: 10px 20px;
-    background-color: #007bff;
+
+
+
+
+/* Update Button Specific Styling */
+.btn-update {
+    background: linear-gradient(to bottom, forestgreen, darkgreen); /* Darker red gradient on hover */
+    box-shadow: 0 5px 10px rgba(178, 34, 34, 0.3); /* Red shadow on hover */
     color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
 }
 
-.modal-button:hover {
-    background-color: #0056b3;
+.btn-update:hover {
+    background-color: darkgreen; /* Slightly darker green */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+/* Cancel Button Specific Styling */
+.btn-cancel {
+    background: linear-gradient(to bottom, #8B0000, #660000); /* Darker red gradient on hover */
+    box-shadow: 0 5px 10px rgba(178, 34, 34, 0.3); /* Red shadow on hover */
+    color: white;
+    margin-left: 10px;
+}
+
+.btn-cancel:hover {
+    background-color: darkred; /* Slightly darker red */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 
 
 .suggestion-item {
@@ -370,9 +310,11 @@ input#blog-title {
 .input-tags-label {
     margin-right: 3rem;
 }
+
 .suggestion-item:hover {
     background-color: #f0f0f0;
 }
+
 .selected-tag, #selected-tags .tag {
     display: inline-block;
     background: #007BFF;
@@ -382,12 +324,11 @@ input#blog-title {
     margin: 5px;
     font-size: 14px;
 }
+
 .remove-tag {
     cursor: pointer;
     padding-left: 5px;
 }
-
-
 
 
 .suggestion-item {
@@ -477,6 +418,7 @@ input#blog-title {
     cursor: pointer; /* Change cursor to indicate clickability */
 }
 
+
 /* Hover Effects for File Input */
 #image:hover {
     background-color: #f0f0f0; /* Light background color on hover */
@@ -488,17 +430,15 @@ input#blog-title {
 }
 
 
-
-
-
-
 /* General Styles for Form Containers */
 .edit-category-container {
+    margin-top: 1rem;
     margin-bottom: 20px;
     padding: 10px;
     border-radius: 8px;
     background-color: #f9f9f9;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    width: 95%;
 }
 
 /* Label Styles */
@@ -546,6 +486,47 @@ input#blog-title {
     z-index: 1000; /* Ensure it's on top of other elements */
     display: none; /* Hidden by default */
 }
+
+.item-class {
+    display: inline-flex; /* Ensures proper alignment */
+    justify-content: center; /* Centers text horizontally */
+    align-items: center; /* Centers text vertically */
+    width: 130px;
+    height: 70px;
+    background-color: #0056b3; /* Primary button color */
+    color: #ffffff; /* White text for contrast */
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none; /* Removes underline from <a> */
+    border: none; /* Removes default button border */
+    border-radius: 6px; /* Slight rounding for modern look */
+    cursor: pointer; /* Ensures clickable behavior */
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover and Active Effects */
+.item-class:hover {
+    background-color: #004494; /* Slightly darker on hover */
+}
+
+.item-class:active {
+    transform: scale(0.97); /* Small press effect */
+}
+
+/* Ensures <a> elements behave like buttons */
+.item-class a {
+    display: inherit;
+    width: 100%;
+    height: 100%;
+}
+
+/* Additional Styling for Button Elements */
+button.item-class {
+    appearance: none; /* Removes default browser styles */
+    outline: none;
+}
+
 
 /* Suggestion Item Styling */
 .suggestion-item {
@@ -620,38 +601,54 @@ input#blog-title {
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.5); /* Optional: Add a dark overlay for better contrast */
+    overflow: hidden; /* Prevent image overflow */
 }
 
 /* Image Preview */
 .image-preview {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain; /* Ensure the image fits inside the container without distortion */
+    width: 100%; /* Make the image fill the container's width */
+    height: 100%; /* Make the image fill the container's height */
+    object-fit: cover; /* Ensure the image covers the container area without distortion */
 }
 
 /* Show the image preview container when a file is selected */
 .image-preview-container.show {
     display: flex;
 }
-/* Add to existing CSS */
 
-/* X button styles for removing the image */
+/* Optional: Style for the remove button */
 .remove-image {
     position: absolute;
     top: 10px;
     right: 10px;
-
-    font-size: 20px;
-    color: #fff;
-    background-color: rgba(0, 0, 0, 0.5); /* Dark background for contrast */
+    font-size: 24px;
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
     border-radius: 50%;
     padding: 5px;
     cursor: pointer;
-    z-index: 10; /* Ensure it's above the image */
-    transition: background-color 0.2s ease;
 }
 
 /* Change color when hovering over the "X" */
 .remove-image:hover {
     background-color: rgba(0, 0, 0, 0.8); /* Darker background on hover */
+}
+
+
+/* SUPERFLUOUS STYLES */
+#tag {
+    margin-left: 3.7rem;
+    width: 79%;
+    border: #4CAF50 4px solid;
+}
+
+/* Styling for the blog items */
+.blog-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    margin: 0.8em;
+    border: black solid 4px;
 }

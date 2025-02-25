@@ -46,7 +46,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                         </a>
                         <div class="blog-details-2">
                             <p id="blog-tags">
-                                <a href="history.php">
+                                <a href="history-and-culture.php">
                                     <?php echo htmlspecialchars($row['Tags']); ?>
                                 </a>
                             </p>
@@ -88,7 +88,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                     </a>
                     <div class="blog-details-2">
                         <p id="blog-tags">
-                            <a href="history.php">Greek Mythology</a>
+                            <a href="history-and-culture.php">Greek Mythology</a>
                         </p>
                         <p id="blog-date"><small><?php echo date('F j, Y', strtotime($row['datePublished'])); ?></small></p>
                     </div>

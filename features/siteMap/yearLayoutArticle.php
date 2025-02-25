@@ -85,7 +85,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
                             } else if (strcasecmp($tag, "Business") == 0) {
                                 echo "business.php";
                             } else if (strcasecmp($tag, "History") == 0) {
-                                echo "history.php";
+                                echo "history-and-culture.php";
                             } else if (strcasecmp($tag, "Lifestyle") == 0) {
                                 echo "lifestyle.php";
                             } else if (strcasecmp($tag, "Politics") == 0) {

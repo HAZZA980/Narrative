@@ -1,6 +1,7 @@
 <?php
 include $_SERVER["DOCUMENT_ROOT"] . "/phpProjects/narrative/config/config.php";
 include BASE_PATH . 'features/write/write-icon-fixed.php';
+include BASE_PATH . 'model/category-file-mapping.php';
 
 ?>
 <!doctype html>
@@ -81,7 +82,74 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                         </a>
                         <div class="blog-details-2">
                             <p id="blog-tags">
-                                <a href="#"><?php echo htmlspecialchars($row['Tags']); ?></a>
+                                <?php
+                                // Category to file mapping
+                                $category_file_map = [
+                                    "Business" => "business.php",
+                                    "Entertainment" => "entertainment.php",
+                                    "Food" => "food.php",
+                                    "Gaming" => "gaming.php",
+                                    "Health & Fitness" => "health.php",
+                                    "History and Culture" => "history-and-culture.php", // Ensure mapping to history-and-culture.php
+                                    "Lifestyle" => "lifestyle.php",
+                                    "Philosophy" => "philosophy.php",
+                                    "Politics" => "politics.php",
+                                    "Reviews" => "reviews.php",
+                                    "Science" => "science.php",
+                                    "Sports" => "sports.php",
+                                    "Technology" => "technology.php",
+                                    "Travel" => "travel.php",
+                                    "Writing Craft" => "writing-craft.php"
+                                ];
+
+                                if (!empty($row['Tags'])) {
+                                    // Include the subcategories file for category mapping
+                                    include BASE_PATH . 'model/subcategories.php';
+
+                                    // Explode tags by comma and trim whitespace
+                                    $tags = explode(",", $row['Tags']);
+                                    $first_tag = strtolower(trim($tags[0])); // Normalize the first tag to lowercase
+
+                                    // Debugging: Output the first tag to check what it's set to
+                                    echo "<!-- First Tag: $first_tag -->";
+
+                                    // Find the category for the first tag
+                                    $category = "Uncategorized"; // Default category if not found
+
+                                    foreach ($subcategories as $catName => $catTags) {
+                                        // Normalize the category tags and compare (lowercase only)
+                                        $normalized_catTags = array_map(function($tag) {
+                                            return strtolower(trim($tag)); // Normalize category tags: lowercase and trim
+                                        }, $catTags);
+
+                                        // Debugging: Output the normalized category tags
+                                        echo "<!-- Checking Category: $catName -->";
+                                        echo "<!-- Normalized Tags in $catName: " . implode(", ", $normalized_catTags) . " -->";
+
+                                        // Check if the normalized first tag matches any of the normalized tags in the category
+                                        if (in_array($first_tag, $normalized_catTags)) {
+                                            $category = $catName;
+                                            break; // Stop searching once we find the category
+                                        }
+                                    }
+
+                                    // Debugging: Check which category was selected
+                                    echo "<!-- Selected Category: $category -->";
+
+                                    // If a category is found, get the corresponding file name
+                                    if (isset($category_file_map[$category])) {
+                                        $category_file = $category_file_map[$category];
+                                    } else {
+                                        $category_file = "uncategorized.php"; // Default to uncategorized if not found
+                                    }
+
+                                    // Replace spaces with hyphens to generate a clean URL (remove url encoding)
+                                    $clean_category = str_replace(" ", "-", $category); // Replace spaces with hyphens
+
+                                    // Check if the category name is mapped to a file correctly
+                                    echo '<a href="' . BASE_URL . 'explore/' . $clean_category . '.php">' . htmlspecialchars($first_tag) . '</a>';
+                                }
+                                ?>
                             </p>
                             <p id="blog-date"><small><?php echo date('F j, Y', strtotime($row['DatePublished'])); ?></small></p>
                         </div>
