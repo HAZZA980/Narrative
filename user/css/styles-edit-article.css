@@ -109,7 +109,6 @@ textarea.blog-content {
     border: none; /* Remove border */
     outline: none; /* Remove outline */
     resize: none; /* Prevent manual resizing */
-    overflow: hidden; /* Hide scrollbars */
     height: auto; /* Allow dynamic height adjustment */
     background: transparent; /* Optional: Make it blend in */
 }
@@ -270,6 +269,20 @@ input#blog-title {
 }
 
 
+#submit-article:disabled {
+    background-color: #ccc; /* Greyed out */
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.freeze-warning {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: bold;
+    margin-right: 3rem;
+    margin-left: 3rem;
+}
 
 
 

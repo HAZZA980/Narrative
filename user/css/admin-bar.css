@@ -60,30 +60,44 @@
     margin-right: 15px;
 }
 
-/* Report Article Button */
-#report-article {
-    background-color: #4CAF50; /* Green background for the button */
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-}
-
-#report-article:hover {
-    background-color: #45a049; /* Darker green on hover */
-}
-
-/* Ensure proper alignment and spacing in the admin bar */
-.admin-bar select,
-.admin-bar label {
-    margin-right: 15px;
-}
-
-.admin-bar p {
-    margin-right: 20px; /* Space between the title and tools */
+#freeze-user {
+    background-color: #f9f9f9; /* Light gray as default background */
+    color: #333;  /* Dark text color */
+    width: 10rem;
     font-size: 16px;
     font-weight: bold;
+    border: none;
+    padding: 2px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
 }
+
+/* Add a smooth color transition on hover */
+#freeze-user:hover {
+    background-color: black;  /* Red background for freeze */
+    color: white;  /* Change text color to white when hovered */
+    transform: scale(1.05);  /* Slightly enlarge the button for a 3D effect */
+}
+
+#freeze-user.unfreeze:hover {
+    background-color: #4CAF50;  /* Green background for unfreeze */
+    color: white;  /* Change text color to white when hovered */
+    transform: scale(1.05);  /* Slightly enlarge the button for a 3D effect */
+}
+
+
+#freeze-user:active {
+    transform: scale(0.95);
+}
+
+/* If the button is for unfreezing, change the color */
+.unfreeze {
+    background-color: #4CAF50 !important; /* Green for unfreeze */
+}
+
+.unfreeze:hover {
+    background-color: #388E3C !important; /* Darker green on hover */
+}
+
+

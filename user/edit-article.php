@@ -129,8 +129,24 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
                         <h2 class="admin-actions-title">Admin Actions</h2>
                         <ul class="admin-action-list">
                             <li class="admin-action-item">
+                                <?php
+                                // Fetch the freeze_user status for the user
+                                $query = "SELECT freeze_user FROM users WHERE user_id = ?";
+                                $stmt = $conn->prepare($query);
+                                $stmt->bind_param("i", $_SESSION['user_id']);
+                                $stmt->execute();
+                                $stmt->store_result();
+                                $stmt->bind_result($freeze_user);
+                                $stmt->fetch();
+                                $stmt->close();
+                                ?>
+                                <?php if ($freeze_user == 0): ?>
                                 <button type="submit" id="saveButton" class="item-publish item-class" >Save Changes</button>
+                                <?php elseif ($freeze_user == 1): ?>
+                                    <p class="freeze-warning delete">Account is frozen pending review. <br><br> Editing privileges have been suspended.</p>
+                                <?php endif; ?>
                             </li>
+
                             <li class="admin-action-item">
                                 <form action="" method="POST">
                                     <button class="admin-action-link item-class" type="submit" name="is_private"

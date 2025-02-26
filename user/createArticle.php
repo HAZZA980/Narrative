@@ -119,11 +119,32 @@ include BASE_PATH . 'user/model/createArticle.php';
                             <button type="submit" name="submit_article" value="draft" id="submit-article" class="item-class">Save Draft
                             </button>
                         </li>
+
+
+                        <?php
+                        // Fetch the freeze_user status for the user
+                        $query = "SELECT freeze_user FROM users WHERE user_id = ?";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bind_param("i", $_SESSION['user_id']);
+                        $stmt->execute();
+                        $stmt->store_result();
+                        $stmt->bind_result($freeze_user);
+                        $stmt->fetch();
+                        $stmt->close();
+                        ?>
+
+
                         <li class="admin-action-item">
+                            <?php if ($freeze_user == 0): ?>
                             <button type="submit" name="submit_article" value="create" id="submit-article" class="item-publish item-class">Publish
                                 Article
                             </button>
+                            <?php elseif ($freeze_user == 1): ?>
+                                <p class="freeze-warning delete">Account is frozen pending review. <br><br> Publishing privileges have been suspended.</p>
+                            <?php endif; ?>
                         </li>
+
+
                     </ul>
                 </aside>
             </aside>

@@ -5,7 +5,6 @@ include BASE_PATH . "user/model/delete.article.php";
 include BASE_PATH . "user/view/delete-article-modal.html";
 include BASE_PATH . "user/model/article-logic.php";
 include BASE_PATH . 'features/write/write-icon-fixed.php';
-
 ?>
 
 <!DOCTYPE html>
@@ -21,6 +20,27 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
     <link rel="stylesheet" href="<?php echo BASE_URL ?>user/css/admin-bar.css">
 
     <style>
+        .popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #222;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            animation: fadeInOut 3s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-10px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
 
     </style>
 </head>
@@ -89,21 +109,103 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                             </select>
                         </form>
 
-                        <form id="featured-form">
-                            <label>
-                                Featured
-                                <input type="checkbox" id="featured" name="featured"
-                                       data-article-id="<?php echo $blog['id']; ?>"
-                                    <?php echo ($blog['featured'] == 1) ? 'checked' : ''; ?>
-                                       onchange="updateFeatured()">
-                            </label>
+                        <?php
+                        // Fetch the user_id associated with the article
+                        $query = "SELECT user_id FROM tbl_blogs WHERE id = ?";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bind_param("i", $blog['id']); // Assuming $blog['id'] is the article_id
+                        $stmt->execute();
+                        $stmt->store_result();
+                        $stmt->bind_result($user_id);
+                        $stmt->fetch();
+                        $stmt->close();
+
+                        // Fetch the freeze_user status for the associated user
+                        $query = "SELECT freeze_user FROM users WHERE user_id = ?";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bind_param("i", $user_id);
+                        $stmt->execute();
+                        $stmt->store_result();
+                        $stmt->bind_result($freeze_user);
+                        $stmt->fetch();
+                        $stmt->close();
+                        ?>
+
+
+                        <form id="freeze-user-form" action="<?php echo BASE_URL ?>admin/model/freeze_user.php" method="POST" data-article-id="<?php echo $blog['id']; ?>">
+                            <button type="button" id="freeze-user" onclick="toggleFreezeUser()">
+                                <?php echo $freeze_user == 1 ? 'Unfreeze User' : 'Freeze User'; ?>
+                            </button>
                         </form>
 
-<!---->
-<!--                         Report Article Button-->
-<!--                        <form id="report-form" action="report_article.php" method="POST">-->
-<!--                            <button type="button" id="report-article" onclick="submitForm('report-form')">Report Article</button>-->
-<!--                        </form>-->
+                        <script>
+                            function toggleFreezeUser() {
+                                var button = document.getElementById("freeze-user");
+                                var article_id = document.getElementById("freeze-user-form").getAttribute("data-article-id"); // Get article ID
+
+                                // Determine the action (freeze or unfreeze)
+                                var action = (button.innerText.trim() === "Freeze User") ? 1 : 0; // Freeze if the button says "Freeze", otherwise unfreeze
+
+                                var xhr = new XMLHttpRequest();
+                                xhr.open("POST", "<?php echo BASE_URL ?>admin/model/freeze_user.php", true);
+                                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                                xhr.onreadystatechange = function () {
+                                    if (xhr.readyState === 4) {
+                                        console.log("Raw Response:", xhr.responseText); // <-- Add this line
+
+                                        if (xhr.status === 200) {
+                                            var response;
+                                            try {
+                                                response = JSON.parse(xhr.responseText);
+                                            } catch (error) {
+                                                console.error("Invalid JSON response:", xhr.responseText); // Show error
+                                                return;
+                                            }
+
+                                            if (response.success) {
+                                                button.innerText = (action === 1) ? "Unfreeze User" : "Freeze User";
+                                                showPopup(response.message); // Use the response message
+                                            } else {
+                                                console.error("Failed to update freeze status.");
+                                            }
+                                        } else {
+                                            console.error("Request failed");
+                                        }
+                                    }
+                                };
+
+                                xhr.send("article_id=" + encodeURIComponent(article_id) + "&action=" + encodeURIComponent(action)); // Only send article_id and action
+                            }
+
+                            // Function to show the popup
+                            function showPopup(message) {
+                                var existingPopup = document.querySelector(".popup");
+                                if (existingPopup) {
+                                    existingPopup.remove(); // Remove existing popup if any
+                                }
+
+                                var popup = document.createElement("div");
+                                popup.classList.add("popup");
+                                popup.innerHTML = `<p>${message}</p>`;
+
+                                document.body.appendChild(popup);
+
+                                // Make sure popup is visible
+                                setTimeout(function () {
+                                    popup.classList.add("visible");
+                                }, 50); // Small delay to trigger CSS animation
+
+                                // Remove popup after 3 seconds
+                                setTimeout(function () {
+                                    popup.classList.remove("visible");
+                                    setTimeout(() => popup.remove(), 500);
+                                }, 3000);
+                            }
+                        </script>
+
+
+
                     </div>
                 <?php endif;
 
@@ -526,7 +628,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
 <script>
     var BASE_URL = "<?php echo BASE_URL; ?>";
 </script>
-<script src="<?php echo BASE_URL ?>user/model/editArticle.js"></script>
+<!--<script src="--><?php //echo BASE_URL ?><!--user/js/editArticle.js"></script>-->
 <script src="<?php echo BASE_URL ?>user/js/delete-article.js"></script>
 
 <script>
@@ -600,7 +702,8 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
     }
 
 </script>
-<script>function updateFeatured() {
+<script>
+    function updateFeatured() {
         var checkbox = document.getElementById("featured");
         var isFeatured = checkbox.checked ? 1 : 0; // Convert to 1 or 0
         var article_id = checkbox.getAttribute("data-article-id"); // Fetch article ID
