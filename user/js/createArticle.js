@@ -90,11 +90,27 @@ document.addEventListener("DOMContentLoaded", function () {
         let matches = [];
         for (const [category, subcategories] of Object.entries(categories)) {
             subcategories.forEach(sub => {
-                if (sub.toLowerCase().includes(query) && !selectedTags.includes(sub)) {
-                    matches.push(sub);
+                // Check for exact match first
+                if (sub.toLowerCase().startsWith(query) && !selectedTags.includes(sub)) {
+                    matches.push({ tag: sub, matchType: 'exact' });
+                }
+                // Then check for partial matches
+                else if (sub.toLowerCase().includes(query) && !selectedTags.includes(sub)) {
+                    matches.push({ tag: sub, matchType: 'partial' });
                 }
             });
         }
+
+        // Sort the matches first by matchType (exact match should come first) and then by length
+        matches.sort((a, b) => {
+            if (a.matchType === 'exact' && b.matchType !== 'exact') {
+                return -1; // Exact match should come first
+            } else if (a.matchType !== 'exact' && b.matchType === 'exact') {
+                return 1; // Exact match should come first
+            } else {
+                return a.tag.length - b.tag.length; // Sort by shortest first
+            }
+        });
 
         if (matches.length === 0) {
             suggestionsBox.style.display = "none";
@@ -103,15 +119,16 @@ document.addEventListener("DOMContentLoaded", function () {
             matches.slice(0, 10).forEach((match, index) => {
                 const suggestion = document.createElement("div");
                 suggestion.classList.add("suggestion-item");
-                suggestion.textContent = match;
+                suggestion.textContent = match.tag;
                 suggestion.setAttribute("data-index", index);
 
-                suggestion.addEventListener("click", () => selectTag(match));
+                suggestion.addEventListener("click", () => selectTag(match.tag));
 
                 suggestionsBox.appendChild(suggestion);
             });
         }
     });
+
 
     // Handle arrow key navigation and Enter key selection
     tagsInput.addEventListener("keydown", function (event) {

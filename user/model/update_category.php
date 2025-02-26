@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category = isset($_POST['category']) ? trim($_POST['category']) : '';
 
     if ($article_id > 0 && !empty($category)) {
-        $stmt = $conn->prepare("UPDATE tbl_blogs SET Tags = ? WHERE id = ?");
+        $stmt = $conn->prepare("UPDATE tbl_blogs SET Category = ? WHERE id = ?");
         $stmt->bind_param("si", $category, $article_id);
 
         if ($stmt->execute()) {

@@ -47,13 +47,20 @@ if ($image) {
 $query = "DELETE FROM tbl_blogs WHERE id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $article_id);
-
 if ($stmt->execute()) {
-    // Redirect to the feed page after successful deletion
-    header('Location: ' . BASE_URL . 'account/feed.php');
-    exit();  // Make sure no further code is executed after the redirect
+// Redirect the user back to the previous page if available
+    $referer = $_SERVER['HTTP_REFERER'] ?? BASE_URL . 'account/feed.php';
+    if (strpos($referer, 'article.php') !== false) {
+        header('Location: ' . BASE_URL . 'forYou.php');
+        exit();
+    } else {
+        header('Location: ' . $referer);
+    }
+    exit(); // Ensure no further code is executed after redirection
 } else {
     echo json_encode(['success' => false, 'message' => 'Failed to delete the article.']);
-    exit();  // Stop further code execution in case of failure
+    exit(); // Stop further code execution in case of failure
 }
+
+
 ?>

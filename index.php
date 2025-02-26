@@ -49,7 +49,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
 <script>
     // Button click function
     function explore() {
-        window.location.href = "layouts/pages/articles/article-home.php";
+        window.location.href = "<?php echo BASE_URL?>explore/home.php";
     }
 </script>
 </body>

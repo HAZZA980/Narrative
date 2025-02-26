@@ -41,7 +41,7 @@ include BASE_PATH . 'includes/model/header_file_mapping.php';
             background: white;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
             border-radius: 5px;
-            z-index: 1000;
+            z-index: 2000;
             min-width: 120px;
         }
 

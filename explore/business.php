@@ -24,7 +24,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
             <?php
             try {
                 // Get the current file name dynamically
-                $sql = "SELECT id, title, LEFT(content, 250) AS summary, datePublished, Tags, featured, Image, user_id FROM tbl_blogs WHERE Tags = 'Finance'";
+                $sql = "SELECT id, title, LEFT(content, 250) AS summary, datePublished, Tags, featured, Image, user_id FROM tbl_blogs WHERE Private = '0' AND Category = 'Business' AND Featured = '1'";
                 $result = $conn->query($sql);
 
                 $i = 1; // Counter to track grid items
@@ -66,7 +66,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
 
         <div class="grid-container">
             <?php
-            $sql = "SELECT id, title, LEFT(content, 250) AS summary, datePublished, Tags, featured, Image, user_id FROM tbl_blogs WHERE Tags = 'Big Tech'";
+            $sql = "SELECT id, title, LEFT(content, 250) AS summary, datePublished, Tags, featured, Image, user_id FROM tbl_blogs WHERE Category = 'Business' AND Featured = '0'";
             $result = $conn->query($sql);
 
             $i = 1; // Counter to track grid items

@@ -12,6 +12,7 @@ include BASE_PATH . 'model/category-file-mapping.php';
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="articleLayouts/layoutFive_8_Items.css">
+<!--    <link rel="stylesheet" href="articleLayouts/layoutOne_7_12_Item.css">-->
     <title>Articles Home | Narrative</title>
     <style>
         /* Pagination Styles */

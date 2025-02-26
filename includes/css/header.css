@@ -262,6 +262,7 @@ body {
     grid-column-start: 1;
     grid-column-end: 4;
     font-family: inherit;
+    z-index: 3000;
 }
 
 /* Dropdown Items */
@@ -281,12 +282,14 @@ body {
     min-width: 140px; /* Ensures uniform size */
     border: 1px solid red;
     background-color: white;
+    z-index: 1000;
 }
 
 /* Hover Effect */
 .dropdown-menu-items:hover {
     background-color: #eaeaea;
     transform: scale(1.03);
+    z-index: 1000;
 }
 
 .dropdown-menu-items img {

@@ -1,5 +1,6 @@
 /* Admin Bar */
 .admin-bar {
+    margin-top: -3rem;
     display: flex;  /* Use Flexbox for horizontal layout */
     justify-content: space-between; /* Distribute items evenly with space between */
     align-items: center; /* Vertically center the items */
@@ -7,6 +8,22 @@
     padding: 10px 20px; /* Add some padding around the bar */
     border: 1px solid #ccc; /* Light border for separation */
     margin-bottom: 20px; /* Space below the admin bar */
+    position: fixed;
+    width: 50%;
+    z-index: 100;
+}
+
+#featured-form {
+    position: relative;
+    top: 0.3rem;
+}
+
+.admin-taskbar-title {
+    position: relative;
+    top: 0.5rem;
+    display: flex;  /* Use Flexbox for horizontal layout */
+    justify-content: space-between; /* Distribute items evenly with space between */
+    align-items: baseline; /* Vertically center the items */
 }
 
 /* Each tool inside the admin bar */

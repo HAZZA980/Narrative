@@ -66,7 +66,6 @@ document.addEventListener("DOMContentLoaded", function () {
         hiddenTagsInput.value = selectedTags.join(", ");
     }
 
-    // Populate suggestions
     function populateSuggestions() {
         const query = tagsInput.value.toLowerCase().trim();
         suggestionsBox.innerHTML = "";
@@ -77,11 +76,27 @@ document.addEventListener("DOMContentLoaded", function () {
         let matches = [];
         for (const [category, subcategories] of Object.entries(categories)) {
             subcategories.forEach(sub => {
-                if (sub.toLowerCase().includes(query) && !selectedTags.includes(sub)) {
-                    matches.push({ sub, category });
+                // Exact match check (startsWith)
+                if (sub.toLowerCase().startsWith(query) && !selectedTags.includes(sub)) {
+                    matches.push({ sub, category, matchType: 'exact' });
+                }
+                // Partial match check (includes)
+                else if (sub.toLowerCase().includes(query) && !selectedTags.includes(sub)) {
+                    matches.push({ sub, category, matchType: 'partial' });
                 }
             });
         }
+
+        // Sort matches: exact matches first, then by length (shorter first)
+        matches.sort((a, b) => {
+            if (a.matchType === 'exact' && b.matchType !== 'exact') {
+                return -1; // Exact match comes first
+            } else if (a.matchType !== 'exact' && b.matchType === 'exact') {
+                return 1; // Exact match comes first
+            } else {
+                return a.sub.length - b.sub.length; // Sort by shortest length
+            }
+        });
 
         if (matches.length > 0) {
             suggestionsBox.style.display = "block";
@@ -95,6 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     }
+
 
     function selectTag(tag) {
         if (!selectedTags.includes(tag)) {

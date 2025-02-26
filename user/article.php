@@ -33,7 +33,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                 <!-- Admin Tools Bar (Visible only for admin users) -->
                 <?php if (isset($_SESSION['user_id']) && $_SESSION['isAdmin'] == 1): ?>
                     <div class="admin-bar">
-                        <p>ADMIN TASKBAR</p>
+                        <p class="admin-taskbar-title">ADMIN TASKBAR</p>
 
                         <!-- Edit Icon -->
                         <?php if (isset($_SESSION['user_id']) && $_SESSION['isAdmin'] == 1): ?>
@@ -91,16 +91,16 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
 
                         <form id="featured-form">
                             <label>
+                                Featured
                                 <input type="checkbox" id="featured" name="featured"
                                        data-article-id="<?php echo $blog['id']; ?>"
                                     <?php echo ($blog['featured'] == 1) ? 'checked' : ''; ?>
                                        onchange="updateFeatured()">
-                                Featured
                             </label>
                         </form>
 
-
-                        <!-- Report Article Button -->
+<!---->
+<!--                         Report Article Button-->
 <!--                        <form id="report-form" action="report_article.php" method="POST">-->
 <!--                            <button type="button" id="report-article" onclick="submitForm('report-form')">Report Article</button>-->
 <!--                        </form>-->
