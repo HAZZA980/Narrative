@@ -93,25 +93,36 @@
     align-items: baseline;
 }
 
-
-#content {
-    width: 80%;
-    height: auto;
+.blog-content {
     margin-left: 1rem;
+    outline: none !important;
+    border: none !important;
+    background: transparent;
+    height: auto;
+    overflow: hidden;
+    width: 80%;
+    resize: none !important;
+    flex-grow: 1;
 }
 
-/* Ensure specificity */
-textarea.blog-content {
-    border: none !important; /* Overrides any other border rules */
-    outline: none !important; /* Removes the focus outline */
-    resize: none; /* Prevent resizing (optional) */
-    background: transparent; /* Optional: Makes the background blend in */
-    border: none; /* Remove border */
-    outline: none; /* Remove outline */
-    resize: none; /* Prevent manual resizing */
-    height: auto; /* Allow dynamic height adjustment */
-    background: transparent; /* Optional: Make it blend in */
-}
+/*#content {*/
+/*    width: 80%;*/
+/*    height: auto;*/
+/*    margin-left: 1rem;*/
+/*}*/
+
+/*!* Ensure specificity *!*/
+/*textarea.blog-content {*/
+/*    border: none !important; !* Overrides any other border rules *!*/
+/*    outline: none !important; !* Removes the focus outline *!*/
+/*    resize: none; !* Prevent resizing (optional) *!*/
+/*    background: transparent; !* Optional: Makes the background blend in *!*/
+/*    border: none; !* Remove border *!*/
+/*    outline: none; !* Remove outline *!*/
+/*    resize: none; !* Prevent manual resizing *!*/
+/*    height: auto; !* Allow dynamic height adjustment *!*/
+/*    background: transparent; !* Optional: Make it blend in *!*/
+/*}*/
 
 .edit-image-container {
     justify-content: space-between;

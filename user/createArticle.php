@@ -49,6 +49,21 @@ include BASE_PATH . 'user/model/createArticle.php';
                                   placeholder="Write your article content here..." required></textarea>
                     </div>
 
+                    <script>
+                        const textarea = document.getElementById('content');
+
+                        // Function to adjust the height based on content
+                        const adjustHeight = () => {
+                            textarea.style.height = 'auto'; // Reset height to auto to shrink if needed
+                            textarea.style.height = (textarea.scrollHeight) + 'px'; // Adjust height to fit content
+                        };
+
+                        // Attach the event listener to automatically adjust height on input
+                        textarea.addEventListener('input', adjustHeight);
+
+                        // Initial adjustment if the textarea contains pre-filled content
+                        adjustHeight();
+                    </script>
                     <div id="selected-tags"></div>
 
                     <div class="edit-category-container">

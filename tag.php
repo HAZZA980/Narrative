@@ -90,6 +90,63 @@ $stmt->close();
             text-decoration: underline;
             color: firebrick;
         }
+
+
+
+        /* Profile image container */
+        .profile-image-container {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+
+        /* Wrapper for the profile picture */
+        .profile-pic-wrapper {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 10px;
+            position: relative;
+        }
+
+        /* Profile picture */
+        .pp-author-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Profile initial (if no image is available) */
+        .profile-initial {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 2rem; /* Adjust font size for initials */
+            text-align: center;
+            background-color: #888; /* Default random color */
+        }
+
+        /* Author name */
+        .profile-author-name {
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: #333;
+            margin-left: 1rem;
+        }
+
+        /* Hover effect for author name */
+        .profile-author-name:hover {
+            color: #007bff;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -254,8 +311,8 @@ $stmt->close();
 
 
             <?php else: ?>
-                <p>No Articles Found. Publish your First Article <a
-                            href="<?php echo BASE_URL ?>includes/createArticle.php">Here</a>.</p>
+                <p>No articles match that tag. Try searching for another <a
+                            href="<?php echo BASE_URL ?>search.php">Here</a>.</p>
             <?php endif; ?>
 
 
@@ -301,8 +358,53 @@ $stmt->close();
         </div>
 
 
-        <aside class="aside-links">
+        <?php
+        // Assuming the user is logged in and their user_id is stored in a session variable
+        session_start();
+        $current_user_id = $_SESSION['user_id'] ?? null; // Get current user's ID from session
 
+        // Ensure that the user is logged in
+        if (!$current_user_id) {
+            die('User not logged in');
+        }
+
+        // Get the tags from the User_preferences table that the user has set
+        $preferences_sql = "SELECT Tag FROM User_preferences WHERE User_id = ?";
+        $stmt = $conn->prepare($preferences_sql);
+        $stmt->bind_param("i", $current_user_id);
+        $stmt->execute();
+        $preferences_result = $stmt->get_result();
+
+        // Store user preferences in an array (Tags that correspond to Category in tbl_blogs)
+        $excluded_categories = [];
+        while ($pref_row = $preferences_result->fetch_assoc()) {
+            $excluded_categories[] = $pref_row['Tag'];
+        }
+
+        // If no preferences found, just skip the filtering for categories (avoid empty IN clause)
+        $excluded_categories_str = count($excluded_categories) > 0 ? "'" . implode("','", $excluded_categories) . "'" : "'0'"; // Default to '0' if no preferences
+
+        // Query to get articles that are not written by the logged-in user and not in the user's preferred categories
+        $sql = "
+                SELECT b.id, b.title, LEFT(b.content, 270) AS summary, b.datePublished, b.Category, b.Image, b.user_id, u.username
+                FROM tbl_blogs b
+                JOIN Users u ON b.user_id = u.user_id
+                WHERE b.user_id != ? 
+                  AND b.Private = 0
+                  AND b.Category NOT IN ($excluded_categories_str)
+                ORDER BY RAND()  -- Randomize the order of articles
+                LIMIT 5
+";
+
+
+        // Prepare and execute the query
+        $stmt2 = $conn->prepare($sql);
+        $stmt2->bind_param("i", $current_user_id);
+        $stmt2->execute();
+        $non_recommended_result = $stmt2->get_result();
+        ?>
+
+        <aside class="aside-links">
             <aside class="non-recommended-articles">
                 <h2 class="aside-title">Other Articles</h2>
                 <?php if ($non_recommended_result->num_rows > 0): ?>
@@ -311,7 +413,7 @@ $stmt->close();
                             <li>
                                 <a href="user/article.php?id=<?php echo $row['id']; ?>">
                                     <div class="article-summary">
-                                        <p class="author-name"><?php echo htmlspecialchars($row['Author']); ?></p>
+                                        <p class="author-name"><?php echo htmlspecialchars($row['username']); ?></p>
                                         <h3 class="article-title"><?php echo htmlspecialchars($row['title']); ?></h3>
                                         <p class="article-date">
                                             <small><?php echo date('F j, Y', strtotime($row['datePublished'])); ?></small>
@@ -325,33 +427,144 @@ $stmt->close();
                     <p>No other articles available at the moment.</p>
                 <?php endif; ?>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <?php
+                // Fetch the most bookmarked authors
+                $sql = "SELECT u.user_id, u.username, COUNT(ub.article_id) AS bookmark_count, ud.profile_picture
+        FROM user_bookmarks ub
+        JOIN tbl_blogs b ON ub.article_id = b.id
+        JOIN Users u ON b.user_id = u.user_id
+        LEFT JOIN User_details ud ON u.user_id = ud.user_id
+        WHERE ub.user_id = ?
+        GROUP BY u.user_id, u.username, ud.profile_picture
+        ORDER BY bookmark_count DESC
+        LIMIT 3";
+
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("i", $user_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                ?>
+
                 <div>
-                    <h3 class="aside-title">Latest From Your Followed Authors</h3>
+                    <h3 class="aside-title">Your Favourite Authors</h3>
+                    <ul>
+                        <?php if ($result->num_rows > 0): ?>
+                            <?php while ($row = $result->fetch_assoc()): ?>
+                                <li>
+                                    <div class="profile-image-container">
+                                        <?php
+                                        // Get profile picture and handle missing profile picture
+                                        $profilePic = $row['profile_picture'] ?? null;
+                                        $author_id = $row['user_id'];
+
+                                        if (!empty($profilePic) && file_exists(BASE_PATH . 'public/images/users/' . $author_id . '/' . htmlspecialchars($profilePic))) {
+                                            // Display the profile picture if it exists
+                                            echo '<div class="profile-pic-wrapper">
+                                            <img src="' . BASE_URL . 'public/images/users/' . $author_id . '/' . htmlspecialchars($profilePic) . '" alt="Profile Picture" class="pp-author-img"></div>';
+                                        } else {
+                                            // If the profile picture doesn't exist, display the user's initial with a random background color
+                                            $initial = strtoupper(substr($row['username'], 0, 1));  // Get the first letter of the username
+                                            $randomColor = '#' . substr(md5(rand()), 0, 6); // Generate a random hex color
+                                            echo '<div class="profile-initial" style="background-color: ' . $randomColor . ';">' . $initial . '</div>';
+                                        }
+                                        ?>
+                                        <a href="<?php echo BASE_URL; ?>feed.php?username=<?php echo urlencode($row['username']); ?>" class="profile-author-name">
+                                            <?php echo htmlspecialchars($row['username']); ?>
+                                            <!--                                            <p>(--><?php //echo $row['bookmark_count']; ?><!-- bookmarks)</p>-->
+                                        </a>
+                                    </div>
+
+                                </li>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <p>No bookmarked authors yet.</p>
+                        <?php endif; ?>
+                    </ul>
                 </div>
 
+
+
+
+
+                <?php
+                // Assuming $user_id is already defined
+                $user_id = $_SESSION['user_id'] ?? 0; // Get the logged-in user ID
+
+                // Step 1: Find the user's most liked category (excluding preferred ones)
+                $most_liked_category_sql = "
+                SELECT Category
+                FROM tbl_blogs
+                WHERE Category NOT IN (
+                SELECT Tag FROM User_preferences WHERE User_id = ?
+                )
+                AND Category IS NOT NULL
+                GROUP BY Category
+                ORDER BY (
+                SELECT COUNT(*) FROM article_likes al
+                JOIN tbl_blogs tb ON al.article_id = tb.id
+                WHERE tb.Category = tbl_blogs.Category
+                ) DESC
+                LIMIT 1
+                ";
+
+                $stmt = $conn->prepare($most_liked_category_sql);
+                $stmt->bind_param("i", $user_id);
+                $stmt->execute();
+                $category_result = $stmt->get_result();
+                $most_liked_category = $category_result->fetch_assoc()['Category'] ?? null;
+
+                // Step 2: Fetch distinct tags from the most liked category
+                if ($most_liked_category) {
+                    $distinct_tags_sql = "
+   SELECT tag_list.tag, COUNT(al.id) AS like_count
+FROM (
+    SELECT DISTINCT TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(b.Tags, ',', n.n), ',', -1)) AS tag, b.id AS article_id
+    FROM tbl_blogs b
+    JOIN (
+        SELECT 1 n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 
+        UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 
+        UNION ALL SELECT 9 UNION ALL SELECT 10
+    ) n 
+    ON CHAR_LENGTH(b.Tags) - CHAR_LENGTH(REPLACE(b.Tags, ',', '')) >= n.n - 1
+    WHERE b.Category = ? AND b.Private = 0
+) tag_list
+LEFT JOIN article_likes al ON tag_list.article_id = al.article_id
+GROUP BY tag_list.tag
+ORDER BY like_count DESC;
+
+";
+
+
+                    $stmt = $conn->prepare($distinct_tags_sql);
+                    $stmt->bind_param("s", $most_liked_category);
+                    $stmt->execute();
+                    $tags_result = $stmt->get_result();
+                }
+                ?>
+
+                <!-- Display Section -->
                 <div class="aside-recommended-topics">
                     <h2 class="aside-title">Topics You May Like</h2>
-                    <?php if ($non_recommended_topics_result->num_rows > 0): ?>
+                    <?php if ($tags_result->num_rows > 0): ?>
                         <ul>
-                            <?php while ($topic_row = $non_recommended_topics_result->fetch_assoc()): ?>
+                            <?php while ($tag_row = $tags_result->fetch_assoc()): ?>
                                 <li>
-                                    <?php
-                                    $tagData = $topic_row['Tags'];
-
-                                    // If it's an array, get the first element; otherwise, treat it as a string
-                                    $firstTag = is_array($tagData) ? reset($tagData) : explode(',', $tagData)[0];
-
-                                    $firstTag = trim($firstTag); // Remove any spaces around the tag
-                                    $file_name = $category_map[$firstTag] ?? null; // Check if the tag exists in the map
-
-                                    if ($file_name): ?>
-                                        <a href="<?php echo BASE_URL; ?>layouts/pages/articles/categories/<?php echo htmlspecialchars($file_name); ?>"
-                                           class="tag-link">
-                                            <?php echo htmlspecialchars($firstTag); ?>
-                                        </a>
-                                    <?php else: ?>
-                                        <span><?php echo htmlspecialchars($firstTag); ?></span>
-                                    <?php endif; ?>
+                                    <a href="<?php echo BASE_URL; ?>tag.php?tag=<?php echo urlencode($tag_row['tag']); ?>" class="tag-link">
+                                        <?php echo htmlspecialchars($tag_row['tag']); ?>
+                                    </a>
                                 </li>
                             <?php endwhile; ?>
                         </ul>
@@ -360,6 +573,7 @@ $stmt->close();
                     <?php endif; ?>
                 </div>
             </aside>
+
         </aside>
     </div>
 </main>

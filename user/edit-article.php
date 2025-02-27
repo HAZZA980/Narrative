@@ -63,7 +63,21 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
                         <textarea class="blog-content" id="content" name="content" rows="6"
                                   required><?php echo htmlspecialchars($article['Content']); ?></textarea>
                     </div>
+                    <script>
+                        const textarea = document.getElementById('content');
 
+                        // Function to adjust the height based on content
+                        const adjustHeight = () => {
+                            textarea.style.height = 'auto'; // Reset height to auto to shrink if needed
+                            textarea.style.height = (textarea.scrollHeight) + 'px'; // Adjust height to fit content
+                        };
+
+                        // Attach the event listener to automatically adjust height on input
+                        textarea.addEventListener('input', adjustHeight);
+
+                        // Initial adjustment if the textarea contains pre-filled content
+                        adjustHeight();
+                    </script>
 
                     <div id="selected-tags">
                         <?php
