@@ -109,6 +109,20 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                             </select>
                         </form>
 
+
+
+                        <form id="featured-form">
+                            <label>
+                                <input type="checkbox" id="featured" name="featured"
+                                       data-article-id="<?php echo $blog['id']; ?>"
+                                        <?php echo ($blog['featured'] == 1) ? 'checked' : ''; ?>
+                                       onchange="updateFeatured()">
+                                Featured
+                            </label>
+                        </form>
+
+
+
                         <?php
                         // Fetch the user_id associated with the article
                         $query = "SELECT user_id FROM tbl_blogs WHERE id = ?";

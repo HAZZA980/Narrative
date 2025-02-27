@@ -10,6 +10,28 @@
     /*border: blue 3px solid;*/
     width: 73%;
 }
+.latest-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers content horizontally */
+    justify-content: center;
+    width: 100%;
+}
+
+#blog-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Ensures articles are centered */
+    width: 100%;
+    max-width: 800px; /* Adjust as needed */
+}
+
+.latest {
+    width: 100%;
+    max-width: 700px; /* Adjust for better centering */
+    margin-bottom: 20px;
+}
+
 
 .main-content .main-content-title {
     padding: 0;
@@ -324,22 +346,6 @@
 /*******
 * Latest Pagination Element
 */
-.latest-container {
-    display: flex;
-    flex-direction: column;
-    justify-items: center;
-    align-items: center;
-}
-
-.latest {
-    display: flex;
-    height: auto;
-    width: 70%;
-    flex-direction: row;
-    padding-top: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px black solid;
-}
 
 .latest-grid-container {
     display: grid;
@@ -380,6 +386,8 @@
     margin-bottom: 1rem;
     /*border: olive solid 2px;*/
 }
+
+
 
 .latest-grid-item-2 {
     width: auto;

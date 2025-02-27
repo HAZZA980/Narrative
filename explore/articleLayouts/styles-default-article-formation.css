@@ -216,13 +216,15 @@
     overflow: hidden;
     border-radius: 4px;
     background-color: #f9f9f9;
+    height: 7rem; /* Ensures a fixed height for the container */
 }
 
+/* Make the image fill the container and maintain the aspect ratio */
 .image-container img {
-    width: 100%;
-    height: auto;
-    object-fit: cover; /* Ensures the image scales properly */
-    object-position: center;
+    width: 100%; /* Make image fill container width */
+    height: 100%; /* Make image fill container height */
+    object-fit: cover; /* Ensures the image scales properly and covers the container */
+    object-position: center; /* Center the image within the container */
 }
 
 .blog-details-2 {

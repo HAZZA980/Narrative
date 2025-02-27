@@ -40,6 +40,7 @@
 .grid-item a {
     height: 100%;
     z-index: 10;
+    text-decoration: none;
 }
 .image-container {
     height: 50%; /* Takes up top half of the box */
@@ -70,6 +71,8 @@
     font-size: 1.125rem;
     position: relative;
     margin-bottom: 3rem;
+    text-decoration: none;
+    text-underline: none;
 }
 
 #blog-content {
@@ -93,6 +96,7 @@
     color: black;
     font-size: 1.75em !important;
     border-bottom: 0;
+    text-decoration: none;
 }
 .p1 #blog-content {
     display: block; /* Show the content only in the .p1 grid item */
@@ -152,6 +156,7 @@
 /* For consistency, ensure the title also changes color on hover */
 .grid-item a:hover #blog-title {
     color: #B80000 !important; /* Set title color to red on hover */
+    text-decoration: none;
 }
 
 /* For ensuring the content and title are consistent in hover effects */
@@ -207,17 +212,23 @@
 }
 
 .latest-image-container {
-    width: 100%;
+    width: 100%; /* Or specify a fixed width like 300px */
+    height: 160px; /* Set the fixed height */
     overflow: hidden;
-
+    position: relative;
+    display: flex; /* Enables Flexbox */
+    justify-content: center; /* Horizontally centers the content */
+    align-items: center; /* Vertically centers the image */
+    /*border: #4CAF50 solid 2px;*/
+    border-radius: 10px;
 }
+
 .latest-image-container img {
     width: 100%;
-    height: auto; /* Maintain aspect ratio */
+    height: 100%; /* Makes the image cover the full height */
     object-fit: cover;
-    object-position: center;
+    object-position: center; /* Center the image */
 }
-
 .latest-grid-container-2 {
     display: grid;
     height: 10rem;
@@ -225,7 +236,59 @@
     grid-auto-rows: 70% 30%; /* Allow rows to grow based on content */
     margin-left: 1rem;
     gap: 1rem;
+    margin-bottom: 1rem;
 }
+
+#load-more-btn {
+    display: block;
+    margin: 20px auto; /* Centers the button horizontally */
+    padding: 12px 20px;
+    background-color: #0056b3;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#load-more-btn:hover {
+    background-color: #003f80;
+    transform: scale(1.05);
+}
+
+#load-more-btn:active {
+    transform: scale(0.95);
+}
+
+#load-more-btn.hidden {
+    display: none;
+}
+
+
+.latest-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers content horizontally */
+    justify-content: center;
+    width: 100%;
+}
+
+#blog-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Ensures articles are centered */
+    width: 100%;
+    max-width: 800px; /* Adjust as needed */
+}
+
+.latest {
+    width: 100%;
+    max-width: 700px; /* Adjust for better centering */
+    margin-bottom: 20px;
+}
+
 .latest-grid-item-2 {
     width: auto;
 }
@@ -420,3 +483,28 @@
 .carousel-button.right {
     right: 10px;
 }
+
+#loadMoreBtn {
+    display: block;
+    margin: 20px auto; /* Centers the button */
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #0056b3;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+#loadMoreBtn:hover {
+    background-color: #003f7f;
+    transform: scale(1.05);
+}
+
+#loadMoreBtn:active {
+    transform: scale(0.98);
+}
+
+

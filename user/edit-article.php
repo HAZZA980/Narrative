@@ -64,6 +64,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
                                   required><?php echo htmlspecialchars($article['Content']); ?></textarea>
                     </div>
 
+
                     <div id="selected-tags">
                         <?php
                         $tagsArray = explode(',', $article['Tags']);
