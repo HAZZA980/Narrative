@@ -738,6 +738,20 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
 
         xhr.send("article_id=" + encodeURIComponent(article_id) + "&featured=" + encodeURIComponent(isFeatured));
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const adminBar = document.querySelector(".admin-bar");
+        const initialOffset = adminBar.offsetTop; // Get initial position
+
+        window.addEventListener("scroll", function () {
+            if (window.scrollY > initialOffset) {
+                adminBar.classList.add("sticky"); // Make sticky
+            } else {
+                adminBar.classList.remove("sticky"); // Revert to original
+            }
+        });
+    });
+
 </script>
 
 </body>

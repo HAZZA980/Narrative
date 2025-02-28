@@ -53,7 +53,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 
         <?php
         // Query to get featured blogs
-        $sql = "SELECT id, title, DatePublished, Tags, Image, user_id FROM tbl_blogs WHERE DatePublished like '%$year%' ORDER BY DatePublished DESC";
+        $sql = "SELECT id, title, DatePublished, Tags, Image, user_id FROM tbl_blogs WHERE DatePublished like '%$year%' AND Private = '0' ORDER BY DatePublished DESC";
         $result = $conn->query($sql);
 
         $i = 1; // Counter to track grid items

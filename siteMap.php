@@ -62,7 +62,6 @@ include BASE_PATH . 'model/subcategories.php';
 
         /* Table row */
         .tag-table td {
-            padding: 8px;
             border: 1px solid #ddd;
             text-align: center;
         }
@@ -161,13 +160,13 @@ include BASE_PATH . 'model/subcategories.php';
                         $count++;
 
                         // Start a new row every 7 tags
-                        if ($count % 7 === 0) {
+                        if ($count % 5 === 0) {
                             echo "</tr><tr>";
                         }
                     }
 
                     // Fill empty cells if the last row has less than 7 items
-                    while ($count % 7 !== 0) {
+                    while ($count % 5 !== 0) {
                         echo "<td></td>";
                         $count++;
                     }

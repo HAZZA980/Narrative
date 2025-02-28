@@ -2,7 +2,6 @@
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 include BASE_PATH . "account/account-masthead.php";
 include BASE_PATH . "settings/model/bio.php";
-include BASE_PATH . 'features/write/write-icon-fixed.php';
 
 
 // Determine which section to show

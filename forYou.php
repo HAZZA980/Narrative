@@ -11,7 +11,7 @@ include BASE_PATH . 'model/for-you-logic.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Articles Home | Narrative</title>
+    <title>For You | Narrative</title>
     <link rel="stylesheet" href="public/css/styles-forYou.css">
     <link rel="stylesheet" href="features/pagination/css/pagination.css">
     <link rel="stylesheet" href="explore/articleLayouts/styles-default-article-formation.css">
