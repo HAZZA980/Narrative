@@ -8,7 +8,8 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="<?php echo BASE_URL?>public/css/styles-articles-sitemap-layout.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL?>explore/articleLayouts/layoutOne_7_12_item.css">
+
     <title>Articles by Year | Narrative Learn</title>
     <style>
         /* General Reset */
@@ -62,8 +63,8 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
             while ($row = $result->fetch_assoc()) {
                 // Dynamically create grid items for each blog
                 ?>
-                <div class="grid-item p<?php echo $i; ?>">
-                    <a href="<?php echo BASE_URL ?>layouts/pages/articles/article.php?id=<?php echo $row['id']; ?>">
+                <div class="grid-item">
+                    <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>">
                         <div class="image-container">
                             <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
                                 ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
@@ -76,37 +77,26 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
                     </a>
                     <div class="blog-details-2">
                         <p id="blog-tags">
-                            <a href="<?php
-                            // Normalize the tag to handle special characters like &amp;
-                            $tag = trim(html_entity_decode($row['Tags']));
-                            // Case-insensitive comparison
-                            if (strcasecmp($tag, "Entertainment") == 0) {
-                                echo "entertainment.php";
-                            } else if (strcasecmp($tag, "Business") == 0) {
-                                echo "business.php";
-                            } else if (strcasecmp($tag, "History") == 0) {
-                                echo "history-and-culture.php";
-                            } else if (strcasecmp($tag, "Lifestyle") == 0) {
-                                echo "lifestyle.php";
-                            } else if (strcasecmp($tag, "Politics") == 0) {
-                                echo "politics.php";
-                            } else if (strcasecmp($tag, "Reviews") == 0) {
-                                echo "reviews.php";
-                            } else if (strcasecmp($tag, "Technology") == 0) {
-                                echo "technology.php";
-                            } else if (strcasecmp($tag, "Travel") == 0) {
-                                echo "travel.php";
-                            } else if (strcasecmp($tag, "Writing Craft") == 0) {
-                                echo "writing-craft.php";
-
+                            <?php
+                            if (!empty($row['Tags'])) {
+                                // Explode tags by comma and trim whitespace
+                                $tags = explode(",", $row['Tags']);
+                                $first_tag = trim($tags[0]); // Get the first tag
+                                ?>
+                                <!-- Tag link to feed.php with tag query -->
+                                <a href="<?php echo BASE_URL; ?>tag.php?tag=<?php echo urlencode($first_tag); ?>"
+                                   class="tag-link">
+                                    <?php echo htmlspecialchars($first_tag); ?>
+                                </a>
+                                <?php
                             } else {
-                                echo "#"; // Fallback link if no match is found
+                                echo "<span>Uncategorized</span>";
                             }
-                            ?>">
-                                <?php echo htmlspecialchars($row['Tags']); ?>
-                            </a>
+                            ?>
+
+
                         </p>
-                        <p id="blog-date"><small><?php echo date('F j, Y', strtotime($row['date'])); ?></small></p>
+                        <p id="blog-date"><small><?php echo date('F j, Y', strtotime($row['DatePublished'])); ?></small></p>
                     </div>
                 </div>
                 <?php

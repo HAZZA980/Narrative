@@ -450,14 +450,14 @@ if (empty($preferred_categories)) {
 
 
 
+
+
+
         <?php
         // Assuming the user is logged in and their user_id is stored in a session variable
         $current_user_id = $_SESSION['user_id'] ?? null; // Get current user's ID from session
 
-        // Ensure that the user is logged in
-        if (!$current_user_id) {
-            die('User not logged in');
-        }
+
 
         // Get the tags from the User_preferences table that the user has set
         $preferences_sql = "SELECT Tag FROM User_preferences WHERE User_id = ?";
@@ -487,7 +487,6 @@ if (empty($preferred_categories)) {
                 LIMIT 5
 ";
 
-
         // Prepare and execute the query
         $stmt2 = $conn->prepare($sql);
         $stmt2->bind_param("i", $current_user_id);
@@ -497,6 +496,12 @@ if (empty($preferred_categories)) {
 
         <aside class="aside-links">
             <aside class="non-recommended-articles">
+                <?php if (!isset($_SESSION['user_id'])): ?>
+
+                    <h2 class="article-title">Log in to get personal recommendations, view your favorite authors, and create your own articles</h2>
+                    <h3 class="author-title"><a href="<?php echo BASE_URL; ?>user_auth.php">Sign In / Register Here</a></h3>
+                <?php else: ?>
+
                 <h2 class="aside-title">Other Articles</h2>
                 <?php if ($non_recommended_result->num_rows > 0): ?>
                     <ul>
@@ -665,6 +670,7 @@ ORDER BY like_count DESC;
                 </div>
             </aside>
 
+            <?php endif; ?>
         </aside>
     </div>
 </main>

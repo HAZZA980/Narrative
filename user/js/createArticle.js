@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("updateForm");
-    const titleInput = document.getElementById("edit-article-title");
+    const titleInput = document.getElementById("blog-title"); // Adjusted to match HTML
     const contentInput = document.getElementById("content");
     const tagsInput = document.getElementById("tags-input");
     const hiddenTagsInput = document.getElementById("tags-hidden");
@@ -8,11 +8,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const suggestionsBox = document.getElementById("suggestions");
     const tagsContainer = document.getElementById("selected-tags");
 
-    let selectedTags = [];
+    let selectedTags = hiddenTagsInput.value ? hiddenTagsInput.value.split(",").map(tag => tag.trim()) : [];
     let activeIndex = -1; // Tracks which suggestion is highlighted
+
+    // Ensure selectedTags is updated before validation
+    function updateSelectedTags() {
+        selectedTags = hiddenTagsInput.value.split(",").filter(tag => tag.trim() !== "");
+    }
 
     // Prevent form submission if fields are empty
     function validateForm(event) {
+        updateSelectedTags(); // Update tags before validation
         let errors = [];
 
         if (titleInput.value.trim() === "") {
@@ -38,7 +44,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Attach event listeners to submission buttons
     submitButtons.forEach(button => {
-        button.addEventListener("click", validateForm);
+        button.addEventListener("click", function (event) {
+            if (!validateForm(event)) {
+                event.preventDefault(); // Ensure the form does not submit
+            }
+        });
     });
 
     // Select a tag

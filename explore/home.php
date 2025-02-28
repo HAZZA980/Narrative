@@ -13,7 +13,7 @@ include BASE_PATH . 'model/category-file-mapping.php';
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="articleLayouts/layoutFive_8_Items.css">
 <!--    <link rel="stylesheet" href="articleLayouts/layoutOne_7_12_Item.css">-->
-    <title>Articles Home | Narrative</title>
+    <title>Explore | Narrative</title>
     <style>
         /* Pagination Styles */
         .pagination {
@@ -90,7 +90,6 @@ include BASE_PATH . 'model/category-file-mapping.php';
                                     "Entertainment" => "entertainment.php",
                                     "Food" => "food.php",
                                     "Gaming" => "gaming.php",
-                                    "Health & Fitness" => "health.php",
                                     "History and Culture" => "history-and-culture.php", // Ensure mapping to history-and-culture.php
                                     "Lifestyle" => "lifestyle.php",
                                     "Philosophy" => "philosophy.php",
@@ -100,7 +99,8 @@ include BASE_PATH . 'model/category-file-mapping.php';
                                     "Sports" => "sports.php",
                                     "Technology" => "technology.php",
                                     "Travel" => "travel.php",
-                                    "Writing Craft" => "writing-craft.php"
+                                    "Writing Craft" => "writing-craft.php",
+                                    "Health and Fitness" => "health.php",
                                 ];
 
                                 if (!empty($row['Tags'])) {
@@ -195,7 +195,7 @@ include BASE_PATH . 'model/category-file-mapping.php';
         <div class="latest-container">
             <?php
             // Query to get latest blogs with pagination
-            $sql = "SELECT Id, Title, LEFT(Content, 230) AS summary, DatePublished, Tags, Image, user_id, Private
+            $sql = "SELECT Id, Title, LEFT(Content, 190) AS summary, DatePublished, Tags, Image, user_id, Private
                     FROM tbl_blogs where Private = '0'
                     ORDER BY DatePublished DESC 
                     LIMIT $results_per_page OFFSET $start_from";
