@@ -274,7 +274,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                             $article_liked = $result->num_rows > 0 ? true : false;
                             ?>
                             <!-- Like button with form -->
-                            <form action="<?php echo BASE_URL; ?>features/likes/like.php" method="POST"
+                            <form action="<?php echo BASE_URL; ?>features/likes/articleLike.php" method="POST"
                                   class="like-form">
                                 <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
                                 <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
@@ -348,7 +348,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                                 $result = $stmt->get_result();
                                 $article_bookmarked = $result->num_rows > 0;
                                 ?>
-                                <form action="<?php echo BASE_URL; ?>features/bookmarks/bookmark.php" method="POST"
+                                <form action="<?php echo BASE_URL; ?>features/bookmarks/articleBookmark.php" method="POST"
                                       class="bookmark-form">
                                     <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
                                     <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">

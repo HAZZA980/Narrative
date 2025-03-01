@@ -1,41 +1,60 @@
 <?php
-ob_start();
-include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
+session_start();
+header('Content-Type: application/json');
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Check if the user is logged in
+// Database connection
+$conn = new mysqli("localhost", "root", "", "db_narrative");
+if ($conn->connect_error) {
+    die(json_encode(["success" => false, "message" => "Database connection failed"]));
+}
+
+// Check if user is logged in
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    // If not logged in, redirect to the sign-in page
-    header("Location: " . BASE_URL . "user_auth.php");
-    exit; // Make sure no further code is executed after the redirect
+    echo json_encode(["success" => false, "message" => "User not authenticated"]);
+    exit;
 }
 
-// Get the data from the form
-$article_id = $_POST['article_id'];
-$user_id = $_POST['user_id'];
-$bookmark_action = $_POST['bookmark_action'];
+// Check request method
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $article_id = $_POST['article_id'];
+    $user_id = $_SESSION['user_id'];
+    $action = $_POST['action'];
 
-// Check the action (add or remove bookmark)
-if ($bookmark_action == 'add') {
-    // Add the article to the user_bookmarks table
-    $query = "INSERT INTO user_bookmarks (user_id, article_id) VALUES (?, ?)";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("ii", $user_id, $article_id);
+    if ($action === 'add') {
+        // Check if the user has already bookmarked the article
+        $check_query = "SELECT * FROM user_bookmarks WHERE article_id = ? AND user_id = ?";
+        $stmt = $conn->prepare($check_query);
+        $stmt->bind_param("ii", $article_id, $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 0) {
+            // Insert bookmark if it doesn't exist
+            $query = "INSERT INTO user_bookmarks (article_id, user_id) VALUES (?, ?)";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("ii", $article_id, $user_id);
+            $stmt->execute();
+        }
+    } elseif ($action === 'remove') {
+        // Remove the bookmark
+        $query = "DELETE FROM user_bookmarks WHERE article_id = ? AND user_id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ii", $article_id, $user_id);
+        $stmt->execute();
+    }
+
+    // Check if the article is still bookmarked after the action
+    $check_query = "SELECT * FROM user_bookmarks WHERE article_id = ? AND user_id = ?";
+    $stmt = $conn->prepare($check_query);
+    $stmt->bind_param("ii", $article_id, $user_id);
     $stmt->execute();
-} elseif ($bookmark_action == 'remove') {
-    // Remove the article from the user_bookmarks table
-    $query = "DELETE FROM user_bookmarks WHERE user_id = ? AND article_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("ii", $user_id, $article_id);
-    $stmt->execute();
-}
+    $result = $stmt->get_result();
+    $article_bookmarked = $result->num_rows > 0;
 
-// Redirect back to the previous page
-if (isset($_SERVER['HTTP_REFERER'])) {
-    $previousPage = $_SERVER['HTTP_REFERER'];
-    header("Location: $previousPage");
-} else {
-    // Fallback if HTTP_REFERER is not set
-    header("Location: forYou.php");
+    echo json_encode(["success" => true, "bookmarked" => $article_bookmarked]);
+    exit;
 }
-exit;
 ?>
