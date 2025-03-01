@@ -535,14 +535,23 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                     <h2 class="aside-title-header">Similar Articles</h2>
 
                     <?php
-                    // SQL query to fetch similar articles
-                    $sql = "
+                    // Retrieve the category of the current article
+                    $category_sql = "SELECT Category FROM tbl_blogs WHERE id = ?";
+                    $stmt = $conn->prepare($category_sql);
+                    $stmt->bind_param("i", $id);
+                    $stmt->execute();
+                    $category_result = $stmt->get_result();
+                    $get_category = $category_result->fetch_assoc()['Category'] ?? null;
+
+                    if ($get_category) {
+                        // SQL query to fetch similar articles based on tags
+                        $sql = "
         (SELECT id, title, LEFT(content, 250) AS summary, datePublished, Tags, featured, Image, user_id 
          FROM tbl_blogs 
-         WHERE Tags LIKE '%$get_tag%' 
-           AND id != $id
-           AND datePublished >= (SELECT datePublished FROM tbl_blogs WHERE id = $id)
-         ORDER BY ABS(TIMESTAMPDIFF(SECOND, datePublished, (SELECT datePublished FROM tbl_blogs WHERE id = $id))) ASC, 
+         WHERE Tags LIKE ? 
+           AND id != ?
+           AND datePublished >= (SELECT datePublished FROM tbl_blogs WHERE id = ?)
+         ORDER BY ABS(TIMESTAMPDIFF(SECOND, datePublished, (SELECT datePublished FROM tbl_blogs WHERE id = ?))) ASC, 
                   datePublished ASC
          LIMIT 3)
 
@@ -550,53 +559,100 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
 
         (SELECT id, title, LEFT(content, 250) AS summary, datePublished, Tags, featured, Image, user_id 
          FROM tbl_blogs 
-         WHERE Tags LIKE '%$get_tag%' 
-           AND id != $id
-         ORDER By datePublished ASC
+         WHERE Tags LIKE ? 
+           AND id != ?
+         ORDER BY datePublished ASC
          LIMIT 3)
     ";
 
-                    $result = $conn->query($sql);
+                        $stmt = $conn->prepare($sql);
+                        $tag_param = "%$get_tag%";
+                        $stmt->bind_param("siiisi", $tag_param, $id, $id, $id, $tag_param, $id);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-                    // Check if there are any results
-                    if ($result->num_rows > 0) {
-                        ?>
-
-                        <!-- Display articles only if there are results -->
-                        <ul class="article-list">
-                            <?php while ($row = $result->fetch_assoc()) { ?>
-                                <li class="article-item">
-                                    <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>" class="article-link">
-                                        <div class="aside-article-summary">
-                                            <div class="aside-image-container">
-                                                <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
-                                                    ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
-                                                    : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
+                        // Check if we found any matching articles
+                        if ($result->num_rows > 0) { ?>
+                            <ul class="article-list">
+                                <?php while ($row = $result->fetch_assoc()) { ?>
+                                    <li class="article-item">
+                                        <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>" class="article-link">
+                                            <div class="aside-article-summary">
+                                                <div class="aside-image-container">
+                                                    <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
+                                                        ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
+                                                        : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
+                                                </div>
+                                                <h3 class="aside-title"><?php echo htmlspecialchars($row['title'] ?? 'Untitled'); ?></h3>
+                                                <div class="aside-date-container">
+                                                    <p class="aside-date">
+                                                        <small><?php echo date('F j, Y', strtotime($row['datePublished'])); ?></small>
+                                                    </p>
+                                                </div>
                                             </div>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                            </ul>
 
-                                            <h3 class="aside-title"><?php echo htmlspecialchars($row['title'] ?? 'Untitled'); ?></h3>
-                                            <div class="aside-date-container">
-                                                <p class="aside-date">
-                                                    <small><?php echo date('F j, Y', strtotime($row['datePublished'])); ?></small>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
+                        <?php } else {
+                            // Fetch similar articles based on category if no tag-based results were found
+                            $sql1 = "
+            (SELECT id, title, LEFT(content, 250) AS summary, datePublished, Tags, featured, Image, user_id 
+             FROM tbl_blogs 
+             WHERE Category = ? 
+               AND id != ?
+               AND datePublished >= (SELECT datePublished FROM tbl_blogs WHERE id = ?)
+             ORDER BY ABS(TIMESTAMPDIFF(SECOND, datePublished, (SELECT datePublished FROM tbl_blogs WHERE id = ?))) ASC, 
+                      datePublished ASC
+             LIMIT 3)
+
+            UNION
+
+            (SELECT id, title, LEFT(content, 250) AS summary, datePublished, Tags, featured, Image, user_id 
+             FROM tbl_blogs 
+             WHERE Category = ? 
+               AND id != ?
+             ORDER BY datePublished ASC
+             LIMIT 3)
+        ";
+
+                            $stmt = $conn->prepare($sql1);
+                            $stmt->bind_param("siiisi", $get_category, $id, $id, $id, $get_category, $id);
+                            $stmt->execute();
+                            $results = $stmt->get_result();
+
+                            if ($results->num_rows > 0) { ?>
+                                <ul class="article-list">
+                                    <?php while ($row = $results->fetch_assoc()) { ?>
+                                        <li class="article-item">
+                                            <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>" class="article-link">
+                                                <div class="aside-article-summary">
+                                                    <div class="aside-image-container">
+                                                        <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
+                                                            ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
+                                                            : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
+                                                    </div>
+                                                    <h3 class="aside-title"><?php echo htmlspecialchars($row['title'] ?? 'Untitled'); ?></h3>
+                                                    <div class="aside-date-container">
+                                                        <p class="aside-date">
+                                                            <small><?php echo date('F j, Y', strtotime($row['datePublished'])); ?></small>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                            <?php } else { ?>
+                                <p>No similar articles found.</p>
                             <?php } ?>
-                        </ul>
-
-                        <?php
-                    } else {
-                        // If no articles are found, hide the section by using JavaScript
-                        echo "<script>document.getElementById('similar-articles-section').style.display = 'none';</script>";
-                    }
-                    ?>
-
-                </aside>
+                        <?php } ?>
+                    <?php } ?>
 
 
-                <aside class="aside-elsewhere-articles">
+
+                    <aside class="aside-elsewhere-articles">
                     <h2 class="aside-title-header">Elsewhere On Narrative</h2>
                     <?php
                     // Get the current file name dynamically
