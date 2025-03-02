@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     let selectedCategories = [];
     const categoryButtons = document.querySelectorAll(".category-button");
-    const finishButton = document.querySelector(".next-btn");
+    const finishButton = document.querySelector(".next-btn-tab3"); // Only select Tab 3 button
     const categoriesInput = document.querySelector("#categories-input");
     const categoryForm = document.querySelector("#category-form");
 

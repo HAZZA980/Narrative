@@ -228,7 +228,7 @@ include BASE_PATH . 'model/category-file-mapping.php';
                                         "Entertainment" => "entertainment.php",
                                         "Food" => "food.php",
                                         "Gaming" => "gaming.php",
-                                        "Health & Fitness" => "health.php",
+                                        "Health and Fitness" => "health.php",
                                         "History and Culture" => "history-and-culture.php", // Ensure mapping to history-and-culture.php
                                         "Lifestyle" => "lifestyle.php",
                                         "Philosophy" => "philosophy.php",

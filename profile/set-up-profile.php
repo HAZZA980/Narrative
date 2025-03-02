@@ -215,11 +215,24 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
 
         <div class="nav-buttons">
             <!--        <button type="button" id="next-btn" onclick="navigateTab('next')">Next</button>-->
-            <button type="button" id="prev-btn" onclick="navigateTab('prev')" style="visibility: hidden">Previous
-            </button>
-            <button type="submit" id="next-btn">Next</button>
+            <button type="button" id="prev-btn" onclick="navigateTab('prev')" style="visibility: hidden">Previous</button>
+            <button type="submit" class="next-btn next-btn-tab1">Next</button> <!-- Tab 1 -->
             </form>
         </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const finishButton = document.querySelector(".next-btn-tab1");
+
+                // Check if we're on Tab 1 (Personal Details)
+                const isTab1 = document.querySelector("#personal-details-form");
+
+                if (isTab1) {
+                    finishButton.disabled = false; // Enable the button for Tab 1
+                }
+            });
+
+        </script>
 
     </div>
 
@@ -295,8 +308,8 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
         <div class="categories">
             <?php
             // Define all possible categories
-            $categories = ["Lifestyle", "Writing Craft", "Travel", "Reviews", "History & Culture", "Entertainment", "Business", "Technology",
-                "Politics", "Science", "Sports", "Health & Fitness", "Food & Drink", "Gaming", "Philosophy"];
+            $categories = ["Lifestyle", "Writing Craft", "Travel", "Reviews", "History and Culture", "Entertainment", "Business", "Technology",
+                "Politics", "Science", "Sports", "Health and Fitness", "Food", "Gaming", "Philosophy"];
 
             // Loop through the categories and check if they are selected
             foreach ($categories as $category):
@@ -313,8 +326,7 @@ $tab = isset($_GET['tab']) ? (int)$_GET['tab'] : 1;
             <input type="hidden" name="categories" id="categories-input" value="">
             <div class="nav-buttons">
                 <button type="button" id="prev-btn" onclick="navigateTab('prev')">Previous</button>
-                <button type="submit" id="next-btn">Next</button>
-            </div>
+                <button type="submit" class="next-btn next-btn-tab3">Next</button> <!-- Tab 3 -->            </div>
         </form>
     </div>
 
