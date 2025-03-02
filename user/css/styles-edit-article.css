@@ -41,15 +41,20 @@
 
 .blog-title {
     color: black;
-    font-size: 3rem;
+    font-size: 5rem;
     padding-top: 1rem;
     font-weight: 700;
     border: none;
 }
 
+
+
 .editing-container {
     width: 100%;
     padding-top: 3rem;
+    height: auto;              /* Allow the container to grow with content */
+    max-height: none;          /* Remove any height limits */
+    overflow: hidden;          /* Hide scrollbars */
     /*border: purple solid 2px;*/
 }
 
@@ -65,8 +70,9 @@
 
 /* Styling for the main content */
 .blogs-content {
-    width: 90%;
+    width: 100%;
     padding-top: 3rem;
+    /*border: #4CAF50 solid 3px*/
 }
 
 /* Blog content styling */
@@ -79,13 +85,7 @@
     text-align: left;
 }
 
-/* Blog title styling */
-.blog-title {
-    color: black;
-    font-size: 3rem;
-    padding-top: 1rem;
-    font-weight: 700;
-}
+
 
 .edit-title-container, .edit-content-container, .edit-category-container, .edit-image-container {
     display: flex;
@@ -138,17 +138,43 @@ input#blog-title {
     border: none !important;
     outline: none !important;
     background: transparent;
-}
-
-#blog-title {
     text-wrap: wrap;
     color: black;
-    font-size: 3em;
+    font-size: 2em;
     width: 80%;
     padding-top: 1rem;
     font-weight: 700;
-    margin-left: 2.9rem
+    /*margin-left: 2.9rem;*/
+    margin-bottom: 1rem;
 }
+
+/* Ensure the CKEditor container doesn’t have fixed height */
+#editor {
+    width: 100%;
+    height: auto !important;          /* Ensure the editor container grows dynamically */
+    max-height: none !important;      /* Remove any height constraints */
+}
+
+
+
+/* Make sure the content area doesn't cause scrollbars */
+.cke_contents {
+    height: 40rem !important;
+    max-height: none !important;     /* Ensure no max-height constraints */
+    border: none !important;
+
+}
+
+/* Ensure no scrollbars are shown in the editor content */
+.cke_inner, .cke_reset {
+    width: 44rem;
+}
+
+/* Prevent scrollbars inside the content area */
+textarea.ckeditor {
+
+}
+
 
 
 /* Styling for the form elements */
@@ -171,8 +197,6 @@ input#blog-title {
     margin-top: 0.5rem;
     padding: 0.8rem;
     border-radius: 4px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
 }
 
 #updateForm textarea {

@@ -25,9 +25,9 @@ document.addEventListener("DOMContentLoaded", function () {
             errors.push("Title is required.");
         }
 
-        if (contentInput.value.trim() === "") {
-            errors.push("Content cannot be empty.");
-        }
+        // if (contentInput.value.trim() === "") {
+        //     errors.push("Content cannot be empty.");
+        // }
 
         if (selectedTags.length === 0) {
             errors.push("At least one tag must be added.");

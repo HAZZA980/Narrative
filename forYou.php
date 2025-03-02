@@ -148,7 +148,7 @@ include BASE_PATH . 'model/for-you-logic.php';
                             <div class="blog-body">
                                 <div class="blog-details">
                                     <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?></h2>
-                                    <p id="blog-content"><?php echo htmlspecialchars($row['summary']); ?>...</p>
+                                    <p id="blog-content"><?php echo $row['summary']; ?>...</p>
                                 </div>
                                 <div class="image-container">
                                     <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'

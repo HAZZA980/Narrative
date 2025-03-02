@@ -28,6 +28,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     <link rel="stylesheet" href="<?php echo BASE_URL?>user/css/styles-edit-article.css">
     <link rel="stylesheet" href="<?php echo BASE_URL?>user/css/delete-article-modal.css">
     <link rel="stylesheet" href="<?php echo BASE_URL ?>user/css/author-actions.css">
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
 
 </head>
 <body>
@@ -54,14 +55,14 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
                       action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'] . '?id=' . $article_id); ?>">
                     <!-- Form fields remain the same -->
                     <div class="edit-title-container">
-                        <label for="title">Title:</label>
+                        <label for="title"></label>
                         <input type="text" id="blog-title" name="title"
                                value="<?php echo htmlspecialchars($article['Title']); ?>" required>
                     </div>
                     <div class="edit-content-container">
-                        <label for="content">Content:</label>
+                        <label for="content"></label>
                         <textarea class="blog-content" id="content" name="content" rows="6"
-                                  required><?php echo htmlspecialchars($article['Content']); ?></textarea>
+                                  required><?php echo $article['Content']; ?></textarea>
                     </div>
                     <script>
                         const textarea = document.getElementById('content');
@@ -202,6 +203,29 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 <script src="<?php echo BASE_URL?>user/js/editArticle.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="<?php echo BASE_URL ?>model/subcategories.js"></script>
+<script>
+    CKEDITOR.replace('content'); // Applies CKEditor to the textarea
+    CKEDITOR.replace('content', {
+        height: 300,                   // Minimum height for the editor
+        resize_enabled: false,          // Disable resizing handles
+        removePlugins: 'elementspath',  // Optional: removes element path in the toolbar
+        contentsCss: [
+            'body {font-family: Arial, sans-serif; line-height: 1.6;}'
+        ],
+        // Allow editor to grow and avoid internal scrollbars
+        bodyClass: 'ckeditor-body',
+        on: {
+            instanceReady: function (evt) {
+                // Prevent scrollbars when content grows
+                const editor = this;
+                const editorArea = editor.container.$;
+                editorArea.style.overflow = 'hidden';
+                editorArea.style.height = 'auto';
+            }
+        }
+    });
+
+</script>
 
 </body>
 </html>

@@ -237,30 +237,17 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
 
                     <small><?php echo date('F j, Y', strtotime($blog['datePublished'])); ?></small></p>
                 <div class="blog-content">
-                    <p id="blog"><?php echo nl2br(htmlspecialchars($blog['content'])); ?></p>
+                    <p id="blog"><?php echo nl2br($blog['content']); ?></p>
                 </div>
 
                 <div class="blog-details-2">
 
 
-                    <?php
-                    // Get the number of comments for this article
-                    $article_id = $row['id']; // Get article ID
-                    $comment_query = "SELECT COUNT(*) AS comment_count FROM article_comments WHERE article_id = ?";
-                    $comment_stmt = $conn->prepare($comment_query);
-                    $comment_stmt->bind_param("i", $article_id);
-                    $comment_stmt->execute();
-                    $comment_stmt->bind_result($comment_count);
-                    $comment_stmt->fetch();
-                    $comment_stmt->close();
-                    ?>
-                    <div class="likes-and-comments" data-article-id="<?php echo $row['id']; ?>">
+                    <div class="likes-and-comments" data-article-id="<?php echo $blog['id']; ?>">
                         <div class="like">
                             <?php
                             // Get the current user's ID
-                            $user_id = $_SESSION['user_id']; // Or however you are retrieving the user_id from the session
-
-                            // Assuming you're inside the loop for displaying each article
+                            $user_id = $_SESSION['user_id']; // Retrieve user ID from the session
                             $article_id = $blog['id']; // Article ID for the current post
 
                             // Check if the user has already liked the article
@@ -269,40 +256,77 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                             $stmt->bind_param("ii", $article_id, $user_id);
                             $stmt->execute();
                             $result = $stmt->get_result();
-
-                            // Check if there is a like record for this article and user
                             $article_liked = $result->num_rows > 0 ? true : false;
-                            ?>
-                            <!-- Like button with form -->
-                            <form action="<?php echo BASE_URL; ?>features/likes/articleLike.php" method="POST"
-                                  class="like-form">
-                                <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
-                                <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
-                                <!-- Show filled icon if the article is liked -->
-                                <button type="submit" class="like-btn" name="bookmark_action"
-                                        value="<?php echo $article_liked ? 'remove' : 'add'; ?>">
-                                    <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
-                                         alt="Add Like" class="like-icon"
-                                         style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
-                                    <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-solid.svg"
-                                         alt="Remove Like" class="like-icon"
-                                         style="display: <?php echo $article_liked ? 'block' : 'none'; ?>"/>
-                                </button>
-                            </form>
-                            <?php
-                            // Query to get the number of likes for the current article
+
+                            // Get the number of likes for the article
                             $like_count_query = "SELECT COUNT(*) AS like_count FROM article_likes WHERE article_id = ?";
                             $stmt = $conn->prepare($like_count_query);
                             $stmt->bind_param("i", $article_id);
                             $stmt->execute();
                             $result = $stmt->get_result();
-                            $like_count = $result->fetch_assoc()['like_count']; // Fetch the count of likes
+                            $like_count = $result->fetch_assoc()['like_count'];
                             ?>
-                            <p class="like-status"><?php echo $like_count; ?></p>
+
+                            <button class="like-btn" data-article-id="<?php echo $article_id; ?>" data-user-id="<?php echo $user_id; ?>">
+                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
+                                     alt="Add Like" class="like-icon like-default"
+                                     style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
+                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-solid.svg"
+                                     alt="Remove Like" class="like-icon like-active"
+                                     style="display: <?php echo $article_liked ? 'block' : 'none'; ?>"/>
+                            </button>
+
+                            <p class="like-status" id="like-count-<?php echo $article_id; ?>"><?php echo $like_count; ?></p>
                         </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".like-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let articleId = this.getAttribute("data-article-id");
+                let userId = this.getAttribute("data-user-id");
 
-                        <div class="comment">
+                let likeIconDefault = this.querySelector(".like-default");
+                let likeIconActive = this.querySelector(".like-active");
+                let likeCountElement = document.getElementById(`like-count-${articleId}`);
+
+                let action = likeIconActive.style.display === "block" ? "remove" : "add";
+
+                fetch("<?php echo BASE_URL; ?>features/likes/articleLike.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: `article_id=${articleId}&user_id=${userId}&bookmark_action=${action}`
+                })
+                    .then(response => response.text()) // First, get raw text response for debugging
+                    .then(text => {
+                        console.log("Raw response:", text); // Log raw response
+                        return JSON.parse(text); // Convert to JSON
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            if (action === "add") {
+                                likeIconDefault.style.display = "none";
+                                likeIconActive.style.display = "block";
+                            } else {
+                                likeIconDefault.style.display = "block";
+                                likeIconActive.style.display = "none";
+                            }
+                            likeCountElement.textContent = data.like_count;
+                        } else {
+                            alert("Error: " + data.error);
+                        }
+                    })
+                    .catch(error => console.error("Parsing Error:", error));
+            });
+        });
+    });
+
+</script>
+
+
+                    <div class="comment">
                             <!--Comments Backend-->
                             <?php
                             // Get the number of comments for this article
@@ -323,24 +347,21 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                         </div>
 
 
-                        <div class="bookmark">
-                            <?php
-                            // Check if the user is logged in
-                            if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-                                // Redirect to login page if not logged in
-                                echo '<form action="' . BASE_URL . 'user_auth.php" method="GET">';
-                                echo '<button type="submit" class="bookmark-btn">';
-                                echo '<img src="' . BASE_URL . 'public/images/article-layout-img/file-earmark-plus.svg" alt="Add to Bookmarks" class="bookmark-icon"/>';
-                                echo '</button>';
-                                echo '</form>';
-                            } else {
-                                // Get the current user's ID
+                        <div class="bookmark" data-article-id="<?php echo $article_id; ?>">
+                            <?php if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
+                                <!-- If user is not logged in, redirect to login -->
+                                <form action="<?php echo BASE_URL; ?>user_auth.php" method="GET">
+                                    <button type="submit" class="bookmark-btn">
+                                        <img src="<?php echo BASE_URL; ?>public/images/article-layout-img/file-earmark-plus.svg"
+                                             alt="Add to Bookmarks" class="bookmark-icon"/>
+                                    </button>
+                                </form>
+                            <?php else: ?>
+                                <?php
+                                // Get user ID
                                 $user_id = $_SESSION['user_id'];
 
-                                // Assuming you're inside the loop for displaying each article
-                                $article_id = $blog['id']; // Article ID for the current post
-
-                                // Check if the user has already bookmarked the article
+                                // Check if the article is already bookmarked
                                 $check_query = "SELECT * FROM user_bookmarks WHERE user_id = ? AND article_id = ?";
                                 $stmt = $conn->prepare($check_query);
                                 $stmt->bind_param("ii", $user_id, $article_id);
@@ -348,24 +369,63 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                                 $result = $stmt->get_result();
                                 $article_bookmarked = $result->num_rows > 0;
                                 ?>
-                                <form action="<?php echo BASE_URL; ?>features/bookmarks/articleBookmark.php" method="POST"
-                                      class="bookmark-form">
-                                    <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
-                                    <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
-                                    <!-- Show filled icon if the article is bookmarked -->
-                                    <button type="submit" class="bookmark-btn" name="bookmark_action"
-                                            value="<?php echo $article_bookmarked ? 'remove' : 'add'; ?>">
-                                        <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg"
-                                             alt="Add to Bookmarks" class="bookmark-icon"
-                                             style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>
-                                        <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus-fill.svg"
-                                             alt="Remove from Bookmarks" class="bookmark-icon"
-                                             style="display: <?php echo $article_bookmarked ? 'block' : 'none'; ?>"/>
-                                    </button>
-                                </form>
-                            <?php } ?>
-                            <p class="bookmark-status"></p>
+                                <!-- AJAX Bookmark Button -->
+                                <button class="bookmark-btn" data-article-id="<?php echo $article_id; ?>"
+                                        data-bookmarked="<?php echo $article_bookmarked ? 'true' : 'false'; ?>">
+                                    <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg"
+                                         alt="Add to Bookmarks" class="bookmark-icon add-bookmark"
+                                         style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>
+                                    <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus-fill.svg"
+                                         alt="Remove from Bookmarks" class="bookmark-icon remove-bookmark"
+                                         style="display: <?php echo $article_bookmarked ? 'block' : 'none'; ?>"/>
+                                </button>
+                            <?php endif; ?>
                         </div>
+
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                document.querySelectorAll(".bookmark-btn").forEach(button => {
+                                    button.addEventListener("click", function (event) {
+                                        event.preventDefault();
+
+                                        let articleId = this.getAttribute("data-article-id");
+                                        let isBookmarked = this.getAttribute("data-bookmarked") === "true";
+                                        let action = isBookmarked ? "remove" : "add";
+                                        let buttonElement = this;
+
+                                        fetch("<?php echo BASE_URL; ?>features/bookmarks/articleBookmark.php", {
+                                            method: "POST",
+                                            headers: {
+                                                "Content-Type": "application/json"
+                                            },
+                                            body: JSON.stringify({ article_id: articleId, action: action })
+                                        })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.success) {
+                                                    // Toggle UI elements
+                                                    let addIcon = buttonElement.querySelector(".add-bookmark");
+                                                    let removeIcon = buttonElement.querySelector(".remove-bookmark");
+
+                                                    if (isBookmarked) {
+                                                        addIcon.style.display = "block";
+                                                        removeIcon.style.display = "none";
+                                                        buttonElement.setAttribute("data-bookmarked", "false");
+                                                    } else {
+                                                        addIcon.style.display = "none";
+                                                        removeIcon.style.display = "block";
+                                                        buttonElement.setAttribute("data-bookmarked", "true");
+                                                    }
+                                                } else {
+                                                    console.error("Bookmark failed:", data.message);
+                                                }
+                                            })
+                                            .catch(error => console.error("Error:", error));
+                                    });
+                                });
+                            });
+
+                        </script>
 
                     </div>
                 </div>
@@ -457,9 +517,9 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                                     <form action="<?php echo BASE_URL; ?>features/comments/edit-comment.php"
                                           method="POST"
                                           class="edit-comment-form" style="display: none;">
-                                        <textarea name="comment" placeholder="Write your comment here..."
-                                                  class="auto-resizing-textarea" required>
-                                            <?php echo htmlspecialchars($comment['comment']); ?></textarea>
+                                      <textarea name="comment" placeholder="Write your comment here..."
+                                                class="auto-resizing-textarea" required><?php echo htmlspecialchars(trim($comment['comment'])); ?></textarea>
+
                                         <input type="hidden" name="comment_id" value="<?php echo $comment['id']; ?>">
                                         <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
                                         <div class="hidden-update-cancel-buttons">
