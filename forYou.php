@@ -108,8 +108,7 @@ include BASE_PATH . 'model/for-you-logic.php';
                        href="<?php echo BASE_URL ?>settings/content-preferences.php?accountManagement=update-topics">+
                         Change Recommendations</a>
                 <?php else: ?>
-                    <li>No preferred tags selected. <a href="profile/model/recommendations.php">Update Preferences</a>
-                    </li>
+                    <li>No preferred tags selected. <a href="<?php echo BASE_URL?>settings/content-preferences.php?accountManagement=update-topics">Update Preferences</a></li>
                 <?php endif; ?>
             </ul>
 

@@ -203,7 +203,7 @@ $user_id = $_SESSION['user_id'];
     </script>
 
     <div id="recommendations" class="tab-content">
-        <?php include BASE_PATH . "features/submitProfile/model/profile-recommendations.php"; ?>
+        <?php include BASE_PATH . "profile/model/recommendations.php"; ?>
         <h3>Select Your Interests</h3>
         <h5>(We'll recommend articles based on your reading history)</h5>
         <div class="categories">
@@ -214,7 +214,11 @@ $user_id = $_SESSION['user_id'];
                 </button>
             <?php endforeach; ?>
         </div>
-        <form id="category-form" method="POST" action="<?php echo BASE_URL?>features/submitProfile/model/profile-recommendations.php">
+        <?php if (isset($_GET['error']) && $_GET['error'] === 'select_category'): ?>
+            <p style="color: red; font-weight: bold;">Please select at least one category before proceeding.</p>
+        <?php endif; ?>
+
+        <form id="category-form" method="POST" action="<?php echo BASE_URL?>profile/model/recommendations.php">
             <input type="hidden" name="categories" id="categories-input" value="">
             <div class="navigation-buttons">
                 <button type="button" class="finish-btn previous-btn" onclick="previousTab('bio')">Previous</button>

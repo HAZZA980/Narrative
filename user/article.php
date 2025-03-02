@@ -82,7 +82,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                             <?php
                                 // List of categories
                                 $categories = [
-                                    "Business", "Entertainment", "Food", "Gaming", "Health & Fitness",
+                                    "Business", "Entertainment", "Food", "Gaming", "Health and Fitness",
                                     "History and Culture", "Lifestyle", "Philosophy", "Politics",
                                     "Reviews", "Science", "Sports", "Technology", "Travel", "Writing Craft"
                                 ];

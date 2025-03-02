@@ -92,7 +92,6 @@ $stmt->close();
         }
 
 
-
         /* Profile image container */
         .profile-image-container {
             display: flex;

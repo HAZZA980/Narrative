@@ -13,7 +13,15 @@ if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
 $user_id = $_SESSION['user_id'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Get selected categories from the form
     $selected_categories = json_decode($_POST['categories'], true) ?? [];
+
+    // Check if no categories were selected
+    if (empty($selected_categories)) {
+        // Redirect back with an error message
+        header("Location: " . BASE_URL . "settings/content-preferences.php?error=select_category");
+        exit;
+    }
 
     // Update the database with category preferences
     $stmt = $conn->prepare("DELETE FROM user_preferences WHERE user_id = ?");

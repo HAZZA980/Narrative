@@ -129,7 +129,7 @@ if ($section === 'notification-preferences') {
 
                     <div class="categories">
                         <?php
-                        $categories = ["Lifestyle", "Writing Craft", "Travel", "Reviews", "History & Culture", "Entertainment", "Business", "Technology", "Politics", "Science", "Sports", "Health & Fitness", "Food & Drink", "Gaming", "Philosophy"];
+                        $categories = ["Lifestyle", "Writing Craft", "Travel", "Reviews", "History and Culture", "Entertainment", "Business", "Technology", "Politics", "Science", "Sports", "Health and Fitness", "Food", "Gaming", "Philosophy"];
 
                         foreach ($categories as $category): ?>
                             <button type="button" class="category-button"
@@ -138,6 +138,9 @@ if ($section === 'notification-preferences') {
                             </button>
                         <?php endforeach; ?>
                     </div>
+                    <?php if (isset($_GET['error']) && $_GET['error'] === 'select_category'): ?>
+                        <p style="color: red; font-weight: bold;">Please select at least one category.</p>
+                    <?php endif; ?>
                     <?php if (isset($_GET['success']) && $_GET['success'] === 'true'): ?>
                         <p class="success-message" style="color: green; font-weight: bold;">TOPICS have been updated successfully!</p>
                     <?php endif; ?>

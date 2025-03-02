@@ -155,24 +155,32 @@ input#blog-title {
     max-height: none !important;      /* Remove any height constraints */
 }
 
+.cke_top{
+    /*border: black solid 2px;*/
+    width: 97.5%;
+}
 
-
+.cke {
+    /*border: firebrick solid 2px;*/
+    width: 95%;
+}
 /* Make sure the content area doesn't cause scrollbars */
 .cke_contents {
+    /*border: #e67e22 solid 3px;*/
     height: 40rem !important;
     max-height: none !important;     /* Ensure no max-height constraints */
-    border: none !important;
-
+    width: 100%;
 }
 
 /* Ensure no scrollbars are shown in the editor content */
-.cke_inner, .cke_reset {
-    width: 44rem;
+.cke_inner{
+    /*border: pink solid 3px;*/
+    width: 100%;
 }
 
 /* Prevent scrollbars inside the content area */
 textarea.ckeditor {
-
+    width: 80%;
 }
 
 

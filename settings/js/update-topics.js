@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const categoriesInput = document.querySelector("#categories-input");
     const tabButtons = document.querySelectorAll(".tab-button");
     const tabContents = document.querySelectorAll(".tab-content");
+    const categoryForm = document.querySelector("#category-form");  // Reference to the form
+    const errorMessage = document.createElement('p'); // Error message element
 
     // Switch between tabs
     tabButtons.forEach(button => {
@@ -47,5 +49,16 @@ document.addEventListener("DOMContentLoaded", function () {
             categoriesInput.value = JSON.stringify(selectedCategories);
             finishButton.disabled = selectedCategories.length === 0;
         });
+    });
+
+    // Handle form submission
+    categoryForm.addEventListener("submit", function (event) {
+        // If no categories are selected, prevent form submission and show an error
+        if (selectedCategories.length === 0) {
+            event.preventDefault();  // Prevent the form from submitting
+            errorMessage.textContent = "Please select at least one category.";
+            errorMessage.style.color = 'red';
+            categoryForm.appendChild(errorMessage);
+        }
     });
 });

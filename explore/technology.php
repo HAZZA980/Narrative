@@ -50,7 +50,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                         </div>
                         <div class="blog-details">
                             <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?></h2>
-                            <p id="blog-content"><?php echo htmlspecialchars($row['summary']); ?>...</p>
+                            <p id="blog-content"><?php echo strip_tags($row['summary']); ?>...</p>
                         </div>
                     </a>
                     <div class="blog-details-2">
@@ -120,7 +120,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                         </div>
                         <div class="blog-details">
                             <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?></h2>
-                            <p id="blog-content"><?php echo htmlspecialchars($row['summary']); ?>...</p>
+                            <p id="blog-content"><?php echo strip_tags($row['summary']); ?>...</p>
                         </div>
                     </a>
                     <div class="blog-details-2">
@@ -199,7 +199,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                                 <div class="latest-grid-item-2">
                                     <div class="latest-content">
                                         <h5 id="latest-blog-title"><?php echo htmlspecialchars($row['Title']); ?></h5>
-                                        <p id="latest-blog-content"><?php echo htmlspecialchars($row['summary']); ?>
+                                        <p id="latest-blog-content"><?php echo strip_tags($row['summary']); ?>
                                             ...</p>
                                     </div>
                                 </div>
@@ -332,7 +332,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                             </div>
                             <div class="blog-details">
                                 <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?></h2>
-                                <p id="blog-content"><?php echo htmlspecialchars($row['summary']); ?>...</p>
+                                <p id="blog-content"><?php echo strip_tags($row['summary']); ?>...</p>
                             </div>
                         </a>
                         <div class="blog-details-2">
@@ -381,7 +381,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                             </div>
                             <div class="blog-details">
                                 <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?></h2>
-                                <p id="blog-content"><?php echo htmlspecialchars($row['summary']); ?>...</p>
+                                <p id="blog-content"><?php echo strip_tags($row['summary']); ?>...</p>
                             </div>
                         </a>
                         <div class="blog-details-2">

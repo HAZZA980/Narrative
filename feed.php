@@ -330,7 +330,7 @@ if (empty($preferred_categories)) {
                             <div class="likes-and-comments" data-article-id="<?php echo $row['id']; ?>">
                                 <div class="like">
                                     <?php
-                                    $user_id = $_SESSION['user_id']; // Get logged-in user's ID
+//                                    $user_id = $_SESSION['user_id']; // Get logged-in user's ID
                                     $article_id = $row['id']; // Get current article ID
 
                                     // Check if the user has already liked the article
@@ -426,7 +426,7 @@ if (empty($preferred_categories)) {
 
                                 <div class="bookmark">
                                     <?php
-                                    $user_id = $_SESSION['user_id']; // Get logged-in user's ID
+//                                    $user_id = $_SESSION['user_id']; // Get logged-in user's ID
                                     $article_id = $row['id']; // Get current article ID
 
                                     // Check if the user has already bookmarked the article
