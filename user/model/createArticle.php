@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/htmlpurifier-4.15.0/library/HTMLPurifier.auto.php'; // Adjust path
+require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/htmlpurifier-4.15.0/library/HTMLPurifier.auto.php';
 
 // Ensure the user is logged in
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
@@ -16,16 +16,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $featured = isset($_POST['featured']) ? 1 : 0;
     $image = null;
 
-    // ✅ Sanitize Content with HTMLPurifier
+    // ✅ Secure Content Sanitization with HTMLPurifier
     $config = HTMLPurifier_Config::createDefault();
-    $config->set('HTML.Allowed', 'p,b,strong,i,em,u,ul,ol,li,br,blockquote'); // Allow safe formatting
+    $config->set('HTML.Allowed', 'p,b,strong,i,em,u,ul,ol,li,br,blockquote'); // Only allow safe elements
+    $config->set('CSS.AllowedProperties', ''); // Remove all CSS to prevent style-based attacks
+    $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true]); // Prevent JavaScript URLs
     $purifier = new HTMLPurifier($config);
 
     $rawContent = $_POST['content']; // User input
     $cleanContent = $purifier->purify($rawContent); // Purify input
 
-    // Prevent script injection
-    if (strpos($cleanContent, '<script>') !== false) {
+    // ✅ Final Security Check: Prevent Any Remaining XSS Attempts
+    if (preg_match('/<script\b[^>]*>|on\w+=/', $cleanContent)) {
         die("Invalid content detected!");
     }
 
@@ -35,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ✅ Define User's Image Directory
     $userDirectory = BASE_PATH . "public/images/users/" . $user_id;
-
     if (!is_dir($userDirectory) && !mkdir($userDirectory, 0777, true)) {
         error_log("Failed to create directory: $userDirectory");
         die("Failed to create directory for user images.");

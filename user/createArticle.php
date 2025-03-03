@@ -172,6 +172,25 @@ include BASE_PATH . 'user/model/createArticle.php';
 <script src="<?php echo BASE_URL ?>user/js/createArticle.js"></script>
 <script>
     CKEDITOR.replace('content'); // Applies CKEditor to the textarea
+    CKEDITOR.replace('editor', {
+        removePlugins: 'sourcearea', // Removes the Source button
+        extraAllowedContent: 'p b i strong em u ul ol li br blockquote;', // Allow only safe HTML
+        disallowedContent: 'script; *[on*]; iframe; style;', // Blocks scripts, event handlers, iframes
+        height: 300
+    });
+    CKEDITOR.replace('editor', {
+        allowedContent: {
+            $1: {
+                elements: CKEDITOR.dtd, // Allows default CKEditor elements
+                attributes: true,
+                styles: false, // Prevents inline styles
+                classes: false // Prevents class-based styling
+            }
+        },
+        disallowedContent: 'script; *[on*]; iframe; style;', // Blocks script tags, event handlers, iframes, styles
+    });
+
+
     CKEDITOR.replace('content', {
         allowedContent: 'p h1 h2 h3 strong em ul ol li blockquote a[href,target]', // Only allow safe tags
         disallowedContent: 'script; *[on*]', // Remove script tags & inline event handlers like onclick

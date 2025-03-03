@@ -280,3 +280,4 @@ window.addEventListener('beforeunload', (event) => {
         return message; // For some browsers (e.g., Safari)
     }
 });
+
