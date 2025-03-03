@@ -173,6 +173,8 @@ include BASE_PATH . 'user/model/createArticle.php';
 <script>
     CKEDITOR.replace('content'); // Applies CKEditor to the textarea
     CKEDITOR.replace('content', {
+        allowedContent: 'p h1 h2 h3 strong em ul ol li blockquote a[href,target]', // Only allow safe tags
+        disallowedContent: 'script; *[on*]', // Remove script tags & inline event handlers like onclick
         height: 300,                   // Minimum height for the editor
         resize_enabled: false,          // Disable resizing handles
         removePlugins: 'elementspath',  // Optional: removes element path in the toolbar

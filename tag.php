@@ -158,9 +158,7 @@ $stmt->close();
             </h1>
 
             <?php
-            // Fetch and display blogs
             if ($blogs_result->num_rows > 0):
-                $i = 0;
                 while ($row = $blogs_result->fetch_assoc()): ?>
                     <div class="flex-item">
                         <div class="article-author-and-topic">
@@ -189,7 +187,7 @@ $stmt->close();
                             <div class="blog-body">
                                 <div class="blog-details">
                                     <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?></h2>
-                                    <p id="blog-content"><?php echo $row['summary']; ?>...</p>
+                                    <p id="blog-content"><?php echo strip_tags($row['summary']); ?>...</p>
                                 </div>
                                 <div class="image-container">
                                     <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'

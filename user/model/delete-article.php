@@ -2,23 +2,20 @@
 ob_start();
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 
-// Check if article ID is provided
+// Check if article ID is provided and valid
 $article_id = $_GET['id'] ?? null;
 if (!$article_id || !is_numeric($article_id)) {
     echo json_encode(['success' => false, 'message' => 'Invalid or missing Article ID.']);
     exit;
 }
 
-// Prepare SQL query to get article details (including the image and user_id)
-$query = "SELECT b.image, b.user_id, u.username 
-          FROM tbl_blogs b
-          JOIN users u ON b.user_id = u.user_id
-          WHERE b.id = ?";
+// ✅ Retrieve the article details (including image and user_id)
+$query = "SELECT image, user_id FROM tbl_blogs WHERE id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $article_id);
 $stmt->execute();
 $stmt->store_result();
-$stmt->bind_result($image, $user_id, $username);
+$stmt->bind_result($image, $user_id);
 $stmt->fetch();
 
 // Check if the article exists
@@ -27,40 +24,33 @@ if ($stmt->num_rows === 0) {
     exit;
 }
 
-// Define the user's image directory based on the user's username (retrieved from users table)
-$userDirectory = BASE_PATH . "public/images/users/" . $username;
+// ✅ Define the correct user directory based on user_id
+$userDirectory = BASE_PATH . "public/images/users/" . $user_id;
+$imagePath = $userDirectory . "/" . $image;
 
-// Delete the image file if it exists
-if ($image) {
-    $imagePath = $userDirectory . "/" . $image;
-
-    // Check if the image file exists and delete it
-    if (file_exists($imagePath)) {
-        if (!unlink($imagePath)) {
-            echo json_encode(['success' => false, 'message' => 'Failed to delete the image file.']);
-            exit;
-        }
+// ✅ Delete the image file if it exists (but only if it's not the default logo)
+if ($image && $image !== 'narrative-logo-big.png' && file_exists($imagePath)) {
+    if (!unlink($imagePath)) {
+        echo json_encode(['success' => false, 'message' => 'Failed to delete the image file.']);
+        exit;
     }
 }
 
-// Prepare SQL query to delete the article
+// ✅ Delete the article from the database
 $query = "DELETE FROM tbl_blogs WHERE id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $article_id);
 if ($stmt->execute()) {
-// Redirect the user back to the previous page if available
+    // Redirect the user back to the previous page if available
     $referer = $_SERVER['HTTP_REFERER'] ?? BASE_URL . 'account/feed.php';
     if (strpos($referer, 'article.php') !== false) {
         header('Location: ' . BASE_URL . 'forYou.php');
-        exit();
     } else {
         header('Location: ' . $referer);
     }
-    exit(); // Ensure no further code is executed after redirection
+    exit();
 } else {
     echo json_encode(['success' => false, 'message' => 'Failed to delete the article.']);
-    exit(); // Stop further code execution in case of failure
+    exit();
 }
-
-
 ?>

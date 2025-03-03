@@ -286,7 +286,7 @@ if (empty($preferred_categories)) {
                 <?php while ($row = $blogs_result->fetch_assoc()): ?>
                     <div class="flex-item">
                         <div class="article-author-and-topic">
-                            <a href="#" class="aa" id="author-name">
+                            <a href="" class="aa" id="author-name">
                                 <?php echo $username ?>
                             </a>
                             <span class="aa" id="writing-about">is writing about</span>
@@ -313,7 +313,7 @@ if (empty($preferred_categories)) {
                             <div class="blog-body">
                                 <div class="blog-details">
                                     <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?></h2>
-                                    <p id="blog-content"><?php echo $row['summary']; ?>...</p>
+                                    <p id="blog-content"><?php echo strip_tags($row['summary']); ?>...</p>
                                 </div>
                                 <div class="image-container">
                                     <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
