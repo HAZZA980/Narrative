@@ -163,7 +163,7 @@ include BASE_PATH . 'model/category-file-mapping.php';
         <!-- Pagination Links -->
         <?php
         // Calculate total number of pages based on 25 entries per page for consistency
-        $sql_total = "SELECT COUNT(Id) AS total FROM tbl_blogs WHERE Type = 'Article'";
+        $sql_total = "SELECT COUNT(Id) AS total FROM tbl_blogs";
         $result_total = $conn->query($sql_total);
         $row_total = $result_total->fetch_assoc();
         $total_records = $row_total['total'];

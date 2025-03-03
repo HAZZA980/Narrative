@@ -394,18 +394,56 @@ $stmt->close();
 
             $total_stmt->close();
 
-            // Generate pagination links
-            if ($total_pages > 1): ?>
-                <div class="pagination">
-                    <?php for ($page = 1; $page <= $total_pages; $page++): ?>
-                        <a href="?tag=<?php echo urlencode($tag); ?>&page=<?php echo $page; ?>"
-                           class="pagination-link <?php echo $current_page == $page ? 'current' : ''; ?>"
-                           aria-label="Page <?php echo $page; ?>">
-                            <?php echo $page; ?>
-                        </a>
-                    <?php endfor; ?>
-                </div>
+          if ($total_pages > 1): ?>
+            <div class="pagination">
+                <!-- Previous Button -->
+                <?php if ($current_page > 1): ?>
+                    <a href="?tag=<?php echo urlencode($tag); ?>&page=<?php echo $current_page - 1; ?>" aria-label="Previous Page">Previous</a>
+                <?php endif; ?>
+
+                <!-- First Page -->
+                <a href="?tag=<?php echo urlencode($tag); ?>&page=1"
+                   class="<?php echo ($current_page == 1) ? 'active' : ''; ?>">1</a>
+
+                <!-- Ellipsis if needed -->
+                <?php if ($current_page > 4): ?>
+                    <span>...</span>
+                <?php endif; ?>
+
+                <!-- Page Numbers Around Current Page -->
+                <?php
+                $start_page = max(2, $current_page - 2);
+                $end_page = min($total_pages - 1, $current_page + 2);
+
+                for ($page = $start_page; $page <= $end_page; $page++): ?>
+                    <a href="?tag=<?php echo urlencode($tag); ?>&page=<?php echo $page; ?>"
+                       class="<?php echo ($current_page == $page) ? 'active' : ''; ?>"
+                       aria-label="Page <?php echo $page; ?>">
+                        <?php echo $page; ?>
+                    </a>
+                <?php endfor; ?>
+
+                <!-- Ellipsis Before Last Page -->
+                <?php if ($current_page < $total_pages - 3): ?>
+                    <span>...</span>
+                <?php endif; ?>
+
+                <!-- Last Page -->
+                <?php if ($total_pages > 1): ?>
+                    <a href="?tag=<?php echo urlencode($tag); ?>&page=<?php echo $total_pages; ?>"
+                       class="<?php echo ($current_page == $total_pages) ? 'active' : ''; ?>"
+                       aria-label="Page <?php echo $total_pages; ?>">
+                        <?php echo $total_pages; ?>
+                    </a>
+                <?php endif; ?>
+
+                <!-- Next Button -->
+                <?php if ($current_page < $total_pages): ?>
+                    <a href="?tag=<?php echo urlencode($tag); ?>&page=<?php echo $current_page + 1; ?>" aria-label="Next Page">Next</a>
+                <?php endif; ?>
+            </div>
             <?php endif; ?>
+
 
         </div>
 

@@ -65,3 +65,42 @@
     font-weight: 600;
     padding-right: 2rem;
 }
+
+
+/* Pagination Styles */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+
+}
+
+.pagination a, .pagination span {
+    margin: 0 5px;
+    padding: 10px 15px;
+    text-decoration: none;
+    background-color: #f4f4f4;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.pagination a.active {
+    background-color: #B80000;
+    color: white;
+    border-color: #B80000;
+}
+
+.pagination a:hover {
+    background-color: #ddd;
+}
+
+/* Style for ellipsis */
+.pagination span {
+    background: none;
+    border: none;
+    color: #666;
+    padding: 10px 5px;
+    font-weight: bold;
+}

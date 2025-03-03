@@ -330,15 +330,53 @@ include BASE_PATH . 'model/for-you-logic.php';
 
             <div class="pagination">
                 <?php if ($total_pages > 1): ?>
-                    <?php for ($page = 1; $page <= $total_pages; $page++): ?>
+                    <!-- Previous Button -->
+                    <?php if ($current_page > 1): ?>
+                        <a href="?page=<?php echo $current_page - 1; ?>" aria-label="Previous Page">Previous</a>
+                    <?php endif; ?>
+
+                    <!-- First Page -->
+                    <a href="?page=1" class="<?php echo ($current_page == 1) ? 'active' : ''; ?>">1</a>
+
+                    <!-- Ellipsis if needed -->
+                    <?php if ($current_page > 4): ?>
+                        <span>...</span>
+                    <?php endif; ?>
+
+                    <!-- Page Numbers Around Current Page -->
+                    <?php
+                    $start_page = max(2, $current_page - 2);
+                    $end_page = min($total_pages - 1, $current_page + 2);
+
+                    for ($page = $start_page; $page <= $end_page; $page++): ?>
                         <a href="?page=<?php echo $page; ?>"
-                           class="pagination-link <?php echo $current_page == $page ? 'current' : ''; ?>"
+                           class="<?php echo ($current_page == $page) ? 'active' : ''; ?>"
                            aria-label="Page <?php echo $page; ?>">
                             <?php echo $page; ?>
                         </a>
                     <?php endfor; ?>
+
+                    <!-- Ellipsis Before Last Page -->
+                    <?php if ($current_page < $total_pages - 3): ?>
+                        <span>...</span>
+                    <?php endif; ?>
+
+                    <!-- Last Page -->
+                    <?php if ($total_pages > 1): ?>
+                        <a href="?page=<?php echo $total_pages; ?>"
+                           class="<?php echo ($current_page == $total_pages) ? 'active' : ''; ?>"
+                           aria-label="Page <?php echo $total_pages; ?>">
+                            <?php echo $total_pages; ?>
+                        </a>
+                    <?php endif; ?>
+
+                    <!-- Next Button -->
+                    <?php if ($current_page < $total_pages): ?>
+                        <a href="?page=<?php echo $current_page + 1; ?>" aria-label="Next Page">Next</a>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
+
         </div>
 
 

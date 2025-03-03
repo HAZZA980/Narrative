@@ -27,6 +27,56 @@ include BASE_PATH . 'features/search/search-logic.php';
             </form>
         </div>
 
+        <!-- Pagination -->
+        <div class="pagination">
+            <?php if ($total_pages > 1): ?>
+                <!-- Previous Button -->
+                <?php if ($current_page > 1): ?>
+                    <a href="?page=<?php echo $current_page - 1; ?>&txt-search=<?php echo urlencode($search); ?>">Previous</a>
+                <?php endif; ?>
+
+                <!-- First Page -->
+                <a href="?page=1&txt-search=<?php echo urlencode($search); ?>"
+                   class="<?php echo ($current_page == 1) ? 'active' : ''; ?>">1</a>
+
+                <!-- Ellipsis if needed -->
+                <?php if ($current_page > 4): ?>
+                    <span>...</span>
+                <?php endif; ?>
+
+                <!-- Page Numbers Around Current Page -->
+                <?php
+                $start_page = max(2, $current_page - 2);
+                $end_page = min($total_pages - 1, $current_page + 2);
+
+                for ($page = $start_page; $page <= $end_page; $page++): ?>
+                    <a href="?page=<?php echo $page; ?>&txt-search=<?php echo urlencode($search); ?>"
+                       class="<?php echo ($current_page == $page) ? 'active' : ''; ?>">
+                        <?php echo $page; ?>
+                    </a>
+                <?php endfor; ?>
+
+                <!-- Ellipsis Before Last Page -->
+                <?php if ($current_page < $total_pages - 3): ?>
+                    <span>...</span>
+                <?php endif; ?>
+
+                <!-- Last Page -->
+                <?php if ($total_pages > 1): ?>
+                    <a href="?page=<?php echo $total_pages; ?>&txt-search=<?php echo urlencode($search); ?>"
+                       class="<?php echo ($current_page == $total_pages) ? 'active' : ''; ?>">
+                        <?php echo $total_pages; ?>
+                    </a>
+                <?php endif; ?>
+
+                <!-- Next Button -->
+                <?php if ($current_page < $total_pages): ?>
+                    <a href="?page=<?php echo $current_page + 1; ?>&txt-search=<?php echo urlencode($search); ?>">Next</a>
+                <?php endif; ?>
+            <?php endif; ?>
+        </div>
+
+
         <div class="flex-container">
             <?php if ($blogs_result->num_rows > 0): ?>
             <?php while ($row = $blogs_result->fetch_assoc()): ?>
@@ -414,32 +464,53 @@ include BASE_PATH . 'features/search/search-logic.php';
             <!-- Pagination -->
             <div class="pagination">
                 <?php if ($total_pages > 1): ?>
-                    <ul class="pagination-list">
-                        <?php if ($current_page > 1): ?>
-                            <li>
-                                <a href="?page=<?php echo $current_page - 1; ?>&txt-search=<?php echo urlencode($search); ?>"
-                                   class="pagination-link">Previous</a>
-                            </li>
-                        <?php endif; ?>
+                    <!-- Previous Button -->
+                    <?php if ($current_page > 1): ?>
+                        <a href="?page=<?php echo $current_page - 1; ?>&txt-search=<?php echo urlencode($search); ?>">Previous</a>
+                    <?php endif; ?>
 
-                        <?php for ($page = 1; $page <= $total_pages; $page++): ?>
-                            <li>
-                                <a href="?page=<?php echo $page; ?>&txt-search=<?php echo urlencode($search); ?>"
-                                   class="pagination-link <?php echo $current_page == $page ? 'current' : ''; ?>">
-                                    <?php echo $page; ?>
-                                </a>
-                            </li>
-                        <?php endfor; ?>
+                    <!-- First Page -->
+                    <a href="?page=1&txt-search=<?php echo urlencode($search); ?>"
+                       class="<?php echo ($current_page == 1) ? 'active' : ''; ?>">1</a>
 
-                        <?php if ($current_page < $total_pages): ?>
-                            <li>
-                                <a href="?page=<?php echo $current_page + 1; ?>&txt-search=<?php echo urlencode($search); ?>"
-                                   class="pagination-link">Next</a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
+                    <!-- Ellipsis if needed -->
+                    <?php if ($current_page > 4): ?>
+                        <span>...</span>
+                    <?php endif; ?>
+
+                    <!-- Page Numbers Around Current Page -->
+                    <?php
+                    $start_page = max(2, $current_page - 2);
+                    $end_page = min($total_pages - 1, $current_page + 2);
+
+                    for ($page = $start_page; $page <= $end_page; $page++): ?>
+                        <a href="?page=<?php echo $page; ?>&txt-search=<?php echo urlencode($search); ?>"
+                           class="<?php echo ($current_page == $page) ? 'active' : ''; ?>">
+                            <?php echo $page; ?>
+                        </a>
+                    <?php endfor; ?>
+
+                    <!-- Ellipsis Before Last Page -->
+                    <?php if ($current_page < $total_pages - 3): ?>
+                        <span>...</span>
+                    <?php endif; ?>
+
+                    <!-- Last Page -->
+                    <?php if ($total_pages > 1): ?>
+                        <a href="?page=<?php echo $total_pages; ?>&txt-search=<?php echo urlencode($search); ?>"
+                           class="<?php echo ($current_page == $total_pages) ? 'active' : ''; ?>">
+                            <?php echo $total_pages; ?>
+                        </a>
+                    <?php endif; ?>
+
+                    <!-- Next Button -->
+                    <?php if ($current_page < $total_pages): ?>
+                        <a href="?page=<?php echo $current_page + 1; ?>&txt-search=<?php echo urlencode($search); ?>">Next</a>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
+
+
     </section>
 </main>
 
