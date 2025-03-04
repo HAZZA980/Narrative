@@ -19,10 +19,10 @@ $order_sql_map = [
     'chronological_desc' => 'b.id DESC'
 ];
 // Validate the order parameter and default to 'date_desc' if invalid
-$order_by = isset($order_sql_map[$order]) ? $order_sql_map[$order] : 'b.datePublished DESC';
+$order_by = isset($order_sql_map[$order]) ? $order_sql_map[$order] : 'b.datePublished ASC';
 
 $order_by = isset($_GET['order_by']) ? $_GET['order_by'] : 'date'; // Default: order by date
-$order_dir = isset($_GET['order_dir']) ? $_GET['order_dir'] : 'desc'; // Default: descending order
+$order_dir = isset($_GET['order_dir']) ? $_GET['order_dir'] : 'asc'; // Default: descending order
 
 // Map the order_by parameter to SQL columns
 $order_column_map = [

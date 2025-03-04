@@ -3,6 +3,9 @@
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 include BASE_PATH . 'features/write/write-icon-fixed.php';
 include BASE_PATH . 'features/search/search-logic.php';
+//include BASE_PATH . 'account/model/feed.php';
+
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -13,6 +16,7 @@ include BASE_PATH . 'features/search/search-logic.php';
     <link rel="stylesheet" href="features/pagination/css/pagination.css">
     <link rel="stylesheet" href="features/search/css/styles-search.css">
     <link rel="stylesheet" href="explore/articleLayouts/styles-default-article-formation.css">
+    <link rel="stylesheet" href="account/css/feed.css">
 </head>
 <body>
 
@@ -27,71 +31,100 @@ include BASE_PATH . 'features/search/search-logic.php';
             </form>
         </div>
 
-        <!-- Pagination -->
-        <div class="pagination">
-            <?php if ($total_pages > 1): ?>
-                <!-- Previous Button -->
-                <?php if ($current_page > 1): ?>
-                    <a href="?page=<?php echo $current_page - 1; ?>&txt-search=<?php echo urlencode($search); ?>">Previous</a>
-                <?php endif; ?>
+        <div class="pagination-container">
+            <!-- Filter Button -->
+            <div class="filter-order-buttons">
+                <!-- Order Button -->
+                <div class="order-dropdown">
+                    <a href="#"><img src="<?php echo BASE_URL; ?>public/images/pagination/order.svg" alt="Order"
+                                     title="Order"></a>
+                    <div class="dropdown-content">
+                        <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=datePublished&order_dir=<?php echo htmlspecialchars($order_dir); ?>&txt-search=<?php echo urlencode($search); ?>">Order By Date</a>
+                        <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=chronological&order_dir=<?php echo htmlspecialchars($order_dir); ?>&txt-search=<?php echo urlencode($search); ?>">Order By ID</a>
+                        <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=alphabetical&order_dir=<?php echo htmlspecialchars($order_dir); ?>&txt-search=<?php echo urlencode($search); ?>">Order By Alphabetical</a>
+                    </div>
+                </div>
 
-                <!-- First Page -->
-                <a href="?page=1&txt-search=<?php echo urlencode($search); ?>"
-                   class="<?php echo ($current_page == 1) ? 'active' : ''; ?>">1</a>
 
-                <!-- Ellipsis if needed -->
-                <?php if ($current_page > 4): ?>
-                    <span>...</span>
-                <?php endif; ?>
+                <!-- Filter Button -->
+                <a href="#" style="display: none"><img src="<?php echo BASE_URL; ?>public/images/pagination/filter.svg"
+                                                       alt="Filter"
+                                                       title="Filter"></a>
+            </div>
 
-                <!-- Page Numbers Around Current Page -->
-                <?php
-                $start_page = max(2, $current_page - 2);
-                $end_page = min($total_pages - 1, $current_page + 2);
 
-                for ($page = $start_page; $page <= $end_page; $page++): ?>
-                    <a href="?page=<?php echo $page; ?>&txt-search=<?php echo urlencode($search); ?>"
-                       class="<?php echo ($current_page == $page) ? 'active' : ''; ?>">
-                        <?php echo $page; ?>
-                    </a>
-                <?php endfor; ?>
-
-                <!-- Ellipsis Before Last Page -->
-                <?php if ($current_page < $total_pages - 3): ?>
-                    <span>...</span>
-                <?php endif; ?>
-
-                <!-- Last Page -->
+            <!-- Pagination -->
+            <!-- Pagination -->
+            <div class="pagination">
                 <?php if ($total_pages > 1): ?>
-                    <a href="?page=<?php echo $total_pages; ?>&txt-search=<?php echo urlencode($search); ?>"
-                       class="<?php echo ($current_page == $total_pages) ? 'active' : ''; ?>">
-                        <?php echo $total_pages; ?>
-                    </a>
-                <?php endif; ?>
+                    <?php if ($current_page > 1): ?>
+                        <a href="?page=<?php echo $current_page - 1; ?>&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>">Previous</a>
+                    <?php endif; ?>
 
-                <!-- Next Button -->
-                <?php if ($current_page < $total_pages): ?>
-                    <a href="?page=<?php echo $current_page + 1; ?>&txt-search=<?php echo urlencode($search); ?>">Next</a>
+                    <a href="?page=1&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>" class="<?php echo ($current_page == 1) ? 'active' : ''; ?>">1</a>
+
+                    <?php if ($current_page > 4): ?>
+                        <span>...</span>
+                    <?php endif; ?>
+
+                    <?php
+                    $start_page = max(2, $current_page - 2);
+                    $end_page = min($total_pages - 1, $current_page + 2);
+
+                    for ($page = $start_page; $page <= $end_page; $page++): ?>
+                        <a href="?page=<?php echo $page; ?>&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>" class="<?php echo ($current_page == $page) ? 'active' : ''; ?>">
+                            <?php echo $page; ?>
+                        </a>
+                    <?php endfor; ?>
+
+                    <?php if ($current_page < $total_pages - 3): ?>
+                        <span>...</span>
+                    <?php endif; ?>
+
+                    <?php if ($total_pages > 1): ?>
+                        <a href="?page=<?php echo $total_pages; ?>&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>" class="<?php echo ($current_page == $total_pages) ? 'active' : ''; ?>">
+                            <?php echo $total_pages; ?>
+                        </a>
+                    <?php endif; ?>
+
+                    <?php if ($current_page < $total_pages): ?>
+                        <a href="?page=<?php echo $current_page + 1; ?>&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>">Next</a>
+                    <?php endif; ?>
                 <?php endif; ?>
-            <?php endif; ?>
+            </div>
+
+
+            <!-- Ascending and Descending Buttons -->
+            <div class="asc-desc">
+                <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=ASC&txt-search=<?php echo urlencode($search); ?>">
+                    <img src="<?php echo BASE_URL; ?>public/images/pagination/arrow-up.svg" alt="Ascending"
+                         title="Ascending">
+                </a>
+                <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=DESC&txt-search=<?php echo urlencode($search); ?>">
+                    <img src="<?php echo BASE_URL; ?>public/images/pagination/arrow-down.svg" alt="Descending"
+                         title="Descending">
+                </a>
+            </div>
+
+
         </div>
 
 
         <div class="flex-container">
             <?php if ($blogs_result->num_rows > 0): ?>
-            <?php while ($row = $blogs_result->fetch_assoc()): ?>
-            <?php if ($row['user_id'] == $_SESSION['user_id']): ?>
-                <!-- User is the author of the article -->
-                <div class="flex-item">
-                    <?php if ($row['private'] == 1): ?>
-                        <div class="private-overlay">
-                            <p>This blog is set to private</p>
-                        </div>
-                    <?php endif; ?>
-                    <div class="article-author-and-topic">
-                        <div class="inter">
-                            <span class="aa" id="writing-about">You are writing about </span>
-                            <span>
+                <?php while ($row = $blogs_result->fetch_assoc()): ?>
+                    <?php if ($row['user_id'] == $_SESSION['user_id']): ?>
+                        <!-- User is the author of the article -->
+                        <div class="flex-item">
+                            <?php if ($row['private'] == 1): ?>
+                                <div class="private-overlay">
+                                    <p>This blog is set to private</p>
+                                </div>
+                            <?php endif; ?>
+                            <div class="article-author-and-topic">
+                                <div class="inter">
+                                    <span class="aa" id="writing-about">You are writing about </span>
+                                    <span>
                             <?php
                             if (!empty($row['Tags'])) {
                                 // Explode tags by comma and trim whitespace
@@ -99,7 +132,8 @@ include BASE_PATH . 'features/search/search-logic.php';
                                 $first_tag = trim($tags[0]); // Get the first tag
                                 ?>
                                 <!-- Tag link to feed.php with tag query -->
-                                <a href="<?php echo BASE_URL; ?>tag.php?tag=<?php echo urlencode($first_tag); ?>" class="tag-link" style="color: firebrick">
+                                <a href="<?php echo BASE_URL; ?>tag.php?tag=<?php echo urlencode($first_tag); ?>"
+                                   class="tag-link" style="color: firebrick">
                                     <?php echo htmlspecialchars($first_tag); ?>
                                 </a>
                                 <?php
@@ -109,208 +143,213 @@ include BASE_PATH . 'features/search/search-logic.php';
                             ?>
                             </span>
 
-                        </div>
-                        <!-- Edit Article Icon and Dropdown Menu -->
-                        <?php
-                        if (strpos($_SERVER['REQUEST_URI'], 'search.php') === false):
-                        ?>
-                        <div class="edit-article">
-                            <img src="public/images/article-layout-img/three-dots.svg" alt="Edit Menu"
-                                 class="edit-menu-icon">
-                            <div class="edit-menu">
-                                <ul>
-                                    <li>
-                                        <a href="user/edit-article.php?id=<?php echo $row['id']; ?>"
-                                           class="edit-article-option">Edit Article</a>
-                                    </li>
-                                    <li class="admin-action-item">
-                                        <form action="" method="POST" style="display: inline;">
-                                            <input type="hidden" name="article_id"
-                                                   value="<?php echo $row['id']; ?>">
-                                            <button type="submit" name="toggle_private"
-                                                    value="<?php echo $row['private'] == 1 ? 0 : 1; ?>"
-                                                    class="edit-article-option">
-                                                <?php echo $row['private'] == 1 ? 'Make Public' : 'Make Private'; ?>
+                                </div>
+                                <!-- Edit Article Icon and Dropdown Menu -->
+                                <?php
+                                if (strpos($_SERVER['REQUEST_URI'], 'search.php') === false):
+                                    ?>
+                                    <div class="edit-article">
+                                        <img src="public/images/article-layout-img/three-dots.svg" alt="Edit Menu"
+                                             class="edit-menu-icon">
+                                        <div class="edit-menu">
+                                            <ul>
+                                                <li>
+                                                    <a href="user/edit-article.php?id=<?php echo $row['id']; ?>"
+                                                       class="edit-article-option">Edit Article</a>
+                                                </li>
+                                                <li class="admin-action-item">
+                                                    <form action="" method="POST" style="display: inline;">
+                                                        <input type="hidden" name="article_id"
+                                                               value="<?php echo $row['id']; ?>">
+                                                        <button type="submit" name="toggle_private"
+                                                                value="<?php echo $row['private'] == 1 ? 0 : 1; ?>"
+                                                                class="edit-article-option">
+                                                            <?php echo $row['private'] == 1 ? 'Make Public' : 'Make Private'; ?>
+                                                        </button>
+                                                    </form>
+                                                </li>
+
+                                                <li class="admin-action-item">
+                                                    <a href="javascript:void(0);" class="admin-action-link"
+                                                       id="deleteLink"
+                                                       data-article-id="<?php echo $row['id']; ?>">Delete Article</a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <a href="<?php echo BASE_URL; ?>user/article.php?id=<?php echo $row['id']; ?>"
+                               class="article-main-link">
+                                <div class="blog-body">
+                                    <div class="blog-details">
+                                        <h2 id="blog-title"><?php echo htmlspecialchars($row['title']) ?></h2>
+                                        <p id="blog-content"><?php echo strip_tags($row['summary']); ?>...</p>
+                                    </div>
+                                    <div class="image-container">
+                                        <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
+                                            ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
+                                            : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
+                                    </div>
+                                </div>
+                            </a>
+
+                            <div class="blog-details-2">
+                                <p id="blog-date">
+                                    <small><?php echo date('F j, Y', strtotime($row['datePublished'])); ?></small>
+                                </p>
+                                <div class="likes-and-comments" data-article-id="<?php echo $row['id']; ?>">
+                                    <div class="like">
+                                        <?php
+                                        $user_id = $_SESSION['user_id']; // Get logged-in user's ID
+                                        $article_id = $row['id']; // Get current article ID
+
+                                        // Check if the user has already liked the article
+                                        $query = "SELECT * FROM article_likes WHERE article_id = ? AND user_id = ?";
+                                        $stmt = $conn->prepare($query);
+                                        $stmt->bind_param("ii", $article_id, $user_id);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        $article_liked = $result->num_rows > 0;
+
+                                        // Get like count
+                                        $like_count_query = "SELECT COUNT(*) AS like_count FROM article_likes WHERE article_id = ?";
+                                        $stmt = $conn->prepare($like_count_query);
+                                        $stmt->bind_param("i", $article_id);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        $like_count = $result->fetch_assoc()['like_count'];
+                                        ?>
+
+                                        <!-- Like Button -->
+                                        <button class="like-btn" data-article-id="<?php echo $article_id; ?>"
+                                                data-liked="<?php echo $article_liked ? '1' : '0'; ?>">
+                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
+                                                 class="like-icon like-unfilled"
+                                                 style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
+
+                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-solid.svg"
+                                                 class="like-icon like-filled"
+                                                 style="display: <?php echo $article_liked ? 'block' : 'none'; ?>"/>
+                                        </button>
+
+                                        <!-- Like Count -->
+                                        <p class="like-status"
+                                           id="like-count-<?php echo $article_id; ?>"><?php echo $like_count; ?></p>
+                                    </div>
+
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function () {
+                                            document.querySelectorAll(".like-btn").forEach(button => {
+                                                button.addEventListener("click", function () {
+                                                    let articleId = this.getAttribute("data-article-id");
+                                                    let isLiked = this.getAttribute("data-liked") === "1";
+
+                                                    let action = isLiked ? "remove" : "add";
+
+                                                    fetch("features/likes/like.php", {
+                                                        method: "POST",
+                                                        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                                                        body: `article_id=${articleId}&action=${action}`
+                                                    })
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            if (data.success) {
+                                                                // Toggle like status
+                                                                this.setAttribute("data-liked", isLiked ? "0" : "1");
+
+                                                                // Toggle icon display
+                                                                this.querySelector(".like-unfilled").style.display = isLiked ? "block" : "none";
+                                                                this.querySelector(".like-filled").style.display = isLiked ? "none" : "block";
+
+                                                                // Update like count
+                                                                document.getElementById(`like-count-${articleId}`).textContent = data.likes;
+                                                            }
+                                                        })
+                                                        .catch(error => console.error("Error:", error));
+                                                });
+                                            });
+                                        });
+                                    </script>
+
+
+                                    <div class="comment">
+                                        <!--Comments Backend-->
+                                        <?php
+                                        // Get the number of comments for this article
+                                        $article_id = $row['id']; // Get article ID
+                                        $comment_query = "SELECT COUNT(*) AS comment_count FROM article_comments WHERE article_id = ?";
+                                        $comment_stmt = $conn->prepare($comment_query);
+                                        $comment_stmt->bind_param("i", $article_id);
+                                        $comment_stmt->execute();
+                                        $comment_stmt->bind_result($comment_count);
+                                        $comment_stmt->fetch();
+                                        $comment_stmt->close();
+                                        ?>
+                                        <a href="<?php echo BASE_URL; ?>user/article.php?id=<?php echo $row['id'] ?>"
+                                           class="comments-link">
+                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/comments-regular.svg"
+                                                 alt="Comments">
+                                            <p class="comments-count"><?php echo $comment_count; ?></p>
+                                        </a>
+                                    </div>
+
+
+                                    <?php
+                                    // Check if the article is already bookmarked
+                                    $check_query = "SELECT * FROM user_bookmarks WHERE user_id = ? AND article_id = ?";
+                                    $stmt = $conn->prepare($check_query);
+                                    $stmt->bind_param("ii", $user_id, $article_id);
+                                    $stmt->execute();
+                                    $result = $stmt->get_result();
+                                    $article_bookmarked = $result->num_rows > 0;
+                                    ?>
+
+                                    <div class="bookmark">
+                                        <!-- Bookmark button with form -->
+                                        <form action="<?php echo BASE_URL; ?>features/bookmarks/bookmark.php"
+                                              method="POST"
+                                              class="bookmark-form">
+                                            <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
+                                            <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
+                                            <!-- Show filled icon if the article is bookmarked -->
+                                            <button type="submit" class="bookmark-btn" name="bookmark_action"
+                                                    value="<?php echo $article_bookmarked ? 'remove' : 'add'; ?>">
+                                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg"
+                                                     alt="Add to Bookmarks" class="bookmark-icon"
+                                                     style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>
+                                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus-fill.svg"
+                                                     alt="Remove from Bookmarks" class="bookmark-icon"
+                                                     style="display: <?php echo $article_bookmarked ? 'block' : 'none'; ?>"/>
                                             </button>
                                         </form>
-                                    </li>
-
-                                    <li class="admin-action-item">
-                                        <a href="javascript:void(0);" class="admin-action-link" id="deleteLink"
-                                           data-article-id="<?php echo $row['id']; ?>">Delete Article</a>
-                                    </li>
-
-                                </ul>
+                                        <p class="bookmark-status"></p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <?php endif; ?>
-                    </div>
-                    <a href="<?php echo BASE_URL; ?>user/article.php?id=<?php echo $row['id']; ?>"
-                       class="article-main-link">
-                        <div class="blog-body">
-                            <div class="blog-details">
-                                <h2 id="blog-title"><?php echo htmlspecialchars($row['title']) ?></h2>
-                                <p id="blog-content"><?php echo strip_tags($row['summary']); ?>...</p>
-                            </div>
-                            <div class="image-container">
-                                <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
-                                    ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
-                                    : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
-                            </div>
-                        </div>
-                    </a>
+                        <div class="divider"></div>
 
-                    <div class="blog-details-2">
-                        <p id="blog-date">
-                            <small><?php echo date('F j, Y', strtotime($row['datePublished'])); ?></small>
-                        </p>
-                        <div class="likes-and-comments" data-article-id="<?php echo $row['id']; ?>">
-                            <div class="like">
+                    <?php else: ?>
+                        <!-- User is NOT the author of the article -->
+                        <div class="flex-item">
+                            <div class="article-author-and-topic">
+
                                 <?php
-                                $user_id = $_SESSION['user_id']; // Get logged-in user's ID
-                                $article_id = $row['id']; // Get current article ID
-
-                                // Check if the user has already liked the article
-                                $query = "SELECT * FROM article_likes WHERE article_id = ? AND user_id = ?";
-                                $stmt = $conn->prepare($query);
-                                $stmt->bind_param("ii", $article_id, $user_id);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                $article_liked = $result->num_rows > 0;
-
-                                // Get like count
-                                $like_count_query = "SELECT COUNT(*) AS like_count FROM article_likes WHERE article_id = ?";
-                                $stmt = $conn->prepare($like_count_query);
-                                $stmt->bind_param("i", $article_id);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                $like_count = $result->fetch_assoc()['like_count'];
-                                ?>
-
-                                <!-- Like Button -->
-                                <button class="like-btn" data-article-id="<?php echo $article_id; ?>" data-liked="<?php echo $article_liked ? '1' : '0'; ?>">
-                                    <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
-                                         class="like-icon like-unfilled"
-                                         style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
-
-                                    <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-solid.svg"
-                                         class="like-icon like-filled"
-                                         style="display: <?php echo $article_liked ? 'block' : 'none'; ?>"/>
-                                </button>
-
-                                <!-- Like Count -->
-                                <p class="like-status" id="like-count-<?php echo $article_id; ?>"><?php echo $like_count; ?></p>
-                            </div>
-
-                            <script>
-                                document.addEventListener("DOMContentLoaded", function() {
-                                    document.querySelectorAll(".like-btn").forEach(button => {
-                                        button.addEventListener("click", function() {
-                                            let articleId = this.getAttribute("data-article-id");
-                                            let isLiked = this.getAttribute("data-liked") === "1";
-
-                                            let action = isLiked ? "remove" : "add";
-
-                                            fetch("features/likes/like.php", {
-                                                method: "POST",
-                                                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                                                body: `article_id=${articleId}&action=${action}`
-                                            })
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    if (data.success) {
-                                                        // Toggle like status
-                                                        this.setAttribute("data-liked", isLiked ? "0" : "1");
-
-                                                        // Toggle icon display
-                                                        this.querySelector(".like-unfilled").style.display = isLiked ? "block" : "none";
-                                                        this.querySelector(".like-filled").style.display = isLiked ? "none" : "block";
-
-                                                        // Update like count
-                                                        document.getElementById(`like-count-${articleId}`).textContent = data.likes;
-                                                    }
-                                                })
-                                                .catch(error => console.error("Error:", error));
-                                        });
-                                    });
-                                });
-                            </script>
-
-
-
-                            <div class="comment">
-                                <!--Comments Backend-->
-                                <?php
-                                // Get the number of comments for this article
-                                $article_id = $row['id']; // Get article ID
-                                $comment_query = "SELECT COUNT(*) AS comment_count FROM article_comments WHERE article_id = ?";
-                                $comment_stmt = $conn->prepare($comment_query);
-                                $comment_stmt->bind_param("i", $article_id);
-                                $comment_stmt->execute();
-                                $comment_stmt->bind_result($comment_count);
-                                $comment_stmt->fetch();
-                                $comment_stmt->close();
-                                ?>
-                                <a href="<?php echo BASE_URL;?>user/article.php?id=<?php echo $row['id']?>" class="comments-link">
-                                    <img src="<?php echo BASE_URL ?>public/images/article-layout-img/comments-regular.svg"
-                                         alt="Comments">
-                                    <p class="comments-count"><?php echo $comment_count; ?></p>
-                                </a>
-                            </div>
-
-
-                            <?php
-                            // Check if the article is already bookmarked
-                            $check_query = "SELECT * FROM user_bookmarks WHERE user_id = ? AND article_id = ?";
-                            $stmt = $conn->prepare($check_query);
-                            $stmt->bind_param("ii", $user_id, $article_id);
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-                            $article_bookmarked = $result->num_rows > 0;
-                            ?>
-
-                            <div class="bookmark">
-                                <!-- Bookmark button with form -->
-                                <form action="<?php echo BASE_URL; ?>features/bookmarks/bookmark.php" method="POST"
-                                      class="bookmark-form">
-                                    <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
-                                    <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
-                                    <!-- Show filled icon if the article is bookmarked -->
-                                    <button type="submit" class="bookmark-btn" name="bookmark_action"
-                                            value="<?php echo $article_bookmarked ? 'remove' : 'add'; ?>">
-                                        <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg"
-                                             alt="Add to Bookmarks" class="bookmark-icon"
-                                             style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>
-                                        <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus-fill.svg"
-                                             alt="Remove from Bookmarks" class="bookmark-icon"
-                                             style="display: <?php echo $article_bookmarked ? 'block' : 'none'; ?>"/>
-                                    </button>
-                                </form>
-                                <p class="bookmark-status"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="divider"></div>
-
-            <?php else: ?>
-                <!-- User is NOT the author of the article -->
-                <div class="flex-item">
-                    <div class="article-author-and-topic">
-
-                        <?php
-                        // Example of how you might be fetching blog posts
-                        $sql = "
+                                // Example of how you might be fetching blog posts
+                                $sql = "
                             SELECT tbl_blogs.id, tbl_blogs.title, tbl_blogs.user_id, tbl_blogs.datePublished, 
                                    tbl_blogs.Tags, tbl_blogs.Image, Users.username 
                             FROM tbl_blogs 
                             LEFT JOIN Users ON tbl_blogs.user_id = Users.user_id
-                            ORDER BY tbl_blogs.datePublished DESC";?>
-                        <a href="<?php echo BASE_URL; ?>feed.php?username=<?php echo urlencode($row['username']); ?>" class="aa" id="author-name">
-                            <?php echo htmlspecialchars($row['username']); ?>
-                        </a>
-                        <span class="aa" id="writing-about">is writing about</span>
-                        <span>
+                            ORDER BY tbl_blogs.datePublished DESC"; ?>
+                                <a href="<?php echo BASE_URL; ?>feed.php?username=<?php echo urlencode($row['username']); ?>"
+                                   class="aa" id="author-name">
+                                    <?php echo htmlspecialchars($row['username']); ?>
+                                </a>
+                                <span class="aa" id="writing-about">is writing about</span>
+                                <span>
                                <?php
                                if (!empty($row['Tags'])) {
                                    // Explode tags by comma and trim whitespace
@@ -318,7 +357,8 @@ include BASE_PATH . 'features/search/search-logic.php';
                                    $first_tag = trim($tags[0]); // Get the first tag
                                    ?>
                                    <!-- Tag link to feed.php with tag query -->
-                                   <a href="<?php echo BASE_URL; ?>tag.php?tag=<?php echo urlencode($first_tag); ?>" class="tag-link" style="color: firebrick">
+                                   <a href="<?php echo BASE_URL; ?>tag.php?tag=<?php echo urlencode($first_tag); ?>"
+                                      class="tag-link" style="color: firebrick">
                                     <?php echo htmlspecialchars($first_tag); ?>
                                 </a>
                                    <?php
@@ -328,130 +368,131 @@ include BASE_PATH . 'features/search/search-logic.php';
                                ?>
 
                         </span>
-                    </div>
-
-                    <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>"
-                       class="article-main-link">
-                        <div class="blog-body">
-                            <div class="blog-details">
-                                <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?></h2>
-                                <p id="blog-content"><?php echo strip_tags($row['summary']); ?>...</p>
                             </div>
-                            <div class="image-container">
-                                <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
-                                    ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
-                                    : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
+
+                            <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>"
+                               class="article-main-link">
+                                <div class="blog-body">
+                                    <div class="blog-details">
+                                        <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?></h2>
+                                        <p id="blog-content"><?php echo strip_tags($row['summary']); ?>...</p>
+                                    </div>
+                                    <div class="image-container">
+                                        <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
+                                            ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
+                                            : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
+                                    </div>
+                                </div>
+                            </a>
+
+                            <div class="blog-details-2">
+                                <p id="blog-date">
+                                    <small><?php echo date('F j, Y', strtotime($row['datePublished'])); ?></small>
+                                </p>
+                                <div class="likes-and-comments" data-article-id="<?php echo $row['id']; ?>">
+                                    <div class="like">
+                                        <?php
+                                        // Get the current user's ID
+                                        $user_id = $_SESSION['user_id']; // Or however you are retrieving the user_id from the session
+
+                                        // Assuming you're inside the loop for displaying each article
+                                        $article_id = $row['id']; // Article ID for the current post
+
+                                        // Check if the user has already liked the article
+                                        $query = "SELECT * FROM article_likes WHERE article_id = ? AND user_id = ?";
+                                        $stmt = $conn->prepare($query);
+                                        $stmt->bind_param("ii", $article_id, $user_id);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+
+                                        // Check if there is a like record for this article and user
+                                        $article_liked = $result->num_rows > 0 ? true : false;
+                                        ?>
+                                        <!-- Like button with form -->
+                                        <form action="<?php echo BASE_URL ?>/features/likes/like.php"
+                                              method="POST" class="like-form">
+                                            <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
+                                            <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
+                                            <!-- Show filled icon if the article is liked -->
+                                            <button type="submit" class="like-btn" name="bookmark_action"
+                                                    value="<?php echo $article_liked ? 'remove' : 'add'; ?>">
+                                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
+                                                     alt="Add Like" class="like-icon"
+                                                     style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
+                                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-solid.svg"
+                                                     alt="Remove Like" class="like-icon"
+                                                     style="display: <?php echo $article_liked ? 'block' : 'none'; ?>"/>
+                                            </button>
+                                        </form>
+                                        <?php
+                                        // Query to get the number of likes for the current article
+                                        $like_count_query = "SELECT COUNT(*) AS like_count FROM article_likes WHERE article_id = ?";
+                                        $stmt = $conn->prepare($like_count_query);
+                                        $stmt->bind_param("i", $article_id);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        $like_count = $result->fetch_assoc()['like_count']; // Fetch the count of likes
+                                        ?>
+                                        <p class="like-status"><?php echo $like_count; ?></p>
+                                    </div>
+
+
+                                    <div class="comment">
+                                        <!--Comments Backend-->
+                                        <?php
+                                        // Get the number of comments for this article
+                                        $article_id = $row['id']; // Get article ID
+                                        $comment_query = "SELECT COUNT(*) AS comment_count FROM article_comments WHERE article_id = ?";
+                                        $comment_stmt = $conn->prepare($comment_query);
+                                        $comment_stmt->bind_param("i", $article_id);
+                                        $comment_stmt->execute();
+                                        $comment_stmt->bind_result($comment_count);
+                                        $comment_stmt->fetch();
+                                        $comment_stmt->close();
+                                        ?>
+                                        <a href="<?php echo BASE_URL; ?>user/article.php?id=<?php echo $row['id'] ?>"
+                                           class="comments-link">
+                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/comments-regular.svg"
+                                                 alt="Comments">
+                                            <p class="comments-count"><?php echo $comment_count; ?></p>
+                                        </a>
+                                    </div>
+
+
+                                    <?php
+                                    // Check if the article is already bookmarked
+                                    $check_query = "SELECT * FROM user_bookmarks WHERE user_id = ? AND article_id = ?";
+                                    $stmt = $conn->prepare($check_query);
+                                    $stmt->bind_param("ii", $user_id, $article_id);
+                                    $stmt->execute();
+                                    $result = $stmt->get_result();
+                                    $article_bookmarked = $result->num_rows > 0;
+                                    ?>
+
+                                    <div class="bookmark">
+                                        <!-- Bookmark button with form -->
+                                        <form action="<?php echo BASE_URL ?>/features/bookmarks/bookmark.php"
+                                              method="POST" class="bookmark-form">
+                                            <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
+                                            <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
+                                            <!-- Show filled icon if the article is bookmarked -->
+                                            <button type="submit" class="bookmark-btn" name="bookmark_action"
+                                                    value="<?php echo $article_bookmarked ? 'remove' : 'add'; ?>">
+                                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg"
+                                                     alt="Add to Bookmarks" class="bookmark-icon"
+                                                     style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>
+                                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus-fill.svg"
+                                                     alt="Remove from Bookmarks" class="bookmark-icon"
+                                                     style="display: <?php echo $article_bookmarked ? 'block' : 'none'; ?>"/>
+                                            </button>
+                                        </form>
+                                        <p class="bookmark-status"></p>
+                                    </div>
+
+
+                                </div>
                             </div>
                         </div>
-                    </a>
-
-                    <div class="blog-details-2">
-                        <p id="blog-date">
-                            <small><?php echo date('F j, Y', strtotime($row['datePublished'])); ?></small>
-                        </p>
-                        <div class="likes-and-comments" data-article-id="<?php echo $row['id']; ?>">
-                            <div class="like">
-                                <?php
-                                // Get the current user's ID
-                                $user_id = $_SESSION['user_id']; // Or however you are retrieving the user_id from the session
-
-                                // Assuming you're inside the loop for displaying each article
-                                $article_id = $row['id']; // Article ID for the current post
-
-                                // Check if the user has already liked the article
-                                $query = "SELECT * FROM article_likes WHERE article_id = ? AND user_id = ?";
-                                $stmt = $conn->prepare($query);
-                                $stmt->bind_param("ii", $article_id, $user_id);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-
-                                // Check if there is a like record for this article and user
-                                $article_liked = $result->num_rows > 0 ? true : false;
-                                ?>
-                                <!-- Like button with form -->
-                                <form action="<?php echo BASE_URL ?>/features/likes/like.php"
-                                      method="POST" class="like-form">
-                                    <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
-                                    <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
-                                    <!-- Show filled icon if the article is liked -->
-                                    <button type="submit" class="like-btn" name="bookmark_action"
-                                            value="<?php echo $article_liked ? 'remove' : 'add'; ?>">
-                                        <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
-                                             alt="Add Like" class="like-icon"
-                                             style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
-                                        <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-solid.svg"
-                                             alt="Remove Like" class="like-icon"
-                                             style="display: <?php echo $article_liked ? 'block' : 'none'; ?>"/>
-                                    </button>
-                                </form>
-                                <?php
-                                // Query to get the number of likes for the current article
-                                $like_count_query = "SELECT COUNT(*) AS like_count FROM article_likes WHERE article_id = ?";
-                                $stmt = $conn->prepare($like_count_query);
-                                $stmt->bind_param("i", $article_id);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                $like_count = $result->fetch_assoc()['like_count']; // Fetch the count of likes
-                                ?>
-                                <p class="like-status"><?php echo $like_count; ?></p>
-                            </div>
-
-
-                            <div class="comment">
-                                <!--Comments Backend-->
-                                <?php
-                                // Get the number of comments for this article
-                                $article_id = $row['id']; // Get article ID
-                                $comment_query = "SELECT COUNT(*) AS comment_count FROM article_comments WHERE article_id = ?";
-                                $comment_stmt = $conn->prepare($comment_query);
-                                $comment_stmt->bind_param("i", $article_id);
-                                $comment_stmt->execute();
-                                $comment_stmt->bind_result($comment_count);
-                                $comment_stmt->fetch();
-                                $comment_stmt->close();
-                                ?>
-                                <a href="<?php echo BASE_URL;?>user/article.php?id=<?php echo $row['id']?>" class="comments-link">
-                                    <img src="<?php echo BASE_URL ?>public/images/article-layout-img/comments-regular.svg"
-                                         alt="Comments">
-                                    <p class="comments-count"><?php echo $comment_count;?></p>
-                                </a>
-                            </div>
-
-
-                            <?php
-                            // Check if the article is already bookmarked
-                            $check_query = "SELECT * FROM user_bookmarks WHERE user_id = ? AND article_id = ?";
-                            $stmt = $conn->prepare($check_query);
-                            $stmt->bind_param("ii", $user_id, $article_id);
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-                            $article_bookmarked = $result->num_rows > 0;
-                            ?>
-
-                            <div class="bookmark">
-                                <!-- Bookmark button with form -->
-                                <form action="<?php echo BASE_URL ?>/features/bookmarks/bookmark.php"
-                                      method="POST" class="bookmark-form">
-                                    <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
-                                    <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
-                                    <!-- Show filled icon if the article is bookmarked -->
-                                    <button type="submit" class="bookmark-btn" name="bookmark_action"
-                                            value="<?php echo $article_bookmarked ? 'remove' : 'add'; ?>">
-                                        <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg"
-                                             alt="Add to Bookmarks" class="bookmark-icon"
-                                             style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>
-                                        <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus-fill.svg"
-                                             alt="Remove from Bookmarks" class="bookmark-icon"
-                                             style="display: <?php echo $article_bookmarked ? 'block' : 'none'; ?>"/>
-                                    </button>
-                                </form>
-                                <p class="bookmark-status"></p>
-                            </div>
-
-
-                        </div>
-                    </div>
-                </div>
                         <div class="divider"></div>
                     <?php endif; ?>
 
@@ -517,6 +558,66 @@ include BASE_PATH . 'features/search/search-logic.php';
 <?php $conn->close(); ?>
 
 <script src="<?php echo BASE_URL . 'public/js/save-page-position.js' ?>"></script>
+<!--<script src="--><?php //echo BASE_URL ?><!--account/js/articleFilter.js"></script>-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const filterButton = document.getElementById("filter-button");
+        const filterOverlay = document.getElementById("filter-overlay");
+        const closeFilter = document.getElementById("close-filter");
+        const applyFilters = document.getElementById("apply-filters");
 
+        if (filterButton && filterOverlay && closeFilter && applyFilters) {
+            // Open the filter overlay when clicking the filter button
+            filterButton.addEventListener("click", function (e) {
+                e.preventDefault();
+                filterOverlay.style.display = "flex";
+            });
+
+            // Close the filter overlay when clicking the close button
+            closeFilter.addEventListener("click", function () {
+                filterOverlay.style.display = "none";
+            });
+
+            // Apply filters while preserving search query and order settings
+            applyFilters.addEventListener("click", function () {
+                const selectedCategories = [];
+                const categoryCheckboxes = document.querySelectorAll('input[name="categories[]"]:checked');
+                categoryCheckboxes.forEach(function (checkbox) {
+                    selectedCategories.push(checkbox.value);
+                });
+
+                const fromDate = document.getElementById("from-date").value;
+                const toDate = document.getElementById("to-date").value;
+
+                // Get the current URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const searchQuery = urlParams.get("txt-search") || "";
+                const orderBy = urlParams.get("order_by") || "datePublished";
+                const orderDir = urlParams.get("order_dir") || "DESC";
+                const tab = urlParams.get("tab") || "";
+
+                // Build the new query string
+                let filterQuery = `?tab=${encodeURIComponent(tab)}`;
+                filterQuery += `&txt-search=${encodeURIComponent(searchQuery)}`;
+                filterQuery += `&order_by=${encodeURIComponent(orderBy)}`;
+                filterQuery += `&order_dir=${encodeURIComponent(orderDir)}`;
+
+                if (selectedCategories.length > 0) {
+                    filterQuery += `&categories=${selectedCategories.join(",")}`;
+                }
+                if (fromDate) {
+                    filterQuery += `&from_date=${encodeURIComponent(fromDate)}`;
+                }
+                if (toDate) {
+                    filterQuery += `&to_date=${encodeURIComponent(toDate)}`;
+                }
+
+                // Redirect to the new URL with applied filters
+                window.location.href = window.location.pathname + filterQuery;
+            });
+        }
+    });
+
+</script>
 </body>
 </html>
