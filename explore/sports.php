@@ -86,7 +86,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
             $featured_ids = [];
             $sql = "SELECT id, title, LEFT(content, 270) AS summary, datePublished, Tags, Image, user_id 
                     FROM tbl_blogs 
-                    WHERE Category = 'Sport' 
+                    WHERE Category = 'Sports' 
                       AND featured = 1 
                       AND Private = 0 
                     ORDER BY datePublished DESC 
@@ -217,7 +217,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
             <?php
             // Query to get latest blogs
             $sql = "SELECT Id, Title, LEFT(Content, 180) AS summary, DatePublished, Tags, Image, user_id, Private
-            FROM tbl_blogs WHERE Private = '0' AND Category = 'Sport'
+            FROM tbl_blogs WHERE Private = '0' AND Category = 'Sports'
             ORDER BY DatePublished DESC";
             $result = $conn->query($sql);
 
