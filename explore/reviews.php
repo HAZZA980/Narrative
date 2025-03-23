@@ -214,7 +214,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                 <?php } ?>
             </div>
 
-            <!-- Load More / Change Less Button -->
+            <!-- Load More / Show Less Button -->
             <div style="text-align: center; margin-top: 20px;">
                 <button id="loadMoreBtn" onclick="loadMoreArticles()">Load More</button>
             </div>
@@ -277,7 +277,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                     currentIndex += 6;
 
                     if (currentIndex >= allBlogs.length) {
-                        button.innerText = "Change Less";
+                        button.innerText = "Show Less";
                         isExpanded = true;
                     }
                 } else {

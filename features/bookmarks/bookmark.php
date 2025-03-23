@@ -19,9 +19,19 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 
 // Check request method
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $article_id = $_POST['article_id'];
+    $article_id = isset($_POST['article_id']) ? $_POST['article_id'] : null;
+    if (!$article_id) {
+        echo json_encode(["success" => false, "message" => "Article ID is missing"]);
+        exit;
+    }
+
     $user_id = $_SESSION['user_id'];
-    $action = $_POST['action'];
+
+    $action = isset($_POST['action']) ? $_POST['action'] : null;
+    if (!$action) {
+        echo json_encode(["success" => false, "message" => "Action parameter is missing"]);
+        exit;
+    }
 
     if ($action === 'add') {
         // Check if the user has already bookmarked the article

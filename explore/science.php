@@ -284,7 +284,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                     currentIndex += 6;
 
                     if (currentIndex >= allBlogs.length) {
-                        button.innerText = "Change Less";
+                        button.innerText = "Show Less";
                         isExpanded = true;
                     }
                 } else {

@@ -46,11 +46,9 @@ include BASE_PATH . "account/account-masthead.php";
             <li class="feed-tabs-li"><a href="?tab=drafts" class="<?= $tab == 'drafts' ? 'active' : '' ?>">Drafts</a>
             </li>
             <li class="feed-tabs-li"><a href="?tab=commented_articles"
-                                        class="<?= $tab == 'commented_articles' ? 'active' : '' ?>">Commented
-                    Articles</a></li>
+                                        class="<?= $tab == 'commented_articles' ? 'active' : '' ?>">Articles you've commented on</a></li>
             <li class="feed-tabs-li"><a href="?tab=saved_articles"
-                                        class="<?= $tab == 'saved_articles' ? 'active' : '' ?>">Saved
-                    Articles</a></li>
+                                        class="<?= $tab == 'saved_articles' ? 'active' : '' ?>">Bookmarked</a></li>
         </ul>
     </div>
 
@@ -518,36 +516,63 @@ include BASE_PATH . "account/account-masthead.php";
                                     </div>
 
 
-                                    <?php
-                                    // Check if the article is already bookmarked
-                                    $check_query = "SELECT * FROM user_bookmarks WHERE user_id = ? AND article_id = ?";
-                                    $stmt = $conn->prepare($check_query);
-                                    $stmt->bind_param("ii", $user_id, $article_id);
-                                    $stmt->execute();
-                                    $result = $stmt->get_result();
-                                    $article_bookmarked = $result->num_rows > 0;
-                                    ?>
-
                                     <div class="bookmark">
-                                        <!-- Bookmark button with form -->
-                                        <form action="<?php echo BASE_URL ?>/features/bookmarks/bookmark.php"
-                                              method="POST" class="bookmark-form">
-                                            <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
-                                            <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
-                                            <!-- Show filled icon if the article is bookmarked -->
-                                            <button type="submit" class="bookmark-btn" name="bookmark_action"
-                                                    value="<?php echo $article_bookmarked ? 'remove' : 'add'; ?>">
+                                        <?php
+                                        $user_id = $_SESSION['user_id']; // Get logged-in user's ID
+                                        $article_id = $row['id']; // Get current article ID
+
+                                        // Check if the user has already bookmarked the article
+                                        $query = "SELECT * FROM user_bookmarks WHERE article_id = ? AND user_id = ?";
+                                        $stmt = $conn->prepare($query);
+                                        $stmt->bind_param("ii", $article_id, $user_id);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        $article_bookmarked = $result->num_rows > 0;
+                                        ?>
+                                        <div class="bookmark-form">
+                                            <!-- Bookmark Button -->
+                                            <button class="bookmark-btn" data-article-id="<?php echo $article_id; ?>" data-bookmarked="<?php echo $article_bookmarked ? '1' : '0'; ?>">
                                                 <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg"
-                                                     alt="Add to Bookmarks" class="bookmark-icon"
+                                                     class="bookmark-icon bookmark-unfilled"
                                                      style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>
+
                                                 <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus-fill.svg"
-                                                     alt="Remove from Bookmarks" class="bookmark-icon"
+                                                     class="bookmark-icon bookmark-filled"
                                                      style="display: <?php echo $article_bookmarked ? 'block' : 'none'; ?>"/>
                                             </button>
-                                        </form>
-                                        <p class="bookmark-status"></p>
+                                        </div>
                                     </div>
 
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function() {
+                                            document.querySelectorAll(".bookmark-btn").forEach(button => {
+                                                button.addEventListener("click", function() {
+                                                    let articleId = this.getAttribute("data-article-id");
+                                                    let isBookmarked = this.getAttribute("data-bookmarked") === "1";
+
+                                                    let action = isBookmarked ? "remove" : "add";
+
+                                                    fetch("../features/bookmarks/bookmark.php", {
+                                                        method: "POST",
+                                                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                                                        body: `article_id=${articleId}&action=${action}`
+                                                    })
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            if (data.success) {
+                                                                // Toggle bookmark status
+                                                                this.setAttribute("data-bookmarked", isBookmarked ? "0" : "1");
+
+                                                                // Toggle icon display
+                                                                this.querySelector(".bookmark-unfilled").style.display = isBookmarked ? "block" : "none";
+                                                                this.querySelector(".bookmark-filled").style.display = isBookmarked ? "none" : "block";
+                                                            }
+                                                        })
+                                                        .catch(error => console.error("Error:", error));
+                                                });
+                                            });
+                                        });
+                                    </script>
 
                                 </div>
                             </div>
