@@ -236,11 +236,8 @@ include BASE_PATH . "account/account-masthead.php";
                                 <div class="likes-and-comments" data-article-id="<?php echo $row['id']; ?>">
                                     <div class="like">
                                         <?php
-                                        // Get the current user's ID
-                                        $user_id = $_SESSION['user_id']; // Or however you are retrieving the user_id from the session
-
-                                        // Assuming you're inside the loop for displaying each article
-                                        $article_id = $row['id']; // Article ID for the current post
+                                        $user_id = $_SESSION['user_id']; // Get logged-in user's ID
+                                        $article_id = $row['id']; // Get current article ID
 
                                         // Check if the user has already liked the article
                                         $query = "SELECT * FROM article_likes WHERE article_id = ? AND user_id = ?";
@@ -248,26 +245,29 @@ include BASE_PATH . "account/account-masthead.php";
                                         $stmt->bind_param("ii", $article_id, $user_id);
                                         $stmt->execute();
                                         $result = $stmt->get_result();
+                                        $article_liked = $result->num_rows > 0;
 
-                                        // Check if there is a like record for this article and user
-                                        $article_liked = $result->num_rows > 0 ? true : false;
+                                        // Get like count
+                                        $like_count_query = "SELECT COUNT(*) AS like_count FROM article_likes WHERE article_id = ?";
+                                        $stmt = $conn->prepare($like_count_query);
+                                        $stmt->bind_param("i", $article_id);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        $like_count = $result->fetch_assoc()['like_count'];
                                         ?>
-                                        <!-- Like button with form -->
-                                        <form action="<?php echo BASE_URL; ?>features/likes/like.php"
-                                              method="POST" class="like-form">
-                                            <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
-                                            <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
-                                            <!-- Show filled icon if the article is liked -->
-                                            <button type="submit" class="like-btn" name="bookmark_action"
-                                                    value="<?php echo $article_liked ? 'remove' : 'add'; ?>">
-                                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
-                                                     alt="Add Like" class="like-icon"
-                                                     style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
-                                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-solid.svg"
-                                                     alt="Remove Like" class="like-icon"
-                                                     style="display: <?php echo $article_liked ? 'block' : 'none'; ?>"/>
-                                            </button>
-                                        </form>
+
+                                        <!-- Like Button -->
+                                        <button class="like-btn" data-article-id="<?php echo $article_id; ?>" data-liked="<?php echo $article_liked ? '1' : '0'; ?>">
+                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
+                                                 class="like-icon like-unfilled"
+                                                 style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
+
+                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-solid.svg"
+                                                 class="like-icon like-filled"
+                                                 style="display: <?php echo $article_liked ? 'block' : 'none'; ?>"/>
+                                        </button>
+
+                                        <!-- Like Count -->
                                         <?php
                                         // Query to get the number of likes for the current article
                                         $like_count_query = "SELECT COUNT(*) AS like_count FROM article_likes WHERE article_id = ?";
@@ -277,8 +277,44 @@ include BASE_PATH . "account/account-masthead.php";
                                         $result = $stmt->get_result();
                                         $like_count = $result->fetch_assoc()['like_count']; // Fetch the count of likes
                                         ?>
-                                        <p class="like-status"><?php echo $like_count; ?></p>
+                                        <p class="like-status" id="like-count-<?php echo $article_id; ?>"><?php echo $like_count; ?></p>
+
                                     </div>
+
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function() {
+                                            document.querySelectorAll(".like-btn").forEach(button => {
+                                                button.addEventListener("click", function() {
+                                                    let articleId = this.getAttribute("data-article-id");
+                                                    let isLiked = this.getAttribute("data-liked") === "1";
+
+                                                    let action = isLiked ? "remove" : "add";
+
+                                                    fetch("../features/likes/like.php", {
+                                                        method: "POST",
+                                                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                                                        body: `article_id=${articleId}&action=${action}`
+                                                    })
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            if (data.success) {
+                                                                // Toggle like status
+                                                                this.setAttribute("data-liked", isLiked ? "0" : "1");
+
+                                                                // Toggle icon display
+                                                                this.querySelector(".like-unfilled").style.display = isLiked ? "block" : "none";
+                                                                this.querySelector(".like-filled").style.display = isLiked ? "none" : "block";
+
+                                                                // Update like count
+                                                                document.getElementById(`like-count-${articleId}`).textContent = data.likes;
+                                                            }
+                                                        })
+                                                        .catch(error => console.error("Error:", error));
+                                                });
+                                            });
+                                        });
+                                    </script>
+
 
 
                                     <div class="comment">
@@ -314,7 +350,7 @@ include BASE_PATH . "account/account-masthead.php";
 
                                     <div class="bookmark">
                                         <!-- Bookmark button with form -->
-                                        <form action="<?php echo BASE_URL; ?>features/bookmarks/bookmark.php"
+                                        <form action="<?php echo BASE_URL;?>features/bookmarks/bookmark.php"
                                               method="POST" class="bookmark-form">
                                             <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
                                             <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
@@ -382,11 +418,8 @@ include BASE_PATH . "account/account-masthead.php";
                                 <div class="likes-and-comments" data-article-id="<?php echo $row['id']; ?>">
                                     <div class="like">
                                         <?php
-                                        // Get the current user's ID
-                                        $user_id = $_SESSION['user_id']; // Or however you are retrieving the user_id from the session
-
-                                        // Assuming you're inside the loop for displaying each article
-                                        $article_id = $row['id']; // Article ID for the current post
+                                        $user_id = $_SESSION['user_id']; // Get logged-in user's ID
+                                        $article_id = $row['id']; // Get current article ID
 
                                         // Check if the user has already liked the article
                                         $query = "SELECT * FROM article_likes WHERE article_id = ? AND user_id = ?";
@@ -394,26 +427,29 @@ include BASE_PATH . "account/account-masthead.php";
                                         $stmt->bind_param("ii", $article_id, $user_id);
                                         $stmt->execute();
                                         $result = $stmt->get_result();
+                                        $article_liked = $result->num_rows > 0;
 
-                                        // Check if there is a like record for this article and user
-                                        $article_liked = $result->num_rows > 0 ? true : false;
+                                        // Get like count
+                                        $like_count_query = "SELECT COUNT(*) AS like_count FROM article_likes WHERE article_id = ?";
+                                        $stmt = $conn->prepare($like_count_query);
+                                        $stmt->bind_param("i", $article_id);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        $like_count = $result->fetch_assoc()['like_count'];
                                         ?>
-                                        <!-- Like button with form -->
-                                        <form action="<?php echo BASE_URL ?>/features/likes/like.php"
-                                              method="POST" class="like-form">
-                                            <input type="hidden" name="article_id" value="<?php echo $article_id; ?>">
-                                            <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
-                                            <!-- Show filled icon if the article is liked -->
-                                            <button type="submit" class="like-btn" name="bookmark_action"
-                                                    value="<?php echo $article_liked ? 'remove' : 'add'; ?>">
-                                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
-                                                     alt="Add Like" class="like-icon"
-                                                     style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
-                                                <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-solid.svg"
-                                                     alt="Remove Like" class="like-icon"
-                                                     style="display: <?php echo $article_liked ? 'block' : 'none'; ?>"/>
-                                            </button>
-                                        </form>
+
+                                        <!-- Like Button -->
+                                        <button class="like-btn" data-article-id="<?php echo $article_id; ?>" data-liked="<?php echo $article_liked ? '1' : '0'; ?>">
+                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
+                                                 class="like-icon like-unfilled"
+                                                 style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
+
+                                            <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-solid.svg"
+                                                 class="like-icon like-filled"
+                                                 style="display: <?php echo $article_liked ? 'block' : 'none'; ?>"/>
+                                        </button>
+
+                                        <!-- Like Count -->
                                         <?php
                                         // Query to get the number of likes for the current article
                                         $like_count_query = "SELECT COUNT(*) AS like_count FROM article_likes WHERE article_id = ?";
@@ -423,9 +459,43 @@ include BASE_PATH . "account/account-masthead.php";
                                         $result = $stmt->get_result();
                                         $like_count = $result->fetch_assoc()['like_count']; // Fetch the count of likes
                                         ?>
-                                        <p class="like-status"><?php echo $like_count; ?></p>
+                                        <p class="like-status" id="like-count-<?php echo $article_id; ?>"><?php echo $like_count; ?></p>
+
                                     </div>
 
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function() {
+                                            document.querySelectorAll(".like-btn").forEach(button => {
+                                                button.addEventListener("click", function() {
+                                                    let articleId = this.getAttribute("data-article-id");
+                                                    let isLiked = this.getAttribute("data-liked") === "1";
+
+                                                    let action = isLiked ? "remove" : "add";
+
+                                                    fetch("../features/likes/like.php", {
+                                                        method: "POST",
+                                                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                                                        body: `article_id=${articleId}&action=${action}`
+                                                    })
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            if (data.success) {
+                                                                // Toggle like status
+                                                                this.setAttribute("data-liked", isLiked ? "0" : "1");
+
+                                                                // Toggle icon display
+                                                                this.querySelector(".like-unfilled").style.display = isLiked ? "block" : "none";
+                                                                this.querySelector(".like-filled").style.display = isLiked ? "none" : "block";
+
+                                                                // Update like count
+                                                                document.getElementById(`like-count-${articleId}`).textContent = data.likes;
+                                                            }
+                                                        })
+                                                        .catch(error => console.error("Error:", error));
+                                                });
+                                            });
+                                        });
+                                    </script>
 
                                     <div class="comment">
                                         <!--Comments Backend-->
