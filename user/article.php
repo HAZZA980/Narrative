@@ -564,7 +564,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
             <aside class="aside-section">
                 <?php if ($is_author): ?>
                     <aside class="aside-admin">
-                        <h2 class="aside-title">Quick Actions</h2>
+                        <h2 class="aside-title">Editor Actions</h2>
                         <ul class="admin-action-list">
                             <li class="admin-action-item">
                                 <a href="<?php echo BASE_URL; ?>user/edit-article.php?id=<?php echo $id; ?>"

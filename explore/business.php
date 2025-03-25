@@ -348,7 +348,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                 <?php
                 $sql = "SELECT id, title, LEFT(content, 250) AS summary, datePublished, Tags, featured, Image, user_id 
                     FROM tbl_blogs 
-                    WHERE Category = 'History & Culture' 
+                    WHERE Category = 'History and Culture' 
                     ORDER BY RAND() 
                     LIMIT 5";
                 $result = $conn->query($sql);
@@ -361,7 +361,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                         <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>">
                             <div class="image-container">
                                 <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
-                                    ? BASE_URL . 'public/images/user/' . $row['user_id'] . '/' . $row['Image']
+                                    ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
                                     : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
                             </div>
                             <div class="blog-details">

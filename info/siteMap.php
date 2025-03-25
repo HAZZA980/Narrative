@@ -10,7 +10,7 @@ include BASE_PATH . 'model/subcategories.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Site Map | Narrative Learn</title>
+    <title>Site Map | Narrative</title>
     <link rel="stylesheet" href="<?php echo BASE_URL?>features/siteMap/css/styles-articles-sitemap-layout.css">
     <style>
         /* Main container */
@@ -100,7 +100,7 @@ include BASE_PATH . 'model/subcategories.php';
                     $activeClass = ($_GET['year'] == $year) ? 'active' : '';
 
                     // Link to the yearLayout.php page, passing the year as a query parameter
-                    echo "<a href=\"features/siteMap/yearLayoutArticle.php?year={$year}\" class=\"{$activeClass}\">{$year}</a>";
+                    echo "<a href=\"" . BASE_URL . "features/siteMap/yearLayoutArticle.php?year={$year}\" class=\"{$activeClass}\">{$year}</a>";
                 }
                 ?>
             </div>
@@ -119,8 +119,8 @@ include BASE_PATH . 'model/subcategories.php';
                     "Entertainment" => "entertainment.php",
                     "Food" => "food.php",
                     "Gaming" => "gaming.php",
-                    "Health" => "health.php",
-                    "History" => "history-and-culture.php",
+                    "Health & Fitness" => "health.php",
+                    "History & Culture" => "history-and-culture.php",
                     "Lifestyle" => "lifestyle.php",
                     "Philosophy" => "philosophy.php",
                     "Politics" => "politics.php",

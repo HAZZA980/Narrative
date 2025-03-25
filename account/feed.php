@@ -46,7 +46,7 @@ include BASE_PATH . "account/account-masthead.php";
             <li class="feed-tabs-li"><a href="?tab=drafts" class="<?= $tab == 'drafts' ? 'active' : '' ?>">Drafts</a>
             </li>
             <li class="feed-tabs-li"><a href="?tab=commented_articles"
-                                        class="<?= $tab == 'commented_articles' ? 'active' : '' ?>">Articles you've commented on</a></li>
+                                        class="<?= $tab == 'commented_articles' ? 'active' : '' ?>">Commented Articles</a></li>
             <li class="feed-tabs-li"><a href="?tab=saved_articles"
                                         class="<?= $tab == 'saved_articles' ? 'active' : '' ?>">Bookmarked</a></li>
         </ul>
