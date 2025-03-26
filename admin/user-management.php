@@ -378,24 +378,7 @@ include BASE_PATH . "admin/view/delete-user-modal.html";
         });
     });
 
-    function showPopup(message) {
-        var existingPopup = document.querySelector(".popup");
-        if (existingPopup) existingPopup.remove();
 
-        var popup = document.createElement("div");
-        popup.classList.add("popup");
-        popup.innerHTML = `<p>${message}</p>`;
-        document.body.appendChild(popup);
-
-        setTimeout(() => {
-            popup.classList.add("visible");
-        }, 50);
-
-        setTimeout(() => {
-            popup.classList.remove("visible");
-            setTimeout(() => popup.remove(), 500);
-        }, 3000);
-    }
 
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".admin-checkbox").forEach(function (checkbox) {
@@ -438,6 +421,8 @@ include BASE_PATH . "admin/view/delete-user-modal.html";
         });
     });
 
+
+
     function showPopup(message) {
         var existingPopup = document.querySelector(".popup");
         if (existingPopup) existingPopup.remove();
@@ -456,8 +441,6 @@ include BASE_PATH . "admin/view/delete-user-modal.html";
             setTimeout(() => popup.remove(), 500);
         }, 3000);
     }
-
-
 
     function openDeleteModal(userId) {
         // Show modal

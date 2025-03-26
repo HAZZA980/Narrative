@@ -150,7 +150,7 @@ session_destroy();
 <main class="log-out-main-content">
     <div class="logging-out">
         <h1 class="logging-out-title">Logging out...</h1>
-        <h1 class="redirecting-title">Redirecting to home page...</h1>
+        <h1 class="redirecting-title">Redirecting to Homepage...</h1>
         <p class="logging-out-desc">Please wait</p>
         <div class="loading-circle"></div>
     </div>
