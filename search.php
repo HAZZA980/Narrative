@@ -54,7 +54,6 @@ include BASE_PATH . 'features/search/search-logic.php';
 
 
             <!-- Pagination -->
-            <!-- Pagination -->
             <div class="pagination">
                 <?php if ($total_pages > 1): ?>
                     <?php if ($current_page > 1): ?>

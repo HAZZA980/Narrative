@@ -59,7 +59,7 @@ unset($_SESSION['pre_filled_password']); // Clear the pre-filled password after 
 
             <div class="form-container">
                 <div id="login" class="tab-content">
-                    <h2>Sign In</h2>
+<!--                    <h2>Sign In</h2>-->
                     <?php session_start();
                     if (isset($_SESSION['login_error'])): ?>
                         <div class="alert"><?php echo htmlspecialchars($_SESSION['login_error']); ?></div>
@@ -81,7 +81,7 @@ unset($_SESSION['pre_filled_password']); // Clear the pre-filled password after 
                 </div>
 
                 <div id="register" class="tab-content">
-                    <h2>Register</h2>
+<!--                    <h2>Register</h2> -->
                     <?php if (isset($_SESSION['register_error'])): ?>
                         <div class="alert"><?php echo htmlspecialchars($_SESSION['register_error']); ?></div>
                         <?php unset($_SESSION['register_error']); ?>
