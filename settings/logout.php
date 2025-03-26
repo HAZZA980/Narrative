@@ -23,81 +23,138 @@ session_destroy();
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 80vh; /* Full height viewport */
+            height: 100vh; /* Full height viewport */
         }
 
-        /* Centered container for the logout message */
         .logging-out {
             text-align: center;
-            background: #ffffff; /* White background for the message box */
-            padding: 2rem;
-            border-radius: 10px; /* Rounded corners */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-            max-width: 400px;
-            width: 100%;
+            background: rgba(255, 255, 255, 0.15); /* Glassmorphism effect */
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            width: 420px; /* Fixed width */
+            height: 200px; /* Fixed height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.8s ease-in-out;
+            position: relative;
         }
 
-        /* Title styles */
+        /* Title and text styles */
+        .logging-out-title, .redirecting-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1E3A8A;
+            transition: opacity 1s ease-in-out;
+            position: absolute;
+        }
+
         .logging-out-title {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            color: #007bff; /* Bootstrap primary blue color */
+            top: 20px;
         }
 
-        /* Description styles */
+        .redirecting-title {
+            opacity: 0; /* Hidden initially */
+            top: 20px;
+        }
+
         .logging-out-desc {
             font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-            color: #6c757d; /* Muted gray text */
+            color: #FF6B00;
+            transition: opacity 1s ease-in-out;
+            position: absolute;
+            top: 70px; /* Keep "Please wait" in the same spot */
         }
 
-        /* Countdown styling */
-        .countdown {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #28a745; /* Bootstrap success green color */
-            animation: pulse 1s infinite;
+        /* CSS Loading Spinner */
+        .loading-circle {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            border-top-color: #FF6B00;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            bottom: 20px;
         }
 
-        /* Countdown pulsing animation */
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
+        /* Spinning animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .logging-out {
+                width: 90%;
+                height: 180px;
+                padding: 2rem;
+            }
+
+            .logging-out-title, .redirecting-title {
+                font-size: 1.6rem;
+            }
+
+            .logging-out-desc {
+                font-size: 1.1rem;
+            }
+
+            .loading-circle {
+                width: 40px;
+                height: 40px;
+                border-width: 4px;
+            }
         }
 
     </style>
     <script>
-        let countdownValue = 3;
+        function fadeOutIn() {
+            const logoutTitle = document.querySelector('.logging-out-title');
+            const logoutDesc = document.querySelector('.logging-out-desc');
+            const redirectingTitle = document.querySelector('.redirecting-title');
 
-        function startCountdown() {
-            const countdownElement = document.getElementById('countdown');
-            const interval = setInterval(() => {
-                if (countdownValue > 1) {
-                    countdownValue--;
-                    countdownElement.textContent = countdownValue;
-                } else {
-                    clearInterval(interval);
-                    // Redirect after the countdown finishes
-                    window.location.href = "<?php echo BASE_URL . 'explore/home.php'; ?>";
-                }
-            }, 1000); // Update every second
+            // Fade out "Logging out..."
+            setTimeout(() => {
+                logoutTitle.style.opacity = "0";
+            }, 1500);
+
+            // Fade in "Redirecting to home page..." smoothly
+            setTimeout(() => {
+                logoutTitle.style.display = "none";
+                redirectingTitle.style.opacity = "1";
+            }, 2500);
+
+            // Redirect after fade transition
+            setTimeout(() => {
+                window.location.href = "<?php echo BASE_URL . 'explore/home.php'; ?>";
+            }, 4000);
         }
 
-        // Start the countdown when the page loads
-        window.onload = startCountdown;
+        // Start the transition when the page loads
+        window.onload = fadeOutIn;
     </script>
 </head>
 <body>
 
 <main class="log-out-main-content">
     <div class="logging-out">
-        <h1 class="logging-out-title">You have been logged out successfully.</h1>
-        <p class="logging-out-desc">Redirecting to the home page in <span id="countdown"
-                                                                                class="countdown">3</span> seconds...
-        </p>
+        <h1 class="logging-out-title">Logging out...</h1>
+        <h1 class="redirecting-title">Redirecting to home page...</h1>
+        <p class="logging-out-desc">Please wait</p>
+        <div class="loading-circle"></div>
     </div>
-</main
+</main>
 
 </body>
 </html>

@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+    var emailField = document.getElementById("register-email");
     var passwordField = document.getElementById("register-password");
     var confirmPasswordField = document.getElementById("register-confirm-password");
     var passwordMatchMessage = document.getElementById("password-match-message");
@@ -7,6 +8,28 @@ document.addEventListener("DOMContentLoaded", function () {
     var strengthBar = document.getElementById("strength-bar");
     var strengthText = document.getElementById("strength-text");
     var submitButton = document.getElementById("submit-button");
+
+    // Create an error message span for email validation
+    var emailErrorMessage = document.createElement("span");
+    emailErrorMessage.id = "email-error-message";
+    emailErrorMessage.style.color = "red";
+    emailField.parentNode.appendChild(emailErrorMessage);
+
+    // Email validation function
+    function validateEmail() {
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        var emailValue = emailField.value.trim();
+
+        if (!emailPattern.test(emailValue)) {
+            emailErrorMessage.textContent = "Invalid email format";
+            emailErrorMessage.style.color = "red";
+            submitButton.disabled = true;
+        } else {
+            emailErrorMessage.textContent = "Valid email";
+            emailErrorMessage.style.color = "green";
+            checkFormValidity();
+        }
+    }
 
     // Show password strength container and requirements box when the user starts typing
     passwordField.addEventListener("focus", function () {
@@ -124,12 +147,17 @@ document.addEventListener("DOMContentLoaded", function () {
         var password = passwordField.value;
         var confirmPassword = confirmPasswordField.value;
 
-        // Enable the submit button only if the password is valid and passwords match
-        if (isPasswordValid() && password === confirmPassword) {
+        // Enable the submit button only if the email is valid, password is valid, and passwords match
+        if (isEmailValid() && isPasswordValid() && password === confirmPassword) {
             submitButton.disabled = false; // Enable button
         } else {
             submitButton.disabled = true; // Disable button
         }
+    }
+
+    // Function to check if email is valid
+    function isEmailValid() {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailField.value.trim());
     }
 
     // Validate form before submission
@@ -149,6 +177,12 @@ document.addEventListener("DOMContentLoaded", function () {
             return false; // Prevent form submission
         }
 
+        // Ensure email is valid
+        if (!isEmailValid()) {
+            alert("Invalid email format.");
+            return false; // Prevent form submission
+        }
+
         return true; // Allow form submission
     }
 
@@ -158,5 +192,11 @@ document.addEventListener("DOMContentLoaded", function () {
             passwordStrengthContainer.classList.add("hidden");
             passwordRequirementsBox.classList.add("hidden");
         }
+    });
+
+    // Attach event listener for email validation
+    emailField.addEventListener("input", function () {
+        validateEmail();
+        enableSubmitButton();
     });
 });
