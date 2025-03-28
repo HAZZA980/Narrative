@@ -17,6 +17,157 @@ include BASE_PATH . 'features/search/search-logic.php';
     <link rel="stylesheet" href="features/search/css/styles-search.css">
     <link rel="stylesheet" href="explore/articleLayouts/styles-default-article-formation.css">
     <link rel="stylesheet" href="account/css/feed.css">
+
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            width: 450px;
+            text-align: center;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+            font-family: 'Poppins', sans-serif; /* Softer, more modern font */
+        }
+
+        /* Title Styling - Softer Look */
+        .modal h2 {
+            margin-bottom: 15px;
+            font-size: 22px;
+            font-weight: 600;
+            color: #1E3A8A;
+        }
+
+        /* Filter Options */
+        .filter-options {
+            margin: 15px 0;
+            border-bottom: #1E3A8A dotted 3px;
+        }
+
+        /* Labels */
+        label {
+            font-size: 16px;
+            font-weight: 500;
+            margin-right: 10px;
+            color: #333;
+        }
+
+        /* Date Filter Section - Styled to Appear in a Row */
+        /* Date Filters Section */
+        .date-filters {
+            margin-top: 15px;
+            padding-bottom: 1rem;
+            text-align: left;
+        }
+
+        /* Date Range Wrapper */
+        .date-range {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        /* Individual Date Fields */
+        .date-item {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        /* Labels */
+        .date-item label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        /* Date Inputs */
+        .date-item input[type="date"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            background: #f8f9fa;
+            text-align: center;
+            width: 100%;
+        }
+
+
+        .filter-title {
+            font-weight: bold;
+            text-align: left;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        /* Category Buttons */
+        .category-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        /* Category Button Styling */
+        .category-btn {
+            margin: 5px;
+            padding: 8px 12px;
+            border: 1px solid #1E3A8A;
+            border-radius: 5px;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: 0.2s ease-in-out;
+        }
+
+        .category-btn:hover {
+            background: #1E3A8A;
+            color: white;
+        }
+
+        .category-btn.active {
+            background: #1E3A8A;
+            color: white;
+        }
+
+        /* Modal Footer */
+        .modal-footer {
+            margin-top: 15px;
+        }
+
+        .modal-footer button {
+            padding: 10px 18px;
+            border: none;
+            background: #FF6B00;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: 0.2s ease-in-out;
+        }
+
+        .modal-footer button:hover {
+            background: #e65c00;
+        }
+
+    </style>
 </head>
 <body>
 
@@ -31,6 +182,7 @@ include BASE_PATH . 'features/search/search-logic.php';
             </form>
         </div>
 
+
         <div class="pagination-container">
             <!-- Filter Button -->
             <div class="filter-order-buttons">
@@ -39,17 +191,69 @@ include BASE_PATH . 'features/search/search-logic.php';
                     <a href="#"><img src="<?php echo BASE_URL; ?>public/images/pagination/order.svg" alt="Order"
                                      title="Order"></a>
                     <div class="dropdown-content">
-                        <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=datePublished&order_dir=<?php echo htmlspecialchars($order_dir); ?>&txt-search=<?php echo urlencode($search); ?>">Order By Date</a>
-                        <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=chronological&order_dir=<?php echo htmlspecialchars($order_dir); ?>&txt-search=<?php echo urlencode($search); ?>">Order By ID</a>
-                        <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=alphabetical&order_dir=<?php echo htmlspecialchars($order_dir); ?>&txt-search=<?php echo urlencode($search); ?>">Order By Alphabetical</a>
+                        <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=datePublished&order_dir=<?php echo htmlspecialchars($order_dir); ?>&txt-search=<?php echo urlencode($search); ?>">Order
+                            By Date</a>
+                        <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=chronological&order_dir=<?php echo htmlspecialchars($order_dir); ?>&txt-search=<?php echo urlencode($search); ?>">Order
+                            By ID</a>
+                        <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=alphabetical&order_dir=<?php echo htmlspecialchars($order_dir); ?>&txt-search=<?php echo urlencode($search); ?>">Order
+                            By Alphabetical</a>
                     </div>
                 </div>
 
 
                 <!-- Filter Button -->
-                <a href="#" style="display: none"><img src="<?php echo BASE_URL; ?>public/images/pagination/filter.svg"
-                                                       alt="Filter"
-                                                       title="Filter"></a>
+                <a href="#" id="openFilterModal"><img src="<?php echo BASE_URL; ?>public/images/pagination/filter.svg"
+                                                      alt="Filter"
+                                                      title="Filter"></a>
+            </div>
+
+
+            <!-- Filter Modal -->
+            <div id="filterModal" class="modal">
+                <div class="modal-content">
+                    <h2>Advanced Search</h2>
+
+                    <!-- Checkbox Filters -->
+                    <div class="filter-options">
+                        <label><input type="checkbox" id="filter-author" checked> Author</label>
+                        <label><input type="checkbox" id="filter-title" checked> Title</label>
+                        <label><input type="checkbox" id="filter-content" checked> Content</label>
+                    </div>
+
+                    <div class="filter-options date-filters">
+                        <h3 class="filter-title">Filter By Date</h3>
+                        <div class="date-range">
+                            <div class="date-item">
+                                <label for="start-date">Date From</label>
+                                <input type="date" id="start-date">
+                            </div>
+                            <div class="date-item">
+                                <label for="end-date">Date To</label>
+                                <input type="date" id="end-date">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Category Filters -->
+                    <h3 class="filter-title">Filter By Category</h3>
+
+                    <div class="category-buttons">
+
+                        <?php
+                        $categories = ["Lifestyle", "Writing Craft", "Travel", "Reviews", "History and Culture", "Entertainment", "Business", "Technology", "Politics", "Science", "Sports", "Health and Fitness", "Food", "Gaming", "Philosophy"];
+
+                        foreach ($categories as $category): ?>
+                            <button class="category-btn" data-category="<?php echo htmlspecialchars($category); ?>">
+                                <?php echo htmlspecialchars($category); ?>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button id="applyFilters">Apply Filters</button>
+                    </div>
+                </div>
             </div>
 
 
@@ -60,7 +264,8 @@ include BASE_PATH . 'features/search/search-logic.php';
                         <a href="?page=<?php echo $current_page - 1; ?>&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>">Previous</a>
                     <?php endif; ?>
 
-                    <a href="?page=1&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>" class="<?php echo ($current_page == 1) ? 'active' : ''; ?>">1</a>
+                    <a href="?page=1&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>"
+                       class="<?php echo ($current_page == 1) ? 'active' : ''; ?>">1</a>
 
                     <?php if ($current_page > 4): ?>
                         <span>...</span>
@@ -71,7 +276,8 @@ include BASE_PATH . 'features/search/search-logic.php';
                     $end_page = min($total_pages - 1, $current_page + 2);
 
                     for ($page = $start_page; $page <= $end_page; $page++): ?>
-                        <a href="?page=<?php echo $page; ?>&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>" class="<?php echo ($current_page == $page) ? 'active' : ''; ?>">
+                        <a href="?page=<?php echo $page; ?>&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>"
+                           class="<?php echo ($current_page == $page) ? 'active' : ''; ?>">
                             <?php echo $page; ?>
                         </a>
                     <?php endfor; ?>
@@ -81,7 +287,8 @@ include BASE_PATH . 'features/search/search-logic.php';
                     <?php endif; ?>
 
                     <?php if ($total_pages > 1): ?>
-                        <a href="?page=<?php echo $total_pages; ?>&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>" class="<?php echo ($current_page == $total_pages) ? 'active' : ''; ?>">
+                        <a href="?page=<?php echo $total_pages; ?>&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>"
+                           class="<?php echo ($current_page == $total_pages) ? 'active' : ''; ?>">
                             <?php echo $total_pages; ?>
                         </a>
                     <?php endif; ?>
@@ -412,7 +619,8 @@ include BASE_PATH . 'features/search/search-logic.php';
                                         ?>
 
                                         <!-- Like Button -->
-                                        <button class="like-btn" data-article-id="<?php echo $article_id; ?>" data-liked="<?php echo $article_liked ? '1' : '0'; ?>">
+                                        <button class="like-btn" data-article-id="<?php echo $article_id; ?>"
+                                                data-liked="<?php echo $article_liked ? '1' : '0'; ?>">
                                             <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
                                                  class="like-icon like-unfilled"
                                                  style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
@@ -423,13 +631,14 @@ include BASE_PATH . 'features/search/search-logic.php';
                                         </button>
 
                                         <!-- Like Count -->
-                                        <p class="like-status" id="like-count-<?php echo $article_id; ?>"><?php echo $like_count; ?></p>
+                                        <p class="like-status"
+                                           id="like-count-<?php echo $article_id; ?>"><?php echo $like_count; ?></p>
                                     </div>
 
                                     <script>
-                                        document.addEventListener("DOMContentLoaded", function() {
+                                        document.addEventListener("DOMContentLoaded", function () {
                                             document.querySelectorAll(".like-btn").forEach(button => {
-                                                button.addEventListener("click", function() {
+                                                button.addEventListener("click", function () {
                                                     let articleId = this.getAttribute("data-article-id");
                                                     let isLiked = this.getAttribute("data-liked") === "1";
 
@@ -437,7 +646,7 @@ include BASE_PATH . 'features/search/search-logic.php';
 
                                                     fetch("features/likes/like.php", {
                                                         method: "POST",
-                                                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                                                        headers: {"Content-Type": "application/x-www-form-urlencoded"},
                                                         body: `article_id=${articleId}&action=${action}`
                                                     })
                                                         .then(response => response.json())
@@ -459,8 +668,6 @@ include BASE_PATH . 'features/search/search-logic.php';
                                             });
                                         });
                                     </script>
-
-
 
 
                                     <div class="comment">
@@ -500,7 +707,8 @@ include BASE_PATH . 'features/search/search-logic.php';
                                         ?>
                                         <div class="bookmark-form">
                                             <!-- Bookmark Button -->
-                                            <button class="bookmark-btn" data-article-id="<?php echo $article_id; ?>" data-bookmarked="<?php echo $article_bookmarked ? '1' : '0'; ?>">
+                                            <button class="bookmark-btn" data-article-id="<?php echo $article_id; ?>"
+                                                    data-bookmarked="<?php echo $article_bookmarked ? '1' : '0'; ?>">
                                                 <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg"
                                                      class="bookmark-icon bookmark-unfilled"
                                                      style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>
@@ -513,9 +721,9 @@ include BASE_PATH . 'features/search/search-logic.php';
                                     </div>
 
                                     <script>
-                                        document.addEventListener("DOMContentLoaded", function() {
+                                        document.addEventListener("DOMContentLoaded", function () {
                                             document.querySelectorAll(".bookmark-btn").forEach(button => {
-                                                button.addEventListener("click", function() {
+                                                button.addEventListener("click", function () {
                                                     let articleId = this.getAttribute("data-article-id");
                                                     let isBookmarked = this.getAttribute("data-bookmarked") === "1";
 
@@ -523,7 +731,7 @@ include BASE_PATH . 'features/search/search-logic.php';
 
                                                     fetch("features/bookmarks/bookmark.php", {
                                                         method: "POST",
-                                                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                                                        headers: {"Content-Type": "application/x-www-form-urlencoded"},
                                                         body: `article_id=${articleId}&action=${action}`
                                                     })
                                                         .then(response => response.json())
@@ -673,5 +881,130 @@ include BASE_PATH . 'features/search/search-logic.php';
     });
 
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        setupEventListeners();
+        restoreFilterSelections(); // Restore selections on page load
+    });
+
+    function setupEventListeners() {
+        const modal = document.getElementById("filterModal");
+        const openFilterBtn = document.getElementById("openFilterModal");
+        const applyFiltersBtn = document.getElementById("applyFilters");
+
+        // Ensure the modal is hidden initially
+        modal.style.display = "none";
+
+        // Open modal and restore previous selections
+        openFilterBtn.addEventListener("click", function () {
+            restoreFilterSelections();
+            modal.style.display = "flex";
+        });
+
+        // Apply filters
+        applyFiltersBtn.addEventListener("click", function () {
+            let queryParams = new URLSearchParams(window.location.search);
+
+            // Preserve the existing search term
+            let searchInput = document.getElementById("text-search-bar").value;
+            if (searchInput) queryParams.set("txt-search", searchInput);
+
+            // Checkbox filters
+            queryParams.set("author", document.getElementById("filter-author").checked ? "1" : "0");
+            queryParams.set("title", document.getElementById("filter-title").checked ? "1" : "0");
+            queryParams.set("content", document.getElementById("filter-content").checked ? "1" : "0");
+
+            // Date filters
+            let startDate = document.getElementById("start-date").value;
+            let endDate = document.getElementById("end-date").value;
+            if (startDate) queryParams.set("startDate", startDate);
+            if (endDate) queryParams.set("endDate", endDate);
+
+            // Category filters
+            let selectedCategories = [];
+            document.querySelectorAll(".category-btn.active").forEach(btn => {
+                selectedCategories.push(btn.getAttribute("data-category"));
+            });
+            if (selectedCategories.length > 0) {
+                queryParams.set("categories", selectedCategories.join(","));
+            } else {
+                queryParams.delete("categories");
+            }
+
+            // Save filter selections to localStorage
+            localStorage.setItem("savedFilters", queryParams.toString());
+
+            // Apply filters without refreshing
+            window.history.pushState({}, "", "search.php?" + queryParams.toString());
+
+            // Reload results dynamically
+            fetchResults();
+
+            // Hide the modal after applying filters
+            modal.style.display = "none";
+        });
+
+        // Handle category button toggling
+        document.querySelectorAll(".category-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                this.classList.toggle("active");
+            });
+        });
+
+        // Close modal when clicking outside of it
+        window.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+    }
+
+    // Fetch results without refreshing the page
+    function fetchResults() {
+        fetch("search.php?" + new URLSearchParams(window.location.search))
+            .then(response => response.text())
+            .then(html => {
+                let parser = new DOMParser();
+                let newDoc = parser.parseFromString(html, "text/html");
+                document.querySelector(".search-page-main-content").innerHTML =
+                    newDoc.querySelector(".search-page-main-content").innerHTML;
+
+                // **Reattach event listeners after dynamic update**
+                setupEventListeners();
+            });
+    }
+
+    // Restore previously selected filter values
+    function restoreFilterSelections() {
+        let queryParams = new URLSearchParams(window.location.search);
+
+        // Restore checkboxes
+        document.getElementById("filter-author").checked = queryParams.get("author") === "1";
+        document.getElementById("filter-title").checked = queryParams.get("title") === "1";
+        document.getElementById("filter-content").checked = queryParams.get("content") === "1";
+
+        // Restore dates
+        if (queryParams.get("startDate")) {
+            document.getElementById("start-date").value = queryParams.get("startDate");
+        }
+        if (queryParams.get("endDate")) {
+            document.getElementById("end-date").value = queryParams.get("endDate");
+        }
+
+        // Restore categories
+        let selectedCategories = queryParams.get("categories") ? queryParams.get("categories").split(",") : [];
+        document.querySelectorAll(".category-btn").forEach(button => {
+            let category = button.getAttribute("data-category");
+            if (selectedCategories.includes(category)) {
+                button.classList.add("active");
+            } else {
+                button.classList.remove("active");
+            }
+        });
+    }
+
+
+</script>
+
 </body>
 </html>

@@ -13,11 +13,11 @@ $offset = ($current_page - 1) * $articles_per_page;
 $search = isset($_GET['txt-search']) ? trim($_GET['txt-search']) : '';
 $search_term = !empty($search) ? "%$search%" : null;
 
-// Order by setup
-$order_by = isset($_GET['order_by']) ? $_GET['order_by'] : 'datePublished';
-$order_dir = isset($_GET['order_dir']) ? $_GET['order_dir'] : 'DESC';
+// Order setup
+$order_by = $_GET['order_by'] ?? 'datePublished';
+$order_dir = $_GET['order_dir'] ?? 'DESC';
 
-// Prevent SQL injection by allowing only specific values
+// Allowed values to prevent SQL injection
 $allowed_order_by = ['datePublished', 'chronological', 'alphabetical'];
 $allowed_order_dir = ['ASC', 'DESC'];
 
@@ -29,14 +29,10 @@ if (!in_array($order_dir, $allowed_order_dir)) {
 }
 
 // Map order_by to actual database columns
-$order_column = 'tbl_blogs.datePublished'; // Default ordering
-if ($order_by === 'chronological') {
-    $order_column = 'tbl_blogs.id';
-} elseif ($order_by === 'alphabetical') {
-    $order_column = 'tbl_blogs.title';
-}
+$order_column = ($order_by === 'chronological') ? 'tbl_blogs.id' :
+    (($order_by === 'alphabetical') ? 'tbl_blogs.title' : 'tbl_blogs.datePublished');
 
-// Prepare the SQL query dynamically
+// Start building SQL query
 $query = "
     SELECT tbl_blogs.id, tbl_blogs.title, tbl_blogs.user_id, 
            LEFT(tbl_blogs.content, 73) AS summary, 
@@ -46,10 +42,11 @@ $query = "
     LEFT JOIN Users ON tbl_blogs.user_id = Users.user_id
     WHERE tbl_blogs.private = 0";
 
+// Filter parameters
 $filter_params = [];
 $param_types = "";
 
-// If search is applied, modify query
+// ✅ Apply Search Term *only* if provided
 if (!empty($search)) {
     $query .= " AND (tbl_blogs.title LIKE ? 
                      OR tbl_blogs.Tags LIKE ? 
@@ -58,6 +55,50 @@ if (!empty($search)) {
                      OR Users.username LIKE ?)";
     $filter_params = array_fill(0, 5, $search_term);
     $param_types = str_repeat("s", count($filter_params)); // "sssss"
+}
+
+// ✅ Apply Advanced Filters even if search is empty
+$authorFilter = isset($_GET['author']) && $_GET['author'] == "1";
+$titleFilter = isset($_GET['title']) && $_GET['title'] == "1";
+$contentFilter = isset($_GET['content']) && $_GET['content'] == "1";
+
+if ($authorFilter || $titleFilter || $contentFilter) {
+    $conditions = [];
+
+    if ($authorFilter) {
+        $conditions[] = "Users.username LIKE ?";
+        $filter_params[] = $search_term ?: "%"; // If no search, match all authors
+        $param_types .= "s";
+    }
+    if ($titleFilter) {
+        $conditions[] = "tbl_blogs.title LIKE ?";
+        $filter_params[] = $search_term ?: "%"; // If no search, match all titles
+        $param_types .= "s";
+    }
+    if ($contentFilter) {
+        $conditions[] = "tbl_blogs.content LIKE ?";
+        $filter_params[] = $search_term ?: "%"; // If no search, match all content
+        $param_types .= "s";
+    }
+
+    $query .= " AND (" . implode(" OR ", $conditions) . ")";
+}
+
+// ✅ Apply Date Range Filter
+if (!empty($_GET['startDate']) && !empty($_GET['endDate'])) {
+    $query .= " AND tbl_blogs.datePublished BETWEEN ? AND ?";
+    $filter_params[] = $_GET['startDate'];
+    $filter_params[] = $_GET['endDate'];
+    $param_types .= "ss";
+}
+
+// ✅ Apply Category Filter
+if (!empty($_GET['categories'])) {
+    $categories = explode(",", $_GET['categories']);
+    $placeholders = implode(",", array_fill(0, count($categories), "?"));
+    $query .= " AND tbl_blogs.Category IN ($placeholders)";
+    $filter_params = array_merge($filter_params, $categories);
+    $param_types .= str_repeat("s", count($categories));
 }
 
 // Append ordering and pagination
@@ -71,35 +112,4 @@ $stmt = $conn->prepare($query);
 $stmt->bind_param($param_types, ...$filter_params);
 $stmt->execute();
 $blogs_result = $stmt->get_result();
-
-// Count total number of articles (for pagination)
-$total_query = "
-    SELECT COUNT(*) as total 
-    FROM tbl_blogs 
-    LEFT JOIN Users ON tbl_blogs.user_id = Users.user_id
-    WHERE tbl_blogs.private = 0";
-
-$total_params = [];
-$total_param_types = "";
-
-// If search is applied, modify total count query
-if (!empty($search)) {
-    $total_query .= " AND (tbl_blogs.title LIKE ? 
-                          OR tbl_blogs.Tags LIKE ? 
-                          OR tbl_blogs.content LIKE ? 
-                          OR tbl_blogs.datePublished LIKE ? 
-                          OR Users.username LIKE ?)";
-    $total_params = array_fill(0, 5, $search_term);
-    $total_param_types = str_repeat("s", count($total_params));
-}
-
-$total_stmt = $conn->prepare($total_query);
-if (!empty($total_params)) {
-    $total_stmt->bind_param($total_param_types, ...$total_params);
-}
-$total_stmt->execute();
-$total_result = $total_stmt->get_result();
-$total_row = $total_result->fetch_assoc();
-$total_articles = $total_row['total'] ?? 0;
-$total_pages = max(1, ceil($total_articles / $articles_per_page));
 ?>
