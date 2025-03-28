@@ -188,20 +188,36 @@ include BASE_PATH . 'features/search/search-logic.php';
             <div class="filter-order-buttons">
                 <!-- Order Button -->
                 <div class="order-dropdown">
-                    <a href="#"><img src="<?php echo BASE_URL; ?>public/images/pagination/order.svg" alt="Order"
-                                     title="Order"></a>
+                    <a href="#"><img src="<?php echo BASE_URL; ?>public/images/pagination/order.svg" alt="Order" title="Order"></a>
                     <div class="dropdown-content">
-                        <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=datePublished&order_dir=<?php echo htmlspecialchars($order_dir); ?>&txt-search=<?php echo urlencode($search); ?>">Order
-                            By Date</a>
-                        <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=chronological&order_dir=<?php echo htmlspecialchars($order_dir); ?>&txt-search=<?php echo urlencode($search); ?>">Order
-                            By ID</a>
-                        <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=alphabetical&order_dir=<?php echo htmlspecialchars($order_dir); ?>&txt-search=<?php echo urlencode($search); ?>">Order
-                            By Alphabetical</a>
+                        <?php
+                        // Retain all current filters in ordering links
+                        $queryParams = [
+                            'tab' => htmlspecialchars($tab),
+                            'txt-search' => urlencode($search),
+                            'author' => isset($_GET['author']) ? $_GET['author'] : '0',
+                            'title' => isset($_GET['title']) ? $_GET['title'] : '0',
+                            'content' => isset($_GET['content']) ? $_GET['content'] : '0',
+                            'startDate' => isset($_GET['startDate']) ? $_GET['startDate'] : '',
+                            'endDate' => isset($_GET['endDate']) ? $_GET['endDate'] : '',
+                            'categories' => isset($_GET['categories']) ? $_GET['categories'] : '',
+                            'page' => isset($_GET['page']) ? $_GET['page'] : 1 // Include the current page for pagination
+                        ];
+
+                        // Generate correct query string for the order links
+                        $queryString = http_build_query($queryParams);
+                        ?>
+
+<!--                        <a href="?--><?php //echo $queryString; ?><!--&order_by=datePublished&order_dir=ASC">Order By Date (Ascending)</a>-->
+                        <a href="?<?php echo $queryString; ?>&order_by=datePublished&order_dir=DESC">Order By Date</a>
+                        <a href="?<?php echo $queryString; ?>&order_by=alphabetical&order_dir=ASC">Order Alphabetically</a>
+<!--                        <a href="?--><?php //echo $queryString; ?><!--&order_by=alphabetical&order_dir=DESC">Order Alphabetically (Descending)</a>-->
                     </div>
                 </div>
 
 
-                <!-- Filter Button -->
+
+            <!-- Filter Button -->
                 <a href="#" id="openFilterModal"><img src="<?php echo BASE_URL; ?>public/images/pagination/filter.svg"
                                                       alt="Filter"
                                                       title="Filter"></a>
@@ -257,62 +273,70 @@ include BASE_PATH . 'features/search/search-logic.php';
             </div>
 
 
-            <!-- Pagination -->
             <div class="pagination">
                 <?php if ($total_pages > 1): ?>
+                    <!-- Previous Button -->
                     <?php if ($current_page > 1): ?>
-                        <a href="?page=<?php echo $current_page - 1; ?>&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>">Previous</a>
+                        <a href="?page=<?php echo $current_page - 1; ?>&txt-search=<?php echo urlencode($search); ?>&author=<?php echo isset($_GET['author']) ? $_GET['author'] : '0'; ?>&title=<?php echo isset($_GET['title']) ? $_GET['title'] : '0'; ?>&content=<?php echo isset($_GET['content']) ? $_GET['content'] : '0'; ?>&startDate=<?php echo isset($_GET['startDate']) ? $_GET['startDate'] : ''; ?>&endDate=<?php echo isset($_GET['endDate']) ? $_GET['endDate'] : ''; ?>&categories=<?php echo isset($_GET['categories']) ? $_GET['categories'] : ''; ?>&order_by=<?php echo urlencode($order_by); ?>&order_dir=<?php echo urlencode($order_dir); ?>">Previous</a>
                     <?php endif; ?>
 
-                    <a href="?page=1&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>"
+                    <!-- First Page -->
+                    <a href="?page=1&txt-search=<?php echo urlencode($search); ?>&author=<?php echo isset($_GET['author']) ? $_GET['author'] : '0'; ?>&title=<?php echo isset($_GET['title']) ? $_GET['title'] : '0'; ?>&content=<?php echo isset($_GET['content']) ? $_GET['content'] : '0'; ?>&startDate=<?php echo isset($_GET['startDate']) ? $_GET['startDate'] : ''; ?>&endDate=<?php echo isset($_GET['endDate']) ? $_GET['endDate'] : ''; ?>&categories=<?php echo isset($_GET['categories']) ? $_GET['categories'] : ''; ?>&order_by=<?php echo urlencode($order_by); ?>&order_dir=<?php echo urlencode($order_dir); ?>"
                        class="<?php echo ($current_page == 1) ? 'active' : ''; ?>">1</a>
 
+                    <!-- Ellipsis Before Middle Pages -->
                     <?php if ($current_page > 4): ?>
                         <span>...</span>
                     <?php endif; ?>
 
+                    <!-- Display 2 Pages Before and After Current Page -->
                     <?php
-                    $start_page = max(2, $current_page - 2);
-                    $end_page = min($total_pages - 1, $current_page + 2);
+                    $start_page = max(2, $current_page - 1);
+                    $end_page = min($total_pages - 1, $current_page + 1);
 
                     for ($page = $start_page; $page <= $end_page; $page++): ?>
-                        <a href="?page=<?php echo $page; ?>&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>"
+                        <a href="?page=<?php echo $page; ?>&txt-search=<?php echo urlencode($search); ?>&author=<?php echo isset($_GET['author']) ? $_GET['author'] : '0'; ?>&title=<?php echo isset($_GET['title']) ? $_GET['title'] : '0'; ?>&content=<?php echo isset($_GET['content']) ? $_GET['content'] : '0'; ?>&startDate=<?php echo isset($_GET['startDate']) ? $_GET['startDate'] : ''; ?>&endDate=<?php echo isset($_GET['endDate']) ? $_GET['endDate'] : ''; ?>&categories=<?php echo isset($_GET['categories']) ? $_GET['categories'] : ''; ?>&order_by=<?php echo urlencode($order_by); ?>&order_dir=<?php echo urlencode($order_dir); ?>"
                            class="<?php echo ($current_page == $page) ? 'active' : ''; ?>">
                             <?php echo $page; ?>
                         </a>
                     <?php endfor; ?>
 
+                    <!-- Ellipsis Before Last Page -->
                     <?php if ($current_page < $total_pages - 3): ?>
                         <span>...</span>
                     <?php endif; ?>
 
+                    <!-- Last Page -->
                     <?php if ($total_pages > 1): ?>
-                        <a href="?page=<?php echo $total_pages; ?>&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>"
+                        <a href="?page=<?php echo $total_pages; ?>&txt-search=<?php echo urlencode($search); ?>&author=<?php echo isset($_GET['author']) ? $_GET['author'] : '0'; ?>&title=<?php echo isset($_GET['title']) ? $_GET['title'] : '0'; ?>&content=<?php echo isset($_GET['content']) ? $_GET['content'] : '0'; ?>&startDate=<?php echo isset($_GET['startDate']) ? $_GET['startDate'] : ''; ?>&endDate=<?php echo isset($_GET['endDate']) ? $_GET['endDate'] : ''; ?>&categories=<?php echo isset($_GET['categories']) ? $_GET['categories'] : ''; ?>&order_by=<?php echo urlencode($order_by); ?>&order_dir=<?php echo urlencode($order_dir); ?>"
                            class="<?php echo ($current_page == $total_pages) ? 'active' : ''; ?>">
                             <?php echo $total_pages; ?>
                         </a>
                     <?php endif; ?>
 
+                    <!-- Next Button -->
                     <?php if ($current_page < $total_pages): ?>
-                        <a href="?page=<?php echo $current_page + 1; ?>&txt-search=<?php echo urlencode($search); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=<?php echo htmlspecialchars($order_dir); ?>">Next</a>
+                        <a href="?page=<?php echo $current_page + 1; ?>&txt-search=<?php echo urlencode($search); ?>&author=<?php echo isset($_GET['author']) ? $_GET['author'] : '0'; ?>&title=<?php echo isset($_GET['title']) ? $_GET['title'] : '0'; ?>&content=<?php echo isset($_GET['content']) ? $_GET['content'] : '0'; ?>&startDate=<?php echo isset($_GET['startDate']) ? $_GET['startDate'] : ''; ?>&endDate=<?php echo isset($_GET['endDate']) ? $_GET['endDate'] : ''; ?>&categories=<?php echo isset($_GET['categories']) ? $_GET['categories'] : ''; ?>&order_by=<?php echo urlencode($order_by); ?>&order_dir=<?php echo urlencode($order_dir); ?>">Next</a>
                     <?php endif; ?>
                 <?php endif; ?>
             </div>
 
 
+
+
+            <!-- Ascending and Descending Buttons -->
             <!-- Ascending and Descending Buttons -->
             <div class="asc-desc">
-                <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=ASC&txt-search=<?php echo urlencode($search); ?>">
+                <a href="?<?php echo htmlspecialchars($queryString); ?>&order_dir=ASC">
                     <img src="<?php echo BASE_URL; ?>public/images/pagination/arrow-up.svg" alt="Ascending"
                          title="Ascending">
                 </a>
-                <a href="?tab=<?php echo htmlspecialchars($tab); ?>&order_by=<?php echo htmlspecialchars($order_by); ?>&order_dir=DESC&txt-search=<?php echo urlencode($search); ?>">
+
+                <a href="?<?php echo htmlspecialchars($queryString); ?>&order_dir=DESC">
                     <img src="<?php echo BASE_URL; ?>public/images/pagination/arrow-down.svg" alt="Descending"
                          title="Descending">
                 </a>
             </div>
-
-
         </div>
 
 
@@ -822,63 +846,7 @@ include BASE_PATH . 'features/search/search-logic.php';
 <script src="<?php echo BASE_URL . 'public/js/save-page-position.js' ?>"></script>
 <!--<script src="--><?php //echo BASE_URL ?><!--account/js/articleFilter.js"></script>-->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const filterButton = document.getElementById("filter-button");
-        const filterOverlay = document.getElementById("filter-overlay");
-        const closeFilter = document.getElementById("close-filter");
-        const applyFilters = document.getElementById("apply-filters");
 
-        if (filterButton && filterOverlay && closeFilter && applyFilters) {
-            // Open the filter overlay when clicking the filter button
-            filterButton.addEventListener("click", function (e) {
-                e.preventDefault();
-                filterOverlay.style.display = "flex";
-            });
-
-            // Close the filter overlay when clicking the close button
-            closeFilter.addEventListener("click", function () {
-                filterOverlay.style.display = "none";
-            });
-
-            // Apply filters while preserving search query and order settings
-            applyFilters.addEventListener("click", function () {
-                const selectedCategories = [];
-                const categoryCheckboxes = document.querySelectorAll('input[name="categories[]"]:checked');
-                categoryCheckboxes.forEach(function (checkbox) {
-                    selectedCategories.push(checkbox.value);
-                });
-
-                const fromDate = document.getElementById("from-date").value;
-                const toDate = document.getElementById("to-date").value;
-
-                // Get the current URL parameters
-                const urlParams = new URLSearchParams(window.location.search);
-                const searchQuery = urlParams.get("txt-search") || "";
-                const orderBy = urlParams.get("order_by") || "datePublished";
-                const orderDir = urlParams.get("order_dir") || "DESC";
-                const tab = urlParams.get("tab") || "";
-
-                // Build the new query string
-                let filterQuery = `?tab=${encodeURIComponent(tab)}`;
-                filterQuery += `&txt-search=${encodeURIComponent(searchQuery)}`;
-                filterQuery += `&order_by=${encodeURIComponent(orderBy)}`;
-                filterQuery += `&order_dir=${encodeURIComponent(orderDir)}`;
-
-                if (selectedCategories.length > 0) {
-                    filterQuery += `&categories=${selectedCategories.join(",")}`;
-                }
-                if (fromDate) {
-                    filterQuery += `&from_date=${encodeURIComponent(fromDate)}`;
-                }
-                if (toDate) {
-                    filterQuery += `&to_date=${encodeURIComponent(toDate)}`;
-                }
-
-                // Redirect to the new URL with applied filters
-                window.location.href = window.location.pathname + filterQuery;
-            });
-        }
-    });
 
 </script>
 <script>
