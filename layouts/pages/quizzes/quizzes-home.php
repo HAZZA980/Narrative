@@ -226,14 +226,6 @@ include "quiz-functions/quiz-links.php"
         </div>
 
     </div>
-    <!-- Resources Section -->
-    <div class=" resources">
-        <h3 class="section-title">Explore More Resources</h3>
-        <div class="resources-links">
-            <a href="movies/movie-database.php" class="resource-link">Movie Database</a>
-            <a href="linguistics/db-lexicon.php" class="resource-link">Lexicon Database</a>
-        </div>
-    </div>
 
 </main>
 

@@ -114,12 +114,12 @@ $generalKnowledgeCategories = [
     'literature' => [
         'title' => 'Literature',
         'subcategories' => [
-//            'literature' => [
-//                'title' => 'General Knowledge: Literature',
-//                'link' => 'questionFunctions.php?category=literature',
-//                'description' => 'Test your literature knowledge! Shakespeare, Austen, Bronte, and more!',
-//                'scoreVar' => $scoreLiterature
-//            ],
+            'literature' => [
+                'title' => 'General Knowledge: Literature',
+                'link' => 'questionFunctions.php?category=literature',
+                'description' => 'Test your literature knowledge! Shakespeare, Austen, Bronte, and more!',
+                'scoreVar' => $scoreLiterature
+            ],
             'shakespearePlays' => [
                 'title' => 'Shakespeare Plays',
                 'link' => 'columnQuestionFunctions.php?category=Shakespeare_Plays',
@@ -168,17 +168,17 @@ $generalKnowledgeCategories = [
         'description' => 'Test your knowledge on science topics! 20 Random Questions every time!',
         'scoreVar' => $scoreGeneralKnowledge
     ],
-//    'compScience' => [
-//        'title' => 'Computer Science',
-//        'subcategories' => [
-////            'methodologies' => [
-////                'title' => 'See how many Software Development Methodologies you can name?',
-////                'link' => 'questionFunctions.php?category=Software_Development_Methodologies',
-////                'description' => 'We\'ve all heard of Agile but how many of the arcane and archaic development methods do you know?',
-////                'scoreVar' => $scoreSoftware_Development_Methodologies
-////            ],
-//        ]
-//    ]
+    'compScience' => [
+        'title' => 'Computer Science',
+        'subcategories' => [
+            'methodologies' => [
+                'title' => 'See how many Software Development Methodologies you can name?',
+                'link' => 'questionFunctions.php?category=Software_Development_Methodologies',
+                'description' => 'We\'ve all heard of Agile but how many of the arcane and archaic development methods do you know?',
+                'scoreVar' => $scoreSoftware_Development_Methodologies
+            ],
+        ]
+    ]
 ];
 
 ?>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../../../config/config.php";
+include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 include "../../../layouts/mastheads/quizzes/quiz-masthead.php";
 include "quiz-functions/quiz-links.php";
 ?>

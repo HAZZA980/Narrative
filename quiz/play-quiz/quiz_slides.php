@@ -1,0 +1,655 @@
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
+include BASE_PATH . 'quiz/views/pause-quiz-modal.php';
+
+// Get quiz ID from URL
+$quizId = $_GET['quiz_id'] ?? null;
+
+$quizData = [];
+$quizCategory = null;
+$quizTitle = '';
+$quizDesc = '';
+
+// Fetch quiz data including timer
+$stmt = $conn->prepare("
+    SELECT id, title, description, category, timer FROM `quiz-quizzes` WHERE id = ?
+");
+$stmt->bind_param("i", $quizId);
+$stmt->execute();
+$stmt->bind_result($quizId, $quizTitle, $quizDesc, $quizCategory, $quizTimer); // Added $quizTimer
+$stmt->fetch();
+$stmt->close();
+
+
+$quizData = [];
+// Fetch questions and answers
+if ($quizId) {
+    $stmt = $conn->prepare("
+        SELECT q.id AS question_id, q.question_text, a.answer_text, a.is_correct
+        FROM `quiz-questions` q
+        LEFT JOIN `quiz-answers` a ON q.id = a.question_id
+        WHERE q.quiz_id = ?
+    ");
+    $stmt->bind_param("i", $quizId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    while ($row = $result->fetch_assoc()) {
+        $questionId = $row['question_id'];
+        $quizData[$questionId]['question'] = $row['question_text'];
+        $quizData[$questionId]['answers'][] = [
+            'text' => strtolower($row['answer_text']),
+            'is_correct' => $row['is_correct']
+        ];
+    }
+    $stmt->close();
+}
+
+// Set the total number of questions
+$totalQuestions = count($quizData);
+$questions = array_values($quizData);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo ucfirst(str_replace('_', ' ', $quizTitle)); ?> | Slides Quiz</title>
+    <link rel="stylesheet" href="<?php echo BASE_URL ?>quiz/css/slides-quiz.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL ?>quiz/css/breadcrumbs.css">
+    <style>
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 40px;
+            padding: 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .quiz-info {
+            width: 100%; /* Full width */
+            text-align: left; /* Left-align the text */
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ddd; /* Optional: Adds a divider */
+        }
+
+        .quiz-info h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .quiz-info p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        .quiz-container {
+            flex: 2;
+            width: 50rem;
+            min-height: 27rem;
+            text-align: center;
+            display: none; /* Hide the quiz container initially */
+        }
+
+        .question-container {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .question {
+            font-size: 1.5rem;
+            font-weight: bold;
+            min-height: 4rem;
+        }
+
+        .answer-input {
+            padding: 10px;
+            font-size: 1rem;
+            margin-top: 15px;
+        }
+
+        .btn {
+            margin: 0 20px;
+        }
+
+        .reveal-btn {
+            background-color: orange !important;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .prev-btn, .next-btn {
+            padding: 10px 15px;
+            font-size: 1rem;
+            border: none;
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+            width: 45%;
+        }
+
+        .prev-btn:hover, .next-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .feedback {
+            font-size: 1.2rem;
+            margin-top: 15px;
+        }
+
+        .correct {
+            color: green;
+        }
+
+        .incorrect {
+            color: red;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Start Quiz button styling */
+        .start-quiz-btn {
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .start-quiz-btn:hover {
+            background-color: #218838;
+        }
+
+        .question-timer-row {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .score-timer {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+            background-color: #f8f9fa;
+            padding: 10px 20px;
+            border-radius: 8px;
+            /*border: 2px solid #007BFF;*/
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .timer-container, .score-container {
+            text-align: center;
+        }
+
+        .timer-container p, .score-container p {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        #time-remaining {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0056b3; /* Red color for urgency */
+        }
+
+        #score-tracker {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0056b3; /* Green color for score */
+        }
+
+        /* Pause Button */
+        .pause-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .pause-btn {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .pause-btn:hover {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+
+        /* Results Section */
+        #quiz-results {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        #quiz-results h2 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Results Section */
+        #quiz-results {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Results Table */
+        #results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Remove all borders */
+        #results-table th,
+        #results-table td {
+            padding: 15px;
+            text-align: left;
+            border: none; /* ✅ Removes table borders */
+        }
+
+        /* Header Styling */
+        #results-table thead {
+            background: #007BFF;
+            color: white;
+        }
+
+        /* Hover effect */
+        #results-table tbody tr:hover {
+            background: #f1f1f1;
+            transition: 0.3s;
+        }
+
+        /* Correct Answers (Green Text) */
+        .correct-answer {
+            color: #28a745 !important;
+            font-weight: bold;
+        }
+
+        /* Incorrect or Revealed Answers (Red Text) */
+        .incorrect-answer {
+            color: #dc3545 !important;
+            font-weight: bold;
+        }
+
+
+
+    </style>
+</head>
+<body>
+
+<nav class="breadcrumbs">
+    <a href="<?php echo BASE_URL; ?>">Home</a> &gt;
+    <a href="<?php echo BASE_URL; ?>quiz/categories.php">Categories</a> &gt;
+    <?php if ($quizCategory): ?>
+        <a href="<?php echo BASE_URL; ?>quiz/quiz-search.php?txt-search=&category=<?php echo urlencode($quizCategory); ?>">
+            <?php echo htmlspecialchars(ucfirst($quizCategory)); ?>
+        </a> &gt;
+    <?php endif; ?>
+    <span><?php echo htmlspecialchars($quizTitle); ?></span>
+</nav>
+
+
+<main class="main-container">
+    <!-- Quiz Info (Now positioned to the left) -->
+    <div class="quiz-info">
+        <h1><?php echo htmlspecialchars($quizTitle, ENT_QUOTES, 'UTF-8'); ?></h1>
+        <p><?php echo htmlspecialchars($quizDesc) ?></p>
+    </div>
+
+    <button id="start-quiz-btn" class="start-quiz-btn">Start Quiz</button>
+
+    <!-- Quiz Question Area (Initially hidden) -->
+    <div class="quiz-container" style="display:none;">
+        <div class="question-timer-row">
+            <div class="score-timer">
+                <div class="timer-container">
+                    <p>Time Left:</p>
+                    <span id="time-remaining"><?php echo gmdate("i:s", $quizTimer); ?></span>
+                </div>
+
+                <div class="score-container">
+                    <p>Score:</p>
+                    <span id="score-tracker">0/<?php echo $totalQuestions; ?></span>
+                </div>
+
+                <div class="pause-container">
+                    <img src="<?php echo BASE_URL ?>public/images/quiz/pause.png" id="pause-btn" class="pause-btn"
+                         alt="Pause Button">
+                </div>
+            </div>
+
+
+
+        </div>
+        <div class="question-area">
+            <p id="question" class="question"></p>
+        </div>
+        <input type="text" id="answer-input" class="answer-input" placeholder="Type your answer" autocomplete="off">
+
+        <div class="button-container">
+            <button id="prev-btn" class="prev-btn btn">Previous</button>
+            <button id="reveal-answer" class="reveal-btn btn">Reveal Answer</button>
+            <button id="next-btn" class="next-btn btn">Next</button>
+        </div>
+
+        <p id="feedback" class="feedback"></p>
+    </div>
+
+    <!-- Results Table (Initially hidden) -->
+    <div id="quiz-results" style="display:none;">
+        <h2>Quiz Results</h2>
+        <table id="results-table" border="1" style="width:100%; text-align:left; margin-top:20px;">
+            <thead>
+            <tr>
+                <th>Question</th>
+                <th>Answer</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</main>
+
+<script>
+    const questions = <?php echo json_encode($questions); ?>;
+
+    // Function to shuffle questions using Fisher-Yates algorithm
+    function shuffleQuestions(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    // Shuffle questions when the quiz starts
+    shuffleQuestions(questions);
+
+    let currentQuestionIndex = 0;
+    let correctTally = 0;
+    let answeredCorrectly = [];
+
+    const questionElement = document.getElementById("question");
+    const answerInput = document.getElementById("answer-input");
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+    const feedbackElement = document.getElementById("feedback");
+    const scoreTracker = document.getElementById("score-tracker");
+    const timerElement = document.getElementById("time-remaining");
+    const startQuizBtn = document.getElementById("start-quiz-btn");
+    const revealAnswerBtn = document.getElementById("reveal-answer");
+    const resultsTableBody = document.querySelector('#results-table tbody');
+    const quizResultsDiv = document.getElementById('quiz-results');
+
+    let timerInterval;
+    let timeRemaining = <?php echo $quizTimer; ?>;
+    let isPaused = false;
+
+    // Start Quiz functionality
+    startQuizBtn.addEventListener("click", () => {
+        startQuizBtn.style.display = "none";
+        document.querySelector('.quiz-container').style.display = "block";
+
+        // Shuffle the questions *before* starting the quiz
+        shuffleQuestions(questions);
+
+        startTimer();
+        loadQuestion();
+    });
+
+    // Load the first question
+    function loadQuestion() {
+        if (currentQuestionIndex >= questions.length) {
+            showResults();
+            return;
+        }
+
+        let question = questions[currentQuestionIndex];
+        questionElement.textContent = `${currentQuestionIndex + 1}. ${question.question}`;
+        answerInput.value = "";
+        feedbackElement.textContent = "";
+        feedbackElement.className = "feedback";
+
+        prevBtn.disabled = currentQuestionIndex === 0 || answeredCorrectly.includes(currentQuestionIndex);
+        nextBtn.disabled = answeredCorrectly.includes(currentQuestionIndex);
+    }
+
+
+    // Function to convert seconds into MM:SS format
+    function formatTime(seconds) {
+        let minutes = Math.floor(seconds / 60);
+        let sec = seconds % 60;  // FIXED THE TYPO (was % 10 before)
+        return `${minutes}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    // Function to update the timer display
+    function updateTimerDisplay() {
+        document.getElementById("time-remaining").innerText = formatTime(timeRemaining);
+    }
+
+    // Function to start the timer (ensures no multiple intervals)
+    function startTimer() {
+        if (timerInterval) clearInterval(timerInterval); // Prevents multiple timers
+
+        timerInterval = setInterval(() => {
+            if (!isPaused && timeRemaining > 0) {
+                timeRemaining--;
+                updateTimerDisplay();
+            } else if (timeRemaining <= 0) {
+                clearInterval(timerInterval); // Stop the timer at zero
+                showResults(); // End the quiz and show results when time runs out
+            }
+        }, 1000);
+    }
+
+    // Pause function
+    document.getElementById("pause-btn").addEventListener("click", function () {
+        isPaused = true;
+        clearInterval(timerInterval);
+        document.getElementById("paused-time").innerText = document.getElementById("time-remaining").innerText;
+        document.getElementById("pause-modal").classList.remove("hidden");
+    });
+
+    // Resume function
+    document.getElementById("play-btn").addEventListener("click", function () {
+        isPaused = false;
+        document.getElementById("pause-modal").classList.add("hidden");
+        startTimer(); // Resume the timer safely
+    });
+
+    // Initialize timer on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        updateTimerDisplay();
+        startTimer();
+    });
+
+
+    function checkAnswer() {
+        let userAnswer = answerInput.value.trim().toLowerCase();
+        let correctAnswers = questions[currentQuestionIndex].answers.filter(a => a.is_correct === 1).map(a => a.text);
+
+        if (correctAnswers.includes(userAnswer)) {
+            feedbackElement.textContent = "Correct!";
+            feedbackElement.classList.add("correct");
+            correctTally++;
+            answeredCorrectly.push(currentQuestionIndex);
+            scoreTracker.textContent = `Score: ${correctTally}/${questions.length}`;
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                while (answeredCorrectly.includes(currentQuestionIndex) && currentQuestionIndex < questions.length) {
+                    currentQuestionIndex++;
+                }
+                loadQuestion();
+            }, 1000);
+        } else {
+            feedbackElement.classList.add("incorrect");
+        }
+    }
+
+    let revealedAnswers = []; // Track revealed answers
+
+    function revealAnswer() {
+        let correctAnswers = questions[currentQuestionIndex].answers
+            .filter(a => a.is_correct === 1)
+            .map(a => a.text);
+
+        feedbackElement.textContent = `The correct answer(s): ${correctAnswers.join(', ')}`;
+        feedbackElement.classList.add("incorrect"); // Show as incorrect since it was revealed
+
+        // Track that this answer was revealed
+        revealedAnswers.push(currentQuestionIndex);
+
+        prevBtn.disabled = false;
+        nextBtn.disabled = false;
+
+        // Auto-skip to next question after 1 second
+        setTimeout(() => {
+            currentQuestionIndex++;
+            while (answeredCorrectly.includes(currentQuestionIndex) && currentQuestionIndex < questions.length) {
+                currentQuestionIndex++;
+            }
+            loadQuestion();
+        }, 1000);
+    }
+
+    function showResults() {
+        document.querySelector('.quiz-container').style.display = "none"; // Hide quiz
+        quizResultsDiv.style.display = "block"; // Show results
+
+        resultsTableBody.innerHTML = ""; // Clear previous results
+
+        questions.forEach((question, index) => {
+            let row = document.createElement('tr');
+            let questionCell = document.createElement('td');
+            let answerCell = document.createElement('td');
+
+            questionCell.textContent = question.question;
+
+            let correctAnswers = question.answers.filter(a => a.is_correct === 1).map(a => a.text);
+            let answerText = correctAnswers.join(', ');
+
+            // Add the correct class instead of using inline styles
+            if (answeredCorrectly.includes(index) && !revealedAnswers.includes(index)) {
+                answerCell.classList.add("correct-answer"); // Green text for correct answers
+            } else {
+                answerCell.classList.add("incorrect-answer"); // Red text for revealed/wrong answers
+            }
+
+            answerCell.textContent = answerText;
+
+            row.appendChild(questionCell);
+            row.appendChild(answerCell);
+            resultsTableBody.appendChild(row);
+        });
+    }
+
+
+    // Ensure showResults() runs when all questions are done
+    function checkIfQuizFinished() {
+        if (answeredCorrectly.length + revealedAnswers.length >= questions.length) {
+            showResults();
+        }
+    }
+
+
+    answerInput.addEventListener("input", checkAnswer);
+    nextBtn.addEventListener("click", () => {
+        let unansweredFound = false;
+
+        for (let i = 0; i < questions.length; i++) {
+            currentQuestionIndex = (currentQuestionIndex + 1) % questions.length; // Cycle through questions
+            if (!answeredCorrectly.includes(currentQuestionIndex)) {
+                unansweredFound = true;
+                break;
+            }
+        }
+
+        if (!unansweredFound) {
+            showResults(); // Only show results when all questions are answered
+        } else {
+            loadQuestion();
+        }
+    });
+
+    prevBtn.addEventListener("click", () => {
+        let unansweredFound = false;
+
+        for (let i = 0; i < questions.length; i++) {
+            currentQuestionIndex = (currentQuestionIndex - 1 + questions.length) % questions.length; // Cycle backward
+            if (!answeredCorrectly.includes(currentQuestionIndex)) {
+                unansweredFound = true;
+                break;
+            }
+        }
+
+        if (unansweredFound) {
+            loadQuestion();
+        }
+    });
+
+
+    // Start Quiz functionality
+    startQuizBtn.addEventListener("click", () => {
+        // Hide the start button
+        startQuizBtn.style.display = "none";
+
+        // Show the quiz content
+        document.querySelector('.quiz-container').style.display = "block";
+
+        // Start the timer
+        startTimer();
+
+        // Load the first question
+        loadQuestion();
+    });
+
+    // Reveal Answer functionality
+    revealAnswerBtn.addEventListener("click", revealAnswer);
+
+
+
+</script>
+
+
+</body>
+</html>

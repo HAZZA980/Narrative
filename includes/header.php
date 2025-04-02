@@ -123,7 +123,7 @@ include BASE_PATH . 'includes/model/header_file_mapping.php';
 
 
 
-                <a href="<?php echo BASE_URL; ?>layouts/pages/quizzes/quizzes-home.php" class="orb-nav orb-nav-learn">
+                <a href="<?php echo BASE_URL; ?>quiz/home.php" class="orb-nav orb-nav-learn">
                     <li>
                         <img class="header-links-img"
                              src="<?php echo BASE_URL; ?>public/images/header-img/lightbulb.png" alt="">Quizzes

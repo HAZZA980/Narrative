@@ -1,0 +1,161 @@
+
+.nav-general-knowledge {
+    border-bottom: white 6px solid !important;
+}
+
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    margin: 10px 20px;
+}
+
+.breadcrumbs a {
+    text-decoration: none;
+    color: #007BFF;
+    margin-right: 5px;
+}
+
+.breadcrumbs a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumbs span {
+    margin: 0 5px;
+    color: #333;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    margin: auto;
+    width: 73%;
+}
+
+.quiz-container {
+    width: 100%;
+    max-width: 600px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.quiz-container h1 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.quiz-container p {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.quiz-container input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.quiz-container input[type="text"]:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+.quiz-container button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: #fff;
+}
+
+.quiz-container button:hover {
+    background-color: #0056b3;
+}
+
+.feedback-message {
+    font-size: 1.2rem;
+    margin-top: 15px;
+}
+
+.feedback-message.correct {
+    color: green;
+}
+
+.feedback-message.incorrect {
+    color: red;
+}
+
+.feedback-message.final {
+    color: #333;
+}
+
+.score-tracker {
+    font-size: 1.2rem;
+    color: #333;
+    margin-top: 10px;
+}
+
+
+/* Style for the table container */
+.table-container {
+    width: 90%; /* Adjust width as needed */
+    margin: 20px auto; /* Center the table */
+    padding: 20px;
+    background-color: #f9f9f9; /* Light background for better contrast */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    overflow-x: auto; /* Enable horizontal scrolling for small screens */
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+/* Header styles */
+thead th {
+    background-color: #007BFF;
+    color: white;
+    text-align: left;
+    padding: 10px;
+    font-weight: bold;
+    border-bottom: 2px solid #ddd;
+}
+
+/* Body styles */
+tbody tr:nth-child(even) {
+    background-color: #f2f2f2; /* Alternating row color */
+}
+
+tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Add responsive design for small screens */
+@media (max-width: 768px) {
+    .table-container {
+        width: 100%;
+        padding: 10px;
+    }
+
+    table {
+        font-size: 12px;
+    }
+}
+
