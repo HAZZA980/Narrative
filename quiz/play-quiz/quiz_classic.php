@@ -54,7 +54,7 @@ if ($fetchedQuizId) {
     $stmt->close();
 }
 
-var_dump($quizData);
+//var_dump($quizData);
 
 
 // Convert $quizData to a sequential array of questions for rendering

@@ -4,6 +4,18 @@ ini_set('display_errors', 1);
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 include BASE_PATH . 'includes/quiz-header.php';
 
+$user_id = $_SESSION['user_id'];
+
+// Fetch the user's information (username and isAdmin status)
+$query = "SELECT isAdmin FROM users WHERE user_id = ?";
+$stmt1 = $conn->prepare($query);
+$stmt1->bind_param("i", $user_id);
+$stmt1->execute();
+$user_result = $stmt1->get_result();
+$user_row = $user_result->fetch_assoc();
+
+$isAdmin = $user_row['isAdmin']; // Fetch the isAdmin status
+
 $searchTerm = $_GET['txt-search'] ?? '';
 $category = $_GET['category'] ?? 'all';
 $quizType = $_GET['quiz-type'] ?? '';
@@ -145,6 +157,12 @@ while ($row = $result->fetch_assoc()) {
             width: 70%;
         }
 
+        .quiz-description {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
     </style>
 </head>
 <body>
@@ -219,39 +237,45 @@ while ($row = $result->fetch_assoc()) {
         </div>
 
         <?php if (!empty($searchResults)): ?>
-            <ul class="results-list">
-                <?php foreach ($searchResults as $result): ?>
-                    <li class="result-item">
-                        <a href="<?php echo BASE_URL ?>quiz/quiz.php?quiz_id=<?php echo urlencode($result['id'] ?? ''); ?>">
-                            <?php echo htmlspecialchars($result['title'] ?? 'Untitled Quiz'); ?>
-                        </a>
+        <ul class="results-list">
+            <?php foreach ($searchResults as $result): ?>
+                <li class="result-item">
+                    <a href="<?php echo BASE_URL ?>quiz/quiz.php?quiz_id=<?php echo urlencode($result['id'] ?? ''); ?>">
+                        <?php echo htmlspecialchars($result['title'] ?? 'Untitled Quiz'); ?>
+                    </a>
+                    <div class="quiz-description">
+                        <p class="result-description"><em><?php echo htmlspecialchars($result['description'] ?? 'No description'); ?></em></p>
 
-                        <p class="result-description">
-                            <em><?php echo htmlspecialchars($result['description'] ?? 'No description'); ?></em>
-                        </p>
+<!--                    --><?php //if (isset($_SESSION['user_id']) &&  $isAdmin == 1): ?>
+<!--                        <div style="display: flex; gap: 10px;">-->
+<!--                            <a href="--><?php //echo BASE_URL . 'quiz/profile/edit-quiz.php?id=' . $result['id']; ?><!--" title="Edit Quiz">✏️</a>-->
+<!---->
+<!--                            <a href="#" class="delete-btn" data-id="--><?php //echo $result['id']; ?><!--" title="Delete Quiz">🗑️</a>-->
+<!--                        </div>-->
+<!--                    --><?php //endif; ?>
+                    </div>
 
-                        <div class="meta-group">
-                            <p class="result-meta">📁 Category: <?php echo htmlspecialchars($result['category'] ?? 'Unknown'); ?></p>
+                    <div class="meta-group">
+                        <p class="result-meta">📁 Category: <?php echo htmlspecialchars($result['category'] ?? 'Unknown'); ?></p>
 
-                            <p class="result-meta">🧩 Quiz Type: <?php echo htmlspecialchars($result['question_type'] ?? 'Unknown'); ?></p>
+                        <p class="result-meta">🧩 Quiz Type: <?php echo htmlspecialchars($result['question_type'] ?? 'Unknown'); ?></p>
 
-                            <?php
-                            $seconds = (int)($result['timer'] ?? 0);
-                            $minutes = floor($seconds / 60);
-                            $secs = str_pad($seconds % 60, 2, "0", STR_PAD_LEFT);
-                            $formattedTime = $minutes . ':' . $secs;
-                            ?>
-                            <p class="result-meta">⏱️ Timer: <?php echo $formattedTime; ?></p>
+                        <?php
+                        $seconds = (int)($result['timer'] ?? 0);
+                        $minutes = floor($seconds / 60);
+                        $secs = str_pad($seconds % 60, 2, "0", STR_PAD_LEFT);
+                        $formattedTime = $minutes . ':' . $secs;
+                        ?>
+                        <p class="result-meta">⏱️ Timer: <?php echo $formattedTime; ?></p>
 
-                            <?php
-                            $createdDate = date('F j, Y', strtotime($result['date_created'] ?? ''));
-                            ?>
-                            <p class="result-meta">📅 Created: <?php echo $createdDate; ?></p>
-                        </div>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-
+                        <?php
+                        $createdDate = date('F j, Y', strtotime($result['date_created'] ?? ''));
+                        ?>
+                        <p class="result-meta">📅 Created: <?php echo $createdDate; ?></p>
+                    </div>
+                </li>
+            <?php endforeach; ?>
+        </ul>
         <?php else: ?>
             <p class="no-results-message">No quizzes found matching your search.</p>
         <?php endif; ?>

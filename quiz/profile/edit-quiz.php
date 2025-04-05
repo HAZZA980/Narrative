@@ -15,6 +15,7 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 $quizId = $_GET['id'] ?? null;
 
+
 if (!$quizId) {
     echo "Invalid quiz ID.";
     exit;
@@ -71,118 +72,81 @@ while ($row = $questionsResult->fetch_assoc()) {
         'answers' => $answers
     ];
 }
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Update quiz metadata
+    $title = $_POST['quizTitle'];
+    $desc = $_POST['quizDesc'];
+    $category = $_POST['quizCategory'];
+    $tags = $_POST['quizTags'];
+    $timer = $_POST['quizTimer'];
+    $quizType = $_POST['quizType'];
 
-// =========================
-// Handle form submission
-// =========================
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $quizTitle = $_POST['quizTitle'] ?? '';
-    $quizDesc = $_POST['quizDesc'] ?? '';
-    $quizCategory = $_POST['quizCategory'] ?? 'miscellaneous';
-    $quizTags = $_POST['quizTags'] ?? '';
-    $quizTimer = isset($_POST['quizTimer']) ? intval($_POST['quizTimer']) : 60;
+    $stmt = $conn->prepare("UPDATE `quiz-quizzes` SET title=?, description=?, category=?, tags=?, timer=?, quiz_type=?, last_updated=NOW() WHERE id=? AND user_id=?");
+    $stmt->bind_param("ssssssii", $title, $desc, $category, $tags, $timer, $quizType, $quizId, $userId);
+    $stmt->execute();
 
-    // Update quiz meta
-    $updateQuiz = $conn->prepare("UPDATE `quiz-quizzes` SET title = ?, description = ?, category = ?, tags = ?, timer = ?, quiz_type = ? WHERE id = ? AND user_id = ?");
-    $updateQuiz->bind_param("ssssssii", $quizTitle, $quizDesc, $quizCategory, $quizTags, $quizTimer, $quizType, $quizId, $userId);
-    $updateQuiz->execute();
+    // === Handle questions ===
 
-    $questions = $_POST['question'] ?? [];
-    $questionIds = $_POST['questionId'] ?? [];
-    $answers = $_POST['answers'] ?? [];
-    $answerIds = $_POST['answerId'] ?? [];
+    $submittedQuestionIds = $_POST['questionId'] ?? [];
 
-    $processedQuestionIds = [];
+    // Get current question IDs in DB for this quiz
+    $existingQuestionIds = [];
+    $res = $conn->query("SELECT id FROM `quiz-questions` WHERE quiz_id = $quizId");
+    while ($row = $res->fetch_assoc()) {
+        $existingQuestionIds[] = $row['id'];
+    }
 
-    foreach ($questions as $qIndex => $questionText) {
-        $questionText = trim($questionText);
+    // Delete questions removed in form
+    $toDelete = array_diff($existingQuestionIds, array_filter($submittedQuestionIds, 'is_numeric'));
+    foreach ($toDelete as $qid) {
+        $conn->query("DELETE FROM `quiz-answers` WHERE question_id = $qid");
+        $conn->query("DELETE FROM `quiz-questions` WHERE id = $qid");
+    }
 
-        if (isset($questionIds[$qIndex]) && !empty($questionIds[$qIndex])) {
-            $qid = intval($questionIds[$qIndex]);
-            $processedQuestionIds[] = $qid;
+    // Loop through submitted questions
+    foreach ($_POST['question'] as $index => $qText) {
+        $qText = trim($qText);
+        $questionId = $_POST['questionId'][$index] ?? null;
 
-            $updateQ = $conn->prepare("UPDATE `quiz-questions` SET question_text = ? WHERE id = ?");
-            $updateQ->bind_param("si", $questionText, $qid);
-            $updateQ->execute();
+        if (!$qText) continue; // Skip empty questions
+
+        // Insert or update
+        if (is_numeric($questionId)) {
+            // Update existing
+            $stmt = $conn->prepare("UPDATE `quiz-questions` SET question_text=? WHERE id=? AND quiz_id=?");
+            $stmt->bind_param("sii", $qText, $questionId, $quizId);
+            $stmt->execute();
         } else {
-            $insertQ = $conn->prepare("INSERT INTO `quiz-questions` (quiz_id, question_text, question_type) VALUES (?, ?, 'classic')");
-            $insertQ->bind_param("is", $quizId, $questionText);
-            $insertQ->execute();
-            $qid = $conn->insert_id;
-            $processedQuestionIds[] = $qid;
+            // Insert new
+            $stmt = $conn->prepare("INSERT INTO `quiz-questions` (quiz_id, question_text, question_type, created_at) VALUES (?, ?, 'classic', NOW())");
+            $stmt->bind_param("is", $quizId, $qText);
+            $stmt->execute();
+            $questionId = $stmt->insert_id;
         }
 
-        // Handle answers
-        $questionAnswers = $answers[$qIndex] ?? [];
-        $questionAnswerIds = $answerIds[$qIndex] ?? [];
-        $processedAnswerIds = [];
+        // Delete all answers for this question
+        $conn->query("DELETE FROM `quiz-answers` WHERE question_id = $questionId");
 
-        foreach ($questionAnswers as $aIndex => $answerText) {
-            $answerText = trim($answerText);
-            if ($answerText === '') continue;
+        // Now add updated answers
+        $qidKey = is_numeric($_POST['questionId'][$index]) ? $_POST['questionId'][$index] : $_POST['questionId'][$index]; // e.g., 'new_123456'
+        $answers = $_POST['answers'][$qidKey] ?? [];
 
-            if (isset($questionAnswerIds[$aIndex]) && !empty($questionAnswerIds[$aIndex])) {
-                $aid = intval($questionAnswerIds[$aIndex]);
-                $processedAnswerIds[] = $aid;
+        foreach ($answers as $aText) {
+            $aText = trim($aText);
+            if ($aText === '') continue;
 
-                $updateA = $conn->prepare("UPDATE `quiz-answers` SET answer_text = ? WHERE id = ?");
-                $updateA->bind_param("si", $answerText, $aid);
-                $updateA->execute();
-            } else {
-                $insertA = $conn->prepare("INSERT INTO `quiz-answers` (question_id, answer_text, is_correct) VALUES (?, ?, 1)");
-                $insertA->bind_param("is", $qid, $answerText);
-                $insertA->execute();
-                $processedAnswerIds[] = $conn->insert_id;
-            }
-        }
-
-        // Delete removed answers
-        if (!empty($processedAnswerIds)) {
-            $inClause = implode(',', array_fill(0, count($processedAnswerIds), '?'));
-            $types = str_repeat('i', count($processedAnswerIds));
-            $stmt = $conn->prepare("DELETE FROM `quiz-answers` WHERE question_id = ? AND id NOT IN ($inClause)");
-            $params = array_merge([$qid], $processedAnswerIds);
-            $stmt->bind_param('i' . $types, ...$params);
+            $stmt = $conn->prepare("INSERT INTO `quiz-answers` (question_id, answer_text, is_correct) VALUES (?, ?, 1)");
+            $stmt->bind_param("is", $questionId, $aText);
             $stmt->execute();
         }
     }
 
-    // Delete removed answers
-    if (!empty($processedAnswerIds)) {
-        // Ensure to delete answers that are not included in the processed list for the question being edited
-        $inClause = implode(',', array_fill(0, count($processedAnswerIds), '?'));
-        $types = str_repeat('i', count($processedAnswerIds));
-
-        // Prepare SQL to delete answers that are NOT in the processed list for this specific question
-        $stmt = $conn->prepare("DELETE FROM `quiz-answers` WHERE question_id = ? AND id NOT IN ($inClause)");
-        $params = array_merge([$qid], $processedAnswerIds);
-        $stmt->bind_param('i' . $types, ...$params);
-        $stmt->execute();
-    }
-
-// Ensure questions without answers are removed
-    if (!empty($processedQuestionIds)) {
-        // Ensure to delete questions that are not included in the processed list
-        $inClause = implode(',', array_fill(0, count($processedQuestionIds), '?'));
-        $types = str_repeat('i', count($processedQuestionIds));
-
-        // Prepare SQL to delete questions that are NOT in the processed list for the quiz
-        $stmt = $conn->prepare("DELETE FROM `quiz-questions` WHERE quiz_id = ? AND id NOT IN ($inClause)");
-        $params = array_merge([$quizId], $processedQuestionIds);
-        $stmt->bind_param('i' . $types, ...$params);
-        $stmt->execute();
-    } else {
-        // If no question IDs are processed, delete questions with no associated answers
-        $stmt = $conn->prepare("DELETE FROM `quiz-questions` WHERE quiz_id = ? AND id NOT IN ($inClause) AND NOT EXISTS (SELECT 1 FROM `quiz-answers` WHERE question_id = `quiz-questions`.id)");
-        $stmt->bind_param('i', $quizId);
-        $stmt->execute();
-    }
-
-
-
+    // Redirect or success
     header("Location: " . BASE_URL . "quiz/profile.php");
-    exit;
+    exit();
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -292,80 +256,78 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     });
 
     function initializeQuizForm() {
-        // Check if there are existing questions
         const existingQuestions = <?php echo json_encode($questions); ?>;
-
-        // Loop through the existing questions and populate the form with them
-        existingQuestions.forEach((questionData, index) => {
+        existingQuestions.forEach((questionData) => {
             if (questionData && questionData.question && questionData.answers.length > 0) {
-                // Adding question from existing data
-                addExistingQuestion(questionData, index);
+                addExistingQuestion(questionData);
             }
         });
     }
 
-    function addExistingQuestion(questionData, index) {
+    function addExistingQuestion(questionData) {
         const quizContainer = document.getElementById('quizContainer');
-    const questionBlock = document.createElement('div');
-    questionBlock.className = 'question-block';
-    questionBlock.setAttribute('draggable', 'true');
+        const questionBlock = document.createElement('div');
+        questionBlock.className = 'question-block';
+        questionBlock.setAttribute('draggable', 'true');
 
-    const dragHandle = document.createElement('div');
-    dragHandle.className = 'drag-handle';
-    dragHandle.innerHTML = '☰';
-    questionBlock.appendChild(dragHandle);
-    addDragEvents(questionBlock);
+        const questionId = questionData.question['id']; // Use real ID from DB
 
-    const questionNumber = document.createElement('div');
-    questionNumber.className = 'question-number';
-    questionNumber.textContent = `Question ${index + 1}`;
-    questionBlock.appendChild(questionNumber);
+        const dragHandle = document.createElement('div');
+        dragHandle.className = 'drag-handle';
+        dragHandle.innerHTML = '☰';
+        questionBlock.appendChild(dragHandle);
+        addDragEvents(questionBlock);
 
-    const removeBtn = document.createElement('button');
-    removeBtn.className = 'btn-remove';
-    removeBtn.textContent = '✖';
-    removeBtn.onclick = () => removeQuestion(questionBlock);
-    questionBlock.appendChild(removeBtn);
+        const questionNumber = document.createElement('div');
+        questionNumber.className = 'question-number';
+        questionNumber.textContent = `Question ${quizContainer.children.length + 1}`;
+        questionBlock.appendChild(questionNumber);
 
-    const questionInput = document.createElement('input');
-    questionInput.type = 'text';
-    questionInput.name = 'question[]';
-    questionInput.className = 'form-input';
-    questionInput.placeholder = 'Enter question';
-    questionInput.value = questionData.question['question_text'];
-    questionBlock.appendChild(questionInput);
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn-remove';
+        removeBtn.textContent = '✖';
+        removeBtn.onclick = () => removeQuestion(questionBlock);
+        questionBlock.appendChild(removeBtn);
 
-    const questionIdInput = document.createElement('input');
-    questionIdInput.type = 'hidden';
-    questionIdInput.name = 'questionId[]';
-    questionIdInput.value = questionData.question['id'];
-    questionBlock.appendChild(questionIdInput);
+        const questionInput = document.createElement('input');
+        questionInput.type = 'text';
+        questionInput.name = 'question[]';
+        questionInput.className = 'form-input';
+        questionInput.placeholder = 'Enter question';
+        questionInput.value = questionData.question['question_text'];
+        questionBlock.appendChild(questionInput);
 
-    const answersRow = document.createElement('div');
-    answersRow.className = 'answers-row';
+        const questionIdInput = document.createElement('input');
+        questionIdInput.type = 'hidden';
+        questionIdInput.name = 'questionId[]';
+        questionIdInput.value = questionId;
+        questionBlock.appendChild(questionIdInput);
 
-    for (let i = 0; i < 4; i++) {
-        const answerInput = document.createElement('input');
-        answerInput.type = 'text';
-        answerInput.name = `answers[${index}][]`;
-        answerInput.className = 'form-input';
-        answerInput.placeholder = `Answer ${i + 1}`;
-        answerInput.value = questionData.answers[i] ? questionData.answers[i]['answer_text'] : '';
-        answersRow.appendChild(answerInput);
+        const answersRow = document.createElement('div');
+        answersRow.className = 'answers-row';
 
-        if (questionData.answers[i]) {
-            const answerIdInput = document.createElement('input');
-            answerIdInput.type = 'hidden';
-            answerIdInput.name = `answerId[${index}][]`;
-            answerIdInput.value = questionData.answers[i]['id'];
-            answersRow.appendChild(answerIdInput);
+        for (let i = 0; i < 4; i++) {
+            const answerInput = document.createElement('input');
+            answerInput.type = 'text';
+            answerInput.name = `answers[${questionId}][]`; // 🛠️ Use question ID as key
+            answerInput.className = 'form-input';
+            answerInput.placeholder = `Answer ${i + 1}`;
+            answerInput.value = questionData.answers[i] ? questionData.answers[i]['answer_text'] : '';
+            answersRow.appendChild(answerInput);
+
+            if (questionData.answers[i]) {
+                const answerIdInput = document.createElement('input');
+                answerIdInput.type = 'hidden';
+                answerIdInput.name = `answerId[${questionId}][]`; // 🛠️ Match ID-based grouping
+                answerIdInput.value = questionData.answers[i]['id'];
+                answersRow.appendChild(answerIdInput);
+            }
         }
-    }
 
-    questionBlock.appendChild(answersRow);
-    quizContainer.appendChild(questionBlock);
-    updateRemoveButtons();
-}
+        questionBlock.appendChild(answersRow);
+        quizContainer.appendChild(questionBlock);
+        updateRemoveButtons();
+    }
 
     function addQuestion() {
         const quizContainer = document.getElementById('quizContainer');
@@ -373,29 +335,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         questionBlock.className = 'question-block';
         questionBlock.setAttribute('draggable', 'true');
 
-        // Add drag handle (☰ icon)
+        const newQuestionId = 'new_' + Date.now(); // 🛠️ Temporary ID for new questions
+
         const dragHandle = document.createElement('div');
         dragHandle.className = 'drag-handle';
-        dragHandle.innerHTML = '☰'; // You can change this to any icon or text
+        dragHandle.innerHTML = '☰';
         questionBlock.appendChild(dragHandle);
-
-        // Add drag events to the question block
         addDragEvents(questionBlock);
 
-        // Question Number
         const questionNumber = document.createElement('div');
         questionNumber.className = 'question-number';
         questionNumber.textContent = `Question ${quizContainer.children.length + 1}`;
         questionBlock.appendChild(questionNumber);
 
-        // Remove button
         const removeBtn = document.createElement('button');
         removeBtn.className = 'btn-remove';
         removeBtn.textContent = '✖';
         removeBtn.onclick = () => removeQuestion(questionBlock);
         questionBlock.appendChild(removeBtn);
 
-        // Question input
         const questionInput = document.createElement('input');
         questionInput.type = 'text';
         questionInput.name = 'question[]';
@@ -404,27 +362,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         questionInput.required = true;
         questionBlock.appendChild(questionInput);
 
-        // Answers - Create exactly 4 answer input fields
+        const questionIdInput = document.createElement('input');
+        questionIdInput.type = 'hidden';
+        questionIdInput.name = 'questionId[]';
+        questionIdInput.value = newQuestionId; // 🛠️ Use temporary ID
+        questionBlock.appendChild(questionIdInput);
+
         const answersRow = document.createElement('div');
         answersRow.className = 'answers-row';
 
-        // Create 4 answer input fields, all initially empty
         for (let i = 0; i < 4; i++) {
             const answerInput = document.createElement('input');
             answerInput.type = 'text';
-            answerInput.name = `answers[${quizContainer.children.length}][]`;
+            answerInput.name = `answers[${newQuestionId}][]`; // 🛠️ Match temp ID
             answerInput.className = 'form-input';
             answerInput.placeholder = `Answer ${i + 1}`;
             answersRow.appendChild(answerInput);
         }
 
         questionBlock.appendChild(answersRow);
-
-        // Append new question block to the container
         quizContainer.appendChild(questionBlock);
         updateRemoveButtons();
     }
-
 
     function removeQuestion(block) {
         const quizContainer = document.getElementById('quizContainer');
@@ -460,13 +419,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             e.dataTransfer.setData('text/plain', '');
             block.classList.add('dragging');
             draggedBlock = block;
-            updateRemoveButtons();
-            updateQuestionNumbers();
         });
 
         block.addEventListener('dragend', () => {
             block.classList.remove('dragging');
             draggedBlock = null;
+            updateQuestionNumbers();
         });
 
         block.addEventListener('dragover', (e) => {
@@ -485,8 +443,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 container.insertBefore(draggedBlock, block.nextSibling === draggedBlock ? block : block);
             }
             block.classList.remove('drag-over');
+            updateQuestionNumbers();
         });
     }
+
 </script>
 
 <?php endif; ?>
