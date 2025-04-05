@@ -15,28 +15,29 @@ $quizTimer = 30; // Default value for timer (in minutes)
 $stmt = $conn->prepare("SELECT id, title, category, timer FROM `quiz-quizzes` WHERE id = ?");
 $stmt->bind_param("i", $quizId);
 $stmt->execute();
-$stmt->bind_result($quizId, $quizTitle, $quizCategory, $quizTimer);
+$stmt->bind_result($fetchedQuizId, $quizTitle, $quizCategory, $quizTimer);
 $stmt->fetch();
 $stmt->close();
 
 // Ensure quiz exists
-if ($quizId) {
-    // Fetch questions and their correct answers
+if ($fetchedQuizId) {
+    // Fetch questions and their correct answers (filtered to not include NULL answers)
     $stmt = $conn->prepare("
         SELECT q.id AS question_id, q.question_text, a.answer_text
         FROM `quiz-questions` q
-        LEFT JOIN `quiz-answers` a ON q.id = a.question_id AND a.is_correct = 1
+        LEFT JOIN `quiz-answers` a 
+            ON q.id = a.question_id AND a.is_correct = 1
         WHERE q.quiz_id = ?
+        ORDER BY q.id ASC
     ");
     $stmt->bind_param("i", $quizId);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Loop through results and structure the quiz data
     while ($row = $result->fetch_assoc()) {
         $questionId = $row['question_id'];
 
-        // Check if the question already exists in the array, if not, initialize it
+        // Initialize the question if it doesn't exist yet
         if (!isset($quizData[$questionId])) {
             $quizData[$questionId] = [
                 'question' => $row['question_text'],
@@ -44,12 +45,17 @@ if ($quizId) {
             ];
         }
 
-        // Add the correct answer to the answers array for this question
-        $quizData[$questionId]['answers'][] = strtolower($row['answer_text']); // Store answers in lowercase for consistency
+        // Only add the answer if it's not null (and not empty)
+        if (!empty($row['answer_text'])) {
+            $quizData[$questionId]['answers'][] = strtolower($row['answer_text']);
+        }
     }
 
     $stmt->close();
 }
+
+var_dump($quizData);
+
 
 // Convert $quizData to a sequential array of questions for rendering
 $questions = array_values($quizData);
@@ -419,12 +425,39 @@ $timeStmt->close();
             };
 
 
-            // End the quiz when time is up or all questions are answered
             function endQuiz() {
-                stopTimer();
-                submitQuizResults();
-                alert("Quiz Over! Final Score: " + Math.round((score / totalQuestions) * 100) + "%");
+                stopTimer(); // Stop the countdown
+                submitQuizResults(); // Save the results
+
+                // Reveal all answers and mark correct/incorrect
+                document.querySelectorAll('.answer').forEach((answer, index) => {
+                    const answers = JSON.parse(answer.getAttribute('data-answers'));
+                    answer.textContent = answers[0]; // Show the first correct answer
+                    answer.style.visibility = 'visible';
+
+                    // Mark styling based on whether it was answered
+                    if (answeredQuestions.has(index)) {
+                        answer.classList.add('correct');
+                    } else {
+                        answer.classList.add('incorrect');
+                    }
+                });
+
+                // Hide the answer input
+                document.getElementById('answerInput').style.display = 'none';
+                document.getElementById('pauseButton').style.display = 'none';
+
+                // Show final score
+                const finalScoreEl = document.getElementById('finalScore');
+                finalScoreEl.textContent = `💯 Your Final Score: ${score}/${totalQuestions} (${Math.round((score / totalQuestions) * 100)}%)`;
+                finalScoreEl.style.display = 'block';
+
+                // Adjust button visibility
+                document.getElementById('pauseButton').style.display = 'none';
+                document.getElementById('giveUpButton').style.display = 'none';
+                document.getElementById('restartButton').style.display = 'inline';
             }
+
 
 
             // Update the timer display function
@@ -468,22 +501,7 @@ $timeStmt->close();
 
             // Restart the quiz
             function restartQuiz() {
-                score = 0;
-                timeLeft = <?php echo $quizTimer; ?>; // Reset timer to original value (in seconds)
-                document.getElementById('score').textContent = "0/" + totalQuestions;
-                initializeTimerDisplay(); // Ensure timer shows the right initial value
-
-                // Hide answers and reset input
-                document.querySelectorAll('.answer').forEach(answer => {
-                    answer.style.visibility = 'hidden';
-                    answer.classList.remove('incorrect', 'correct');  // Reset the colors
-                });
-                document.getElementById('answerInput').value = '';
-
-                // Start the timer and reset button visibility
-                startTimer();
-                document.getElementById('repeatButton').style.display = 'none';
-                document.getElementById('pauseButton').style.display = 'inline';
+                location.reload(); // Refresh the page
             }
 
             // Handle user input and check answers

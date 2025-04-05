@@ -1,216 +1,169 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+session_start();
+require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 include BASE_PATH . 'includes/quiz-header.php';
 
-// If form is submitted, store data and redirect
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $_SESSION['quizType'] = $_POST['quizType'] ?? 'classic';
-    $_SESSION['quizTitle'] = $_POST['quizTitle'] ?? '';
-    $_SESSION['quizDesc'] = $_POST['quizDesc'] ?? '';
-    $_SESSION['quizCategory'] = $_POST['quizCategory'] ?? 'miscellaneous';
-    $_SESSION['quizTags'] = $_POST['quizTags'] ?? '';
-    $_SESSION['quizTimer'] = isset($_POST['quizTimer']) ? intval($_POST['quizTimer']) : 60; // Ensure it's an integer
-
-    // Redirect based on quiz type
-    if ($_SESSION['quizType'] === 'slides') {
-        header("Location: " . BASE_URL . "quiz/views/create-slideshow.php");
-        exit();
-    } else {
-        header("Location: " . BASE_URL . "quiz/views/create-classic.php");
-        exit();
-    }
-}
-
-// Retrieve stored values for form repopulation
-$quizType = $_SESSION['quizType'] ?? 'classic';
-$quizTitle = $_SESSION['quizTitle'] ?? '';
-$quizDesc = $_SESSION['quizDesc'] ?? '';
-$quizCategory = $_SESSION['quizCategory'] ?? 'miscellaneous';
-$quizTags = $_SESSION['quizTags'] ?? '';
-$quizTimer = $_SESSION['quizTimer'] ?? 60;
-
+// Defaults for the form fields
+$quizType = 'classic';
+$quizTitle = '';
+$quizDesc = '';
+$quizCategory = 'miscellaneous';
+$quizTags = '';
+$quizTimer = 60;
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Quiz | Narrative Quizzes</title>
     <link rel="stylesheet" href="<?php echo BASE_URL ?>public/css/styles-create-quiz.css">
-</head>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Quiz | Narrative Quizzes</title>
     <style>
-        /* General Page Styles */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f7f6;
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            color: #333;
         }
 
-        /* Ensure full-page height */
-        .quiz-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            min-height: 100vh;
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
             padding: 20px;
         }
 
-        /* Page Heading */
-        h1 {
+        /* Container */
+        .quiz-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Headings */
+        h1, h2, h3 {
             text-align: center;
             color: #007BFF;
-            font-family: 'Poppins', sans-serif;
-            font-size: 2rem;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
-        /* Form Styling */
-        #quizForm {
-            width: 100%; /* Makes it take up the full width */
-            max-width: 1200px; /* Limits the maximum width to avoid it becoming too wide */
-            margin: 0 auto; /* Centers the form horizontally */
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+        /* Form Elements */
+        form {
+            width: 100%;
         }
 
-        /* Labels */
-        label {
-            font-weight: bold;
-            display: block;
-            margin: 8px 0;
-        }
-
-        /* Form container styles */
         .form-row {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
-            width: 100%;
+            margin-bottom: 20px;
         }
 
-        /* Input Fields */
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
         .form-input,
         .form-textarea,
         .form-select {
-            width: 100%; /* Ensures inputs and selects take full width */
+            width: 100%;
             padding: 12px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 16px;
-            background-color: white;
+            background-color: #fff;
             transition: border-color 0.3s ease;
         }
 
-        /* Textarea Adjustments */
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        /* Styled Dropdowns */
-        select {
-            appearance: none;
-            cursor: pointer;
-        }
-
-        /* Hover & Focus Effects */
         .form-input:hover,
-        .form-select:hover,
-        .form-textarea:hover,
         .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
+        .form-textarea:hover,
+        .form-textarea:focus,
+        .form-select:hover,
+        .form-select:focus {
             border-color: #007BFF;
             outline: none;
         }
 
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
         /* Buttons */
-        .form-button,
-        button {
-            margin-top: 8px;
-            background-color: #007BFF;
-            color: white;
+        .btn,
+        .form-button {
+            display: inline-block;
+            padding: 12px 18px;
+            font-size: 16px;
             font-weight: 600;
             border: none;
-            padding: 12px;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
-            font-size: 16px;
+            text-align: center;
         }
 
-        .form-button:hover,
-        button:hover {
+
+        .question-number {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+
+        .btn-add {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .btn-add:hover {
             background-color: #0056b3;
         }
 
-        .form {
-            width: 100%;
-        }
-
-        /* Question Section */
-        #questionsContainer {
-            margin-top: 25px;
-        }
-
-        /* Individual Question Block */
-        .question {
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            margin-bottom: 20px;
-        }
-
-        /* Remove Question Button */
-        .removeQuestion {
-            background-color: #dc3545;
+        .btn-save {
+            background-color: #28a745;
             color: white;
-            margin-top: 10px;
         }
 
-        .removeQuestion:hover {
-            background-color: #c82333;
+        .btn-save:hover {
+            background-color: #218838;
         }
 
-        /* Extra spacing between sections */
-        .section {
-            margin-bottom: 30px;
+        .btn-remove {
+            background: none;
+            color: red;
+            font-weight: bold;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            transition: 0.3s ease;
         }
 
-        /* Responsive Design */
-        @media screen and (max-width: 768px) {
-            #quizForm {
-                width: 95%;
-                padding: 20px;
-            }
-
-            .form-row {
-                flex-direction: column;
-                gap: 15px;
-            }
+        .btn-remove:hover {
+            color: darkred;
+            transform: scale(1.2);
         }
 
         /* Login Section */
         .login-section {
             text-align: center;
-            width: 100%;
             padding: 50px 0;
         }
 
@@ -227,81 +180,374 @@ $quizTimer = $_SESSION['quizTimer'] ?? 60;
             background-color: #0056b3;
         }
 
+        /* Quiz Table */
+        .quiz-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .quiz-table th,
+        .quiz-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .quiz-table th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+
+            .btn,
+            .btn-add,
+            .btn-save {
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .quiz-container {
+                padding: 20px;
+            }
+
+            .quiz-table th,
+            .quiz-table td {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            background: #f4f4f4;
+        }
+
+        .question-block {
+            border: 1px solid #ccc;
+            padding: 15px 15px 15px 40px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            background-color: #fff;
+            position: relative;
+            cursor: move;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        .answers-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .answers-row .form-input {
+            flex: 1;
+        }
+
+        .correct-answer-row {
+            margin-bottom: 10px;
+        }
+
+        .btn-remove {
+            position: absolute;
+            top: 0;
+            right:0;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .drag-handle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 18px;
+            cursor: grab;
+            color: #888;
+            user-select: none;
+        }
+
+        .drag-over {
+            border: 2px dashed #3498db;
+        }
+
+        .btn-add {
+            padding: 10px 15px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        form {
+            max-width: 800px;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
 
 <div class="quiz-container">
-    <?php
-    // If user is not logged in, show login prompt
-    if (!isset($_SESSION['user_id'])) {
-        echo '
-            <div class="login-section">
-                <h1>Log in to create a quiz!</h1>
-                <a href="' . BASE_URL . 'user_auth.php" class="login-button">Log in</a>
-            </div>
-        ';
-    } else {
-        ?>
-        <h2>Basic Info</h2>
-        <form action="" method="POST" class="form">
-            <div class="form-row">
-                <!-- Quiz Type -->
-                <div class="form-group">
-                    <label for="quizType">Type:</label>
-                    <select id="quizType" name="quizType" class="form-select" required>
-                        <option value="classic" <?php echo ($quizType === "classic") ? "selected" : ""; ?>>Classic</option>
-                        <option value="slides" <?php echo ($quizType === "slides") ? "selected" : ""; ?>>Slides</option>
-                    </select>
-                </div>
+    <?php if (!isset($_SESSION['user_id'])): ?>
+        <div class="login-section">
+            <h1>Log in to create a quiz!</h1>
+            <a href="<?php echo BASE_URL; ?>user_auth.php" class="login-button">Log in</a>
+        </div>
+    <?php else: ?>
 
-                <!-- Quiz Category -->
-                <div class="form-group">
-                    <label for="quizCategory">Category:</label>
-                    <select id="quizCategory" name="quizCategory" class="form-select" required>
-                        <?php
-                        $categories = ["sports", "geography", "music", "movies", "tv", "history", "language", "science", "gaming", "literature", "entertainment", "miscellaneous"];
-                        foreach ($categories as $category) {
-                            $selected = ($quizCategory === $category) ? "selected" : "";
-                            echo "<option value='$category' $selected>" . ucfirst($category) . "</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-
-                <!-- Timer -->
-                <div class="form-group">
-                    <label for="quizTimer">Timer:</label>
-                    <select id="quizTimer" name="quizTimer" class="form-select" required>
-                        <?php
-                        $timers = [60, 120, 180, 300, 600, 900, 1200, 1500, 1800]; // Seconds
-                        foreach ($timers as $time) {
-                            $selected = ($quizTimer == $time) ? "selected" : "";
-                            echo "<option value='$time' $selected>" . gmdate("i:s", $time) . "</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
+    <h2>Create a New Quiz</h2>
+    <form action="<?php echo BASE_URL ?>quiz/model/save-quiz.php" method="POST" autocomplete="off">
+        <!-- Basic Info -->
+        <h3>Basic Info</h3>
+        <div class="form-row">
+            <!-- Quiz Type -->
+            <div class="form-group">
+                <label for="quizType">Type:</label>
+                <select id="quizType" name="quizType" class="form-select" required>
+                    <option value="classic" <?php echo ($quizType === "classic") ? "selected" : ""; ?>>Classic</option>
+                    <option value="slides" <?php echo ($quizType === "slides") ? "selected" : ""; ?>>Slides</option>
+                </select>
             </div>
 
-            <!-- Quiz Title -->
-            <label for="quizTitle">Title:</label>
-            <input type="text" id="quizTitle" name="quizTitle" class="form-input" placeholder="Enter quiz title" value="<?php echo htmlspecialchars($quizTitle); ?>" required>
+            <!-- Quiz Category -->
+            <div class="form-group">
+                <label for="quizCategory">Category:</label>
+                <select id="quizCategory" name="quizCategory" class="form-select" required>
+                    <?php
+                    $categories = ["sports", "geography", "music", "movies", "tv", "history", "language", "science", "gaming", "literature", "entertainment", "miscellaneous"];
+                    foreach ($categories as $category) {
+                        $selected = ($quizCategory === $category) ? "selected" : "";
+                        echo "<option value='$category' $selected>" . ucfirst($category) . "</option>";
+                    }
+                    ?>
+                </select>
+            </div>
 
-            <!-- Quiz Description -->
-            <label for="quizDesc">Description:</label>
-            <textarea id="quizDesc" name="quizDesc" class="form-textarea" rows="3" required><?php echo htmlspecialchars($quizDesc); ?></textarea>
+            <!-- Timer -->
+            <div class="form-group">
+                <label for="quizTimer">Timer:</label>
+                <select id="quizTimer" name="quizTimer" class="form-select" required>
+                    <?php
+                    $timers = [60, 120, 180, 300, 600, 900, 1200, 1500, 1800];
+                    foreach ($timers as $time) {
+                        $selected = ($quizTimer == $time) ? "selected" : "";
+                        echo "<option value='$time' $selected>" . gmdate("i:s", $time) . "</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
 
-            <!-- Quiz Tags -->
-            <label for="quizTags">Tags (comma-separated):</label>
-            <input type="text" id="quizTags" name="quizTags" class="form-input" placeholder="e.g., trivia, fun, general knowledge" value="<?php echo htmlspecialchars($quizTags); ?>" required>
+        <!-- Quiz Title -->
+        <label for="quizTitle">Title:</label>
+        <input type="text" id="quizTitle" name="quizTitle" class="form-input" placeholder="Enter quiz title"
+               value="<?php echo htmlspecialchars($quizTitle); ?>" required>
 
-            <button type="submit" class="form-button">Save</button>
-        </form>
+        <!-- Quiz Description -->
+        <label for="quizDesc">Description:</label>
+        <textarea id="quizDesc" name="quizDesc" class="form-textarea" rows="3"
+                  required><?php echo htmlspecialchars($quizDesc); ?></textarea>
+
+        <!-- Quiz Tags -->
+        <label for="quizTags">Tags (comma-separated):</label>
+        <input type="text" id="quizTags" name="quizTags" class="form-input"
+               placeholder="e.g., trivia, fun, general knowledge"
+               value="<?php echo htmlspecialchars($quizTags); ?>" required>
+
+        <!-- Questions Section -->
+
+
         <?php
-    }
-    ?>
-</div>
+        // Example: Set the quiz type
+        $quizType = isset($_GET['type']) ? $_GET['type'] : 'text'; // or 'clickable'
+        ?>
 
+
+        <h3>Enter Your Questions</h3>
+        <p>Each question can have four possible correct answers if you so chose. Leave the unused answer boxes blank. </p>
+
+        <div id="quizContainer"></div>
+
+        <button type="button" class="btn-add" onclick="addQuestion()">Add Question</button>
+        <br><br>
+        <button type="submit" class="btn-add">Submit Quiz</button>
+    </form>
+
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeQuizForm();
+    });
+
+    const quizType = "<?php echo $quizType; ?>";
+
+    function initializeQuizForm() {
+        addQuestion(); // Show one block by default
+    }
+
+    function addQuestion() {
+        const quizContainer = document.getElementById('quizContainer');
+        const index = quizContainer.children.length;
+        updateRemoveButtons();
+        updateQuestionNumbers();
+
+        const questionBlock = document.createElement('div');
+        questionBlock.className = 'question-block';
+        questionBlock.setAttribute('draggable', 'true');
+
+        // Drag handle
+        const dragHandle = document.createElement('div');
+        dragHandle.className = 'drag-handle';
+        dragHandle.innerHTML = '☰';
+        questionBlock.appendChild(dragHandle);
+
+        // Question Number
+        const questionNumber = document.createElement('div');
+        questionNumber.className = 'question-number';
+        questionNumber.textContent = `Question ${index + 1}`;
+        questionBlock.appendChild(questionNumber);
+
+        // Remove button
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn-remove';
+        removeBtn.textContent = '✖';
+        removeBtn.onclick = () => removeQuestion(questionBlock);
+        questionBlock.appendChild(removeBtn);
+
+        // Question input
+        const questionInput = document.createElement('input');
+        questionInput.type = 'text';
+        questionInput.name = 'question[]';
+        questionInput.className = 'form-input';
+        questionInput.placeholder = 'Enter question';
+        questionInput.required = true;
+        questionBlock.appendChild(questionInput);
+
+        // Answers
+        const answersRow = document.createElement('div');
+        answersRow.className = 'answers-row';
+
+        for (let i = 1; i <= 4; i++) {
+            const answerInput = document.createElement('input');
+            answerInput.type = 'text';
+            answerInput.name = `answer${i}[]`;
+            answerInput.className = 'form-input';
+            answerInput.placeholder = `Answer ${i}`;
+            if (i === 1) answerInput.required = true;
+            answersRow.appendChild(answerInput);
+        }
+
+        questionBlock.appendChild(answersRow);
+
+        // Correct answer radios (optional)
+        if (quizType === 'clickable') {
+            const correctRow = document.createElement('div');
+            correctRow.className = 'correct-answer-row';
+            correctRow.innerHTML = `
+                    <label>Select correct answer:</label><br>
+                    <label><input type="radio" name="correct_answer[${index}]" value="answer1" required> 1</label>
+                    <label><input type="radio" name="correct_answer[${index}]" value="answer2"> 2</label>
+                    <label><input type="radio" name="correct_answer[${index}]" value="answer3"> 3</label>
+                    <label><input type="radio" name="correct_answer[${index}]" value="answer4"> 4</label>
+                `;
+            questionBlock.appendChild(correctRow);
+        }
+
+        // Drag events
+        addDragEvents(questionBlock);
+
+        quizContainer.appendChild(questionBlock);
+        updateRemoveButtons();
+    }
+
+    function removeQuestion(block) {
+        const quizContainer = document.getElementById('quizContainer');
+        if (quizContainer.children.length > 1) {
+            quizContainer.removeChild(block);
+            updateRemoveButtons();
+            updateQuestionNumbers();
+
+        }
+    }
+
+
+    function updateQuestionNumbers() {
+        const blocks = document.querySelectorAll('.question-block');
+        blocks.forEach((block, idx) => {
+            const numberDiv = block.querySelector('.question-number');
+            if (numberDiv) {
+                numberDiv.textContent = `Question ${idx + 1}`;
+            }
+        });
+    }
+
+
+
+    function updateRemoveButtons() {
+        const blocks = document.querySelectorAll('.question-block');
+        blocks.forEach((block) => {
+            const btn = block.querySelector('.btn-remove');
+            btn.style.display = blocks.length > 1 ? 'block' : 'none';
+        });
+    }
+
+    let draggedBlock = null;
+
+    function addDragEvents(block) {
+        block.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', '');
+            block.classList.add('dragging');
+            draggedBlock = block;
+            updateRemoveButtons();
+            updateQuestionNumbers();
+
+        });
+
+        block.addEventListener('dragend', () => {
+            block.classList.remove('dragging');
+            draggedBlock = null;
+        });
+
+        block.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            block.classList.add('drag-over');
+        });
+
+        block.addEventListener('dragleave', () => {
+            block.classList.remove('drag-over');
+        });
+
+        block.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const container = document.getElementById('quizContainer');
+            if (draggedBlock && draggedBlock !== block) {
+                container.insertBefore(draggedBlock, block.nextSibling === draggedBlock ? block : block);
+            }
+            block.classList.remove('drag-over');
+        });
+    }
+</script>
+
+<?php endif; ?>
 </body>
 </html>
