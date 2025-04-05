@@ -23,7 +23,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Insert questions and answers
     foreach ($_POST['question'] as $index => $question_text) {
-        if (empty(trim($question_text))) continue; // Skip empty questions
+        if (is_array($question_text)) {
+            continue; // Skip if it's an array instead of a string
+        }
+
+        $question_text = trim($question_text); // Ensure it's a string before trimming
+        if (empty($question_text)) continue; // Skip empty questions
 
         $stmt = $conn->prepare("INSERT INTO `quiz-questions` (quiz_id, question_text, question_type) VALUES (?, ?, ?)");
         $stmt->bind_param("iss", $quiz_id, $question_text, $quizType);

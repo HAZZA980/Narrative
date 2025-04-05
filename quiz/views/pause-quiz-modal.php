@@ -1,4 +1,22 @@
 <style>
+
+    /* Pause Button */
+    .pause-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .pause-btn {
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .pause-btn:hover {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
     /* Dark overlay when paused */
     .pause-modal {
         display: flex;
@@ -10,7 +28,7 @@
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.8);
-        z-index: 1000;
+        z-index: 9999;
     }
 
     /* Styling the modal box */

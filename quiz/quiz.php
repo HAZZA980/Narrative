@@ -27,9 +27,6 @@ switch ($quizType) {
     case 'slides':
         include 'play-quiz/quiz_slides.php';
         break;
-    case 'multiple':
-        include 'play-quiz/quiz_multiple.php';
-        break;
     default:
         include 'play-quiz/quiz_classic.php';  // Loads the working quiz
         break;

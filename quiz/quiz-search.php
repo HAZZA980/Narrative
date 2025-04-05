@@ -1,59 +1,72 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-// Assuming $searchResults is fetched from the database based on the search query
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 include BASE_PATH . 'includes/quiz-header.php';
 
+$searchTerm = $_GET['txt-search'] ?? '';
+$category = $_GET['category'] ?? 'all';
+$quizType = $_GET['quiz-type'] ?? '';
+$timerLimit = $_GET['length'] ?? 'All Timer Lengths';
+$sortBy = $_GET['Relevance'] ?? 'Relevance';
 
-$searchTerm = isset($_GET['txt-search']) ? $_GET['txt-search'] : '';
-$category = isset($_GET['category']) ? $_GET['category'] : 'all'; // Default 'all' for all categories
-$quizType = isset($_GET['quiz-type']) ? $_GET['quiz-type'] : ''; // Get quiz type filter (Classic, Slideshow, Clickable)
-
-// Build SQL query based on the search term, category filter, and quiz type filter
-$sql = "SELECT DISTINCT q.* FROM `quiz-quizzes` q
-        JOIN `quiz-questions` qq ON q.id = qq.quiz_id";
+$sql = "SELECT DISTINCT q.*, qq.question_type FROM `quiz-quizzes` q 
+    JOIN `quiz-questions` qq ON q.id = qq.quiz_id
+";
 
 $conditions = [];
 $params = [];
+$types = "";
 
-// If search term is not empty, add the conditions for LIKE
+// Search term
 if (!empty($searchTerm)) {
     $conditions[] = "(q.title LIKE ? OR q.description LIKE ? OR q.tags LIKE ?)";
     $params[] = "%$searchTerm%";
     $params[] = "%$searchTerm%";
     $params[] = "%$searchTerm%";
+    $types .= "sss";
 }
 
-// If a category is selected and it's not 'all', filter by category
-if ($category != 'all') {
+// Category
+if ($category !== 'all') {
     $conditions[] = "q.category = ?";
     $params[] = $category;
+    $types .= "s";
 }
 
-// If a quiz type is selected, filter by question_type
+// Quiz Type
 if (!empty($quizType)) {
     $conditions[] = "qq.question_type = ?";
     $params[] = $quizType;
+    $types .= "s";
 }
 
-// If there are conditions, append them to the SQL query
+// Timer filter (convert MM:SS to seconds)
+if ($timerLimit !== 'All Timer Lengths') {
+    list($min, $sec) = explode(":", $timerLimit);
+    $maxSeconds = ($min * 60) + $sec;
+    $conditions[] = "q.timer <= ?";
+    $params[] = $maxSeconds;
+    $types .= "i";
+}
+
+// Combine WHERE conditions
 if (!empty($conditions)) {
     $sql .= " WHERE " . implode(" AND ", $conditions);
 }
 
-// Prepare and execute the query
-$stmt = $conn->prepare($sql);
-
-// Bind parameters only if necessary
-if (!empty($params)) {
-    $stmt->bind_param(str_repeat('s', count($params)), ...$params);
+// Sort by Date if selected
+if ($sortBy === "Date") {
+    $sql .= " ORDER BY q.date_created DESC";
 }
 
+$stmt = $conn->prepare($sql);
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Fetch the search results
 $searchResults = [];
 while ($row = $result->fetch_assoc()) {
     $searchResults[] = $row;
@@ -71,6 +84,67 @@ while ($row = $result->fetch_assoc()) {
         .nav-search {
             border-bottom: white 6px solid !important;
         }
+
+        .results-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .result-item {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-left: 5px solid #007BFF; /* Accent color */
+            padding: 20px;
+            border-radius: 8px;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        }
+
+        .result-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .result-item a {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #007BFF;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .result-item a:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+        .result-description {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .result-meta {
+            font-size: 0.9rem;
+            color: #888;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .meta-group {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 70%;
+        }
+
     </style>
 </head>
 <body>
@@ -115,27 +189,30 @@ while ($row = $result->fetch_assoc()) {
                         <option value="">All Quiz Types</option>
                         <option value="Classic" <?php echo ($quizType == 'Classic') ? 'selected' : ''; ?>>Classic</option>
                         <option value="Slides" <?php echo ($quizType == 'Slides') ? 'selected' : ''; ?>>Slideshow</option>
-                        <option value="Clickable" <?php echo ($quizType == 'Clickable') ? 'selected' : ''; ?>>Clickable</option>
                     </select>
 
                     <!-- Dropdown Menu for Length (optional) -->
                     <select name="length" id="length-dropdown" class="length-dropdown">
-                        <!-- Assuming length options are based on timer values, you can adjust as needed -->
-                        <option value="1:00">1:00</option>
-                        <option value="2:00">2:00</option>
-                        <option value="3:00">3:00</option>
-                        <option value="4:00">4:00</option>
-                        <option value="5:00">5:00</option>
-                        <option value="10:00">10:00</option>
-                        <option value="15:00">15:00</option>
+                        <option value="All Timer Lengths" <?php echo ($timerLimit == 'All Timer Lengths') ? 'selected' : ''; ?>>All Timer Durations</option>
+                        <option value="1:00" <?php echo ($timerLimit == '1:00') ? 'selected' : ''; ?>>1:00</option>
+                        <option value="2:00" <?php echo ($timerLimit == '2:00') ? 'selected' : ''; ?>>2:00</option>
+                        <option value="3:00" <?php echo ($timerLimit == '3:00') ? 'selected' : ''; ?>>3:00</option>
+                        <option value="4:00" <?php echo ($timerLimit == '4:00') ? 'selected' : ''; ?>>4:00</option>
+                        <option value="5:00" <?php echo ($timerLimit == '5:00') ? 'selected' : ''; ?>>5:00</option>
+                        <option value="10:00" <?php echo ($timerLimit == '10:00') ? 'selected' : ''; ?>>10:00</option>
+                        <option value="15:00" <?php echo ($timerLimit == '15:00') ? 'selected' : ''; ?>>15:00</option>
+                        <option value="20:00" <?php echo ($timerLimit == '20:00') ? 'selected' : ''; ?>>20:00</option>
+                        <option value="25:00" <?php echo ($timerLimit == '25:00') ? 'selected' : ''; ?>>25:00</option>
+                        <option value="30:00" <?php echo ($timerLimit == '30:00') ? 'selected' : ''; ?>>30:00</option>
                     </select>
+
 
                     <!-- Dropdown Menu for Relevance -->
                     <select name="Relevance" id="relevance-dropdown" class="relevance-dropdown">
-                        <option value="Relevance">Relevance</option>
-                        <option value="Date">Date</option>
-                        <option value="Popularity">Popularity</option>
+                        <option value="Relevance" <?php echo ($sortBy == 'Relevance') ? 'selected' : ''; ?>>Relevance</option>
+                        <option value="Date" <?php echo ($sortBy == 'Date') ? 'selected' : ''; ?>>Date</option>
                     </select>
+
 
                 </div>
             </form>
@@ -145,15 +222,36 @@ while ($row = $result->fetch_assoc()) {
             <ul class="results-list">
                 <?php foreach ($searchResults as $result): ?>
                     <li class="result-item">
-                        <a href="<?php echo BASE_URL?>quiz/quiz.php?quiz_id=<?php echo urlencode($result['id'] ?? ''); ?>">
+                        <a href="<?php echo BASE_URL ?>quiz/quiz.php?quiz_id=<?php echo urlencode($result['id'] ?? ''); ?>">
                             <?php echo htmlspecialchars($result['title'] ?? 'Untitled Quiz'); ?>
                         </a>
+
                         <p class="result-description">
                             <em><?php echo htmlspecialchars($result['description'] ?? 'No description'); ?></em>
                         </p>
+
+                        <div class="meta-group">
+                            <p class="result-meta">📁 Category: <?php echo htmlspecialchars($result['category'] ?? 'Unknown'); ?></p>
+
+                            <p class="result-meta">🧩 Quiz Type: <?php echo htmlspecialchars($result['question_type'] ?? 'Unknown'); ?></p>
+
+                            <?php
+                            $seconds = (int)($result['timer'] ?? 0);
+                            $minutes = floor($seconds / 60);
+                            $secs = str_pad($seconds % 60, 2, "0", STR_PAD_LEFT);
+                            $formattedTime = $minutes . ':' . $secs;
+                            ?>
+                            <p class="result-meta">⏱️ Timer: <?php echo $formattedTime; ?></p>
+
+                            <?php
+                            $createdDate = date('F j, Y', strtotime($result['date_created'] ?? ''));
+                            ?>
+                            <p class="result-meta">📅 Created: <?php echo $createdDate; ?></p>
+                        </div>
                     </li>
                 <?php endforeach; ?>
             </ul>
+
         <?php else: ?>
             <p class="no-results-message">No quizzes found matching your search.</p>
         <?php endif; ?>

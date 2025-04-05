@@ -11,7 +11,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.p
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
 <style>
     * {
         margin: 0;
@@ -107,6 +106,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.p
         color: white;
         text-decoration: none;
         text-underline: none;
+
+
     }
 
     .nav-links a:hover {
@@ -123,9 +124,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.p
     }
 
     .nav-links {
+        width: 50%;
         display: flex;
         flex-direction: row;
-        justify-content: space-evenly;
+        justify-content: space-between;
     }
 
 
@@ -192,9 +194,9 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.p
         <div class="navigation">
             <ul class="nav-links">
                 <a href="<?php echo BASE_URL?>quiz/home.php"><li class="nav-bar nav-home">Home</li></a>
+                <a href="<?php echo BASE_URL?>quiz/profile.php"><li class="nav-bar nav-profile">Profile</li></a>
                 <a href="<?php echo BASE_URL?>quiz/categories.php"><li class="nav-bar nav-categories">Categories</li></a>
-                <a href="<?php echo BASE_URL?>"><li class="nav-bar nav-leaderboards">Leaderboards</li></a>
-                <a href="<?php echo BASE_URL?>"><li class="nav-bar nav-badges">Badges</li></a>
+<!--                <a href="--><?php //echo BASE_URL?><!--"><li class="nav-bar nav-badges">Badges</li></a>-->
                 <a href="<?php echo BASE_URL?>quiz/createQuiz.php"><li class="nav-bar nav-create">Create</li></a>
                 <a href="<?php echo BASE_URL?>quiz/quiz-search.php"><li class="nav-bar nav-search">Search</li></a>
             </ul>

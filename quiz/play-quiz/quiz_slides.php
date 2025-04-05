@@ -50,6 +50,45 @@ if ($quizId) {
 // Set the total number of questions
 $totalQuestions = count($quizData);
 $questions = array_values($quizData);
+
+
+
+
+
+$leaderboardQuery = $conn->prepare("
+    SELECT 
+        u.username,
+        a.user_id,
+        a.score AS best_score,
+        a.time_taken AS best_time
+    FROM `quiz-attempts` a
+    INNER JOIN (
+        SELECT user_id, MAX(score) AS max_score
+        FROM `quiz-attempts`
+        WHERE quiz_id = ?
+        GROUP BY user_id
+    ) AS max_scores
+    ON a.user_id = max_scores.user_id AND a.score = max_scores.max_score
+    JOIN users u ON a.user_id = u.user_id
+    WHERE a.quiz_id = ?
+    GROUP BY a.user_id
+    ORDER BY a.score DESC, a.time_taken ASC
+    LIMIT 10
+");
+
+$leaderboardQuery->bind_param("ii", $quizId, $quizId);
+$leaderboardQuery->execute();
+$leaderboardResult = $leaderboardQuery->get_result();
+
+
+$timeStmt = $conn->prepare("SELECT timer FROM `quiz-quizzes` WHERE id = ?");
+$timeStmt->bind_param("i", $quizId);
+$timeStmt->execute();
+$timeStmt->bind_result($quizTimer);
+$timeStmt->fetch();
+$timeStmt->close();
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -221,23 +260,7 @@ $questions = array_values($quizData);
             color: #0056b3; /* Green color for score */
         }
 
-        /* Pause Button */
-        .pause-container {
-            display: flex;
-            align-items: center;
-        }
 
-        .pause-btn {
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            transition: transform 0.2s ease-in-out;
-        }
-
-        .pause-btn:hover {
-            transform: scale(1.1);
-            opacity: 0.8;
-        }
 
         /* Results Section */
         #quiz-results {
@@ -312,6 +335,36 @@ $questions = array_values($quizData);
         }
 
 
+
+        /*    LEADERBOARD*/
+        #leaderboardContainer {
+            margin-top: 30px;
+            padding: 15px;
+            border-top: 2px solid #ccc;
+            width: 70%;
+        }
+
+        #leaderboardContainer h2 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        #leaderboardTable {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        #leaderboardTable th, #leaderboardTable td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+
+        #leaderboardTable th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+            color: black;
+        }
 
     </style>
 </head>
@@ -388,131 +441,217 @@ $questions = array_values($quizData);
             <tbody></tbody>
         </table>
     </div>
+
+
+
+    <div id="leaderboardContainer">
+        <h2>🏆 Leaderboard</h2>
+        <table id="leaderboardTable">
+            <thead>
+            <tr>
+                <th>Rank</th>
+                <th>User</th>
+                <th>Best Score</th>
+                <th>Best Time</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            $rank = 1;
+            while ($row = $leaderboardResult->fetch_assoc()):
+                $minutes = floor($row['best_time'] / 60);
+                $seconds = $row['best_time'] % 60;
+                $formattedTime = sprintf("%d:%02d", $minutes, $seconds);
+                ?>
+                <tr>
+                    <td><?php echo $rank++; ?></td>
+                    <td><?php echo htmlspecialchars($row['username']); ?></td>
+                    <td><?php echo (int) $row['best_score']; ?></td>
+                    <td><?php echo $formattedTime; ?></td>
+                </tr>
+            <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
 </main>
 
+
+
+
 <script>
-    const questions = <?php echo json_encode($questions); ?>;
-
-    // Function to shuffle questions using Fisher-Yates algorithm
-    function shuffleQuestions(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
-
-    // Shuffle questions when the quiz starts
-    shuffleQuestions(questions);
-
-    let currentQuestionIndex = 0;
-    let correctTally = 0;
-    let answeredCorrectly = [];
-
-    const questionElement = document.getElementById("question");
-    const answerInput = document.getElementById("answer-input");
-    const prevBtn = document.getElementById("prev-btn");
-    const nextBtn = document.getElementById("next-btn");
-    const feedbackElement = document.getElementById("feedback");
-    const scoreTracker = document.getElementById("score-tracker");
-    const timerElement = document.getElementById("time-remaining");
-    const startQuizBtn = document.getElementById("start-quiz-btn");
-    const revealAnswerBtn = document.getElementById("reveal-answer");
-    const resultsTableBody = document.querySelector('#results-table tbody');
-    const quizResultsDiv = document.getElementById('quiz-results');
-
-    let timerInterval;
-    let timeRemaining = <?php echo $quizTimer; ?>;
-    let isPaused = false;
-
-    // Start Quiz functionality
-    startQuizBtn.addEventListener("click", () => {
-        startQuizBtn.style.display = "none";
-        document.querySelector('.quiz-container').style.display = "block";
-
-        // Shuffle the questions *before* starting the quiz
-        shuffleQuestions(questions);
-
-        startTimer();
-        loadQuestion();
-    });
-
-    // Load the first question
-    function loadQuestion() {
-        if (currentQuestionIndex >= questions.length) {
-            showResults();
-            return;
-        }
-
-        let question = questions[currentQuestionIndex];
-        questionElement.textContent = `${currentQuestionIndex + 1}. ${question.question}`;
-        answerInput.value = "";
-        feedbackElement.textContent = "";
-        feedbackElement.className = "feedback";
-
-        prevBtn.disabled = currentQuestionIndex === 0 || answeredCorrectly.includes(currentQuestionIndex);
-        nextBtn.disabled = answeredCorrectly.includes(currentQuestionIndex);
-    }
-
-
-    // Function to convert seconds into MM:SS format
-    function formatTime(seconds) {
-        let minutes = Math.floor(seconds / 60);
-        let sec = seconds % 60;  // FIXED THE TYPO (was % 10 before)
-        return `${minutes}:${sec < 10 ? '0' : ''}${sec}`;
-    }
-
-    // Function to update the timer display
-    function updateTimerDisplay() {
-        document.getElementById("time-remaining").innerText = formatTime(timeRemaining);
-    }
-
-    // Function to start the timer (ensures no multiple intervals)
-    function startTimer() {
-        if (timerInterval) clearInterval(timerInterval); // Prevents multiple timers
-
-        timerInterval = setInterval(() => {
-            if (!isPaused && timeRemaining > 0) {
-                timeRemaining--;
-                updateTimerDisplay();
-            } else if (timeRemaining <= 0) {
-                clearInterval(timerInterval); // Stop the timer at zero
-                showResults(); // End the quiz and show results when time runs out
-            }
-        }, 1000);
-    }
-
-    // Pause function
-    document.getElementById("pause-btn").addEventListener("click", function () {
-        isPaused = true;
-        clearInterval(timerInterval);
-        document.getElementById("paused-time").innerText = document.getElementById("time-remaining").innerText;
-        document.getElementById("pause-modal").classList.remove("hidden");
-    });
-
-    // Resume function
-    document.getElementById("play-btn").addEventListener("click", function () {
-        isPaused = false;
-        document.getElementById("pause-modal").classList.add("hidden");
-        startTimer(); // Resume the timer safely
-    });
-
-    // Initialize timer on page load
     document.addEventListener("DOMContentLoaded", function () {
-        updateTimerDisplay();
-        startTimer();
-    });
+        const questions = <?php echo json_encode($questions); ?>;
+        const questionElement = document.getElementById("question");
+        const answerInput = document.getElementById("answer-input");
+        const prevBtn = document.getElementById("prev-btn");
+        const nextBtn = document.getElementById("next-btn");
+        const feedbackElement = document.getElementById("feedback");
+        const scoreTracker = document.getElementById("score-tracker");
+        const timerElement = document.getElementById("time-remaining");
+        const startQuizBtn = document.getElementById("start-quiz-btn");
+        const revealAnswerBtn = document.getElementById("reveal-answer");
+        const resultsTableBody = document.querySelector('#results-table tbody');
+        const quizResultsDiv = document.getElementById('quiz-results');
+
+        let currentQuestionIndex = 0;
+        let correctTally = 0;
+        let answeredCorrectly = [];
+        let timerInterval;
+        let timeRemaining = <?php echo $quizTimer; ?>;
+        let isPaused = false;
+
+        // Function to shuffle questions using Fisher-Yates algorithm
+        function shuffleQuestions(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Function to convert seconds into MM:SS format
+        function formatTime(seconds) {
+            let minutes = Math.floor(seconds / 60);
+            let sec = seconds % 60;
+            return `${minutes}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        // Function to update the timer display
+        function updateTimerDisplay() {
+            timerElement.innerText = formatTime(timeRemaining);
+        }
+
+        // Function to start the timer
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval); // Prevent multiple intervals
+            timerInterval = setInterval(() => {
+                if (!isPaused && timeRemaining > 0) {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                } else if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    showResults(); // Show results when time runs out
+                }
+            }, 1000);
+        }
+
+        // Start Quiz functionality
+        startQuizBtn.addEventListener("click", () => {
+            startQuizBtn.style.display = "none"; // Hide the start button
+            document.querySelector('.quiz-container').style.display = "block"; // Show the quiz container
+
+            shuffleQuestions(questions); // Shuffle questions before starting
+            startTimer(); // Start the timer
+            loadQuestion(); // Load the first question
+        });
+
+        // Load the first question
+        function loadQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showResults();
+                return;
+            }
+
+            let question = questions[currentQuestionIndex];
+            questionElement.textContent = `${currentQuestionIndex + 1}. ${question.question}`;
+            answerInput.value = "";
+            feedbackElement.textContent = "";
+            feedbackElement.className = "feedback";
+
+            prevBtn.disabled = currentQuestionIndex === 0 || answeredCorrectly.includes(currentQuestionIndex);
+            nextBtn.disabled = answeredCorrectly.includes(currentQuestionIndex);
+        }
+
+        // Check if the user's answer is correct
+        function checkAnswer() {
+            let userAnswer = answerInput.value.trim().toLowerCase();
+            let correctAnswers = questions[currentQuestionIndex].answers.filter(a => a.is_correct === 1).map(a => a.text);
+
+            if (correctAnswers.includes(userAnswer)) {
+                feedbackElement.textContent = "Correct!";
+                feedbackElement.classList.add("correct");
+                correctTally++;
+                answeredCorrectly.push(currentQuestionIndex);
+                scoreTracker.textContent = `Score: ${correctTally}/${questions.length}`;
+
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    while (answeredCorrectly.includes(currentQuestionIndex) && currentQuestionIndex < questions.length) {
+                        currentQuestionIndex++;
+                    }
+                    loadQuestion();
+                }, 1000);
+            } else {
+                feedbackElement.classList.add("incorrect");
+            }
+        }
 
 
-    function checkAnswer() {
-        let userAnswer = answerInput.value.trim().toLowerCase();
-        let correctAnswers = questions[currentQuestionIndex].answers.filter(a => a.is_correct === 1).map(a => a.text);
+        function submitQuizResults() {
+            const totalTime = <?php echo (int) $quizTimer; ?>; // in seconds
+            const timeTaken = totalTime - timeRemaining;       // ✅ calculate time used
 
-        if (correctAnswers.includes(userAnswer)) {
-            feedbackElement.textContent = "Correct!";
-            feedbackElement.classList.add("correct");
-            correctTally++;
-            answeredCorrectly.push(currentQuestionIndex);
-            scoreTracker.textContent = `Score: ${correctTally}/${questions.length}`;
+            const data = {
+                quiz_id: <?php echo (int) $quizId; ?>,
+                score: correctTally,
+                time_taken: timeTaken
+            };
+
+            fetch('<?php echo BASE_URL; ?>quiz/model/submit-quiz.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams(data)
+            })
+                .then(res => res.json())
+                .then(data => console.log('Quiz saved:', data))
+                .catch(err => console.error('Save error:', err));
+        }
+
+
+// Call submitQuizResults() after showing results
+        function showResults() {
+            document.querySelector('.quiz-container').style.display = "none";
+            quizResultsDiv.style.display = "block";
+
+            resultsTableBody.innerHTML = ""; // Clear previous results
+
+            questions.forEach((question, index) => {
+                let row = document.createElement('tr');
+                let questionCell = document.createElement('td');
+                let answerCell = document.createElement('td');
+
+                questionCell.textContent = question.question;
+
+                let correctAnswers = question.answers.filter(a => a.is_correct === 1).map(a => a.text);
+                let answerText = correctAnswers.join(', ');
+
+                if (answeredCorrectly.includes(index)) {
+                    answerCell.classList.add("correct-answer"); // Green for correct answers
+                } else {
+                    answerCell.classList.add("incorrect-answer"); // Red for incorrect answers
+                }
+
+                answerCell.textContent = answerText;
+                row.appendChild(questionCell);
+                row.appendChild(answerCell);
+                resultsTableBody.appendChild(row);
+            });
+
+            // Call submitQuizResults after showing results
+            submitQuizResults();
+        }
+
+
+
+        // Reveal answer functionality
+        function revealAnswer() {
+            let correctAnswers = questions[currentQuestionIndex].answers
+                .filter(a => a.is_correct === 1)
+                .map(a => a.text);
+
+            feedbackElement.textContent = `The correct answer(s): ${correctAnswers.join(', ')}`;
+            feedbackElement.classList.add("incorrect");
 
             setTimeout(() => {
                 currentQuestionIndex++;
@@ -521,131 +660,23 @@ $questions = array_values($quizData);
                 }
                 loadQuestion();
             }, 1000);
-        } else {
-            feedbackElement.classList.add("incorrect");
         }
-    }
 
-    let revealedAnswers = []; // Track revealed answers
 
-    function revealAnswer() {
-        let correctAnswers = questions[currentQuestionIndex].answers
-            .filter(a => a.is_correct === 1)
-            .map(a => a.text);
-
-        feedbackElement.textContent = `The correct answer(s): ${correctAnswers.join(', ')}`;
-        feedbackElement.classList.add("incorrect"); // Show as incorrect since it was revealed
-
-        // Track that this answer was revealed
-        revealedAnswers.push(currentQuestionIndex);
-
-        prevBtn.disabled = false;
-        nextBtn.disabled = false;
-
-        // Auto-skip to next question after 1 second
-        setTimeout(() => {
+        // Listen for user input to check answers
+        answerInput.addEventListener("input", checkAnswer);
+        nextBtn.addEventListener("click", () => {
             currentQuestionIndex++;
-            while (answeredCorrectly.includes(currentQuestionIndex) && currentQuestionIndex < questions.length) {
-                currentQuestionIndex++;
-            }
             loadQuestion();
-        }, 1000);
-    }
-
-    function showResults() {
-        document.querySelector('.quiz-container').style.display = "none"; // Hide quiz
-        quizResultsDiv.style.display = "block"; // Show results
-
-        resultsTableBody.innerHTML = ""; // Clear previous results
-
-        questions.forEach((question, index) => {
-            let row = document.createElement('tr');
-            let questionCell = document.createElement('td');
-            let answerCell = document.createElement('td');
-
-            questionCell.textContent = question.question;
-
-            let correctAnswers = question.answers.filter(a => a.is_correct === 1).map(a => a.text);
-            let answerText = correctAnswers.join(', ');
-
-            // Add the correct class instead of using inline styles
-            if (answeredCorrectly.includes(index) && !revealedAnswers.includes(index)) {
-                answerCell.classList.add("correct-answer"); // Green text for correct answers
-            } else {
-                answerCell.classList.add("incorrect-answer"); // Red text for revealed/wrong answers
-            }
-
-            answerCell.textContent = answerText;
-
-            row.appendChild(questionCell);
-            row.appendChild(answerCell);
-            resultsTableBody.appendChild(row);
         });
-    }
 
-
-    // Ensure showResults() runs when all questions are done
-    function checkIfQuizFinished() {
-        if (answeredCorrectly.length + revealedAnswers.length >= questions.length) {
-            showResults();
-        }
-    }
-
-
-    answerInput.addEventListener("input", checkAnswer);
-    nextBtn.addEventListener("click", () => {
-        let unansweredFound = false;
-
-        for (let i = 0; i < questions.length; i++) {
-            currentQuestionIndex = (currentQuestionIndex + 1) % questions.length; // Cycle through questions
-            if (!answeredCorrectly.includes(currentQuestionIndex)) {
-                unansweredFound = true;
-                break;
-            }
-        }
-
-        if (!unansweredFound) {
-            showResults(); // Only show results when all questions are answered
-        } else {
+        prevBtn.addEventListener("click", () => {
+            currentQuestionIndex--;
             loadQuestion();
-        }
+        });
+
+        revealAnswerBtn.addEventListener("click", revealAnswer);
     });
-
-    prevBtn.addEventListener("click", () => {
-        let unansweredFound = false;
-
-        for (let i = 0; i < questions.length; i++) {
-            currentQuestionIndex = (currentQuestionIndex - 1 + questions.length) % questions.length; // Cycle backward
-            if (!answeredCorrectly.includes(currentQuestionIndex)) {
-                unansweredFound = true;
-                break;
-            }
-        }
-
-        if (unansweredFound) {
-            loadQuestion();
-        }
-    });
-
-
-    // Start Quiz functionality
-    startQuizBtn.addEventListener("click", () => {
-        // Hide the start button
-        startQuizBtn.style.display = "none";
-
-        // Show the quiz content
-        document.querySelector('.quiz-container').style.display = "block";
-
-        // Start the timer
-        startTimer();
-
-        // Load the first question
-        loadQuestion();
-    });
-
-    // Reveal Answer functionality
-    revealAnswerBtn.addEventListener("click", revealAnswer);
-
 
 
 </script>

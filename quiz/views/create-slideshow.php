@@ -2,6 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
+include BASE_PATH . 'includes/quiz-header.php';
 
 
 // Retrieve stored quiz data from session
@@ -33,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Quiz - Data</title>
+    <title>Create Quiz - Slideshow</title>
     <style>
         /* General Styling */
         body {
@@ -55,21 +56,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         /* Quiz Container */
         .quiz-container {
             display: flex;
+            justify-content: center; /* Center the content horizontally */
             min-height: 70vh;
+            width: 100%;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background: #f4f4f4;
-            padding: 20px;
-            border-right: 2px solid #ddd;
-        }
-
-        /* Content Area */
         .content {
             flex: 1;
+            max-width: 1200px; /* Maximum width */
             padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         /* Quiz Table */
@@ -124,7 +122,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background-color: #218838;
         }
 
-
         .btn-remove {
             background-color: transparent;
             color: red;
@@ -141,6 +138,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             transform: scale(1.2);
         }
 
+        /* Responsiveness */
+        @media screen and (max-width: 768px) {
+            .content {
+                padding: 15px;
+            }
+
+            .quiz-container {
+                flex-direction: column;
+                padding: 0 15px;
+            }
+
+            .form-input {
+                padding: 10px;
+            }
+
+            .btn-add, .btn-save {
+                width: 100%;
+                padding: 14px 0;
+                margin-top: 20px;
+            }
+
+            table {
+                width: 100%;
+            }
+        }
     </style>
     <script>
         function updateTable() {
@@ -185,21 +207,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Question and answers
             row.innerHTML += `
-        <td><input type="text" name="question[]" class="form-input" required></td>
-        <td><input type="text" name="answer1[]" class="form-input" required></td>
-        <td><input type="text" name="answer2[]" class="form-input"></td>
-        <td><input type="text" name="answer3[]" class="form-input"></td>
-        <td><input type="text" name="answer4[]" class="form-input"></td>`;
+                <td><input type="text" name="question[]" class="form-input" required></td>
+                <td><input type="text" name="answer1[]" class="form-input" required></td>
+                <td><input type="text" name="answer2[]" class="form-input"></td>
+                <td><input type="text" name="answer3[]" class="form-input"></td>
+                <td><input type="text" name="answer4[]" class="form-input"></td>`;
 
             // If quiz type is clickable, add correct answer selection
             if (quizType === "clickable") {
                 let correctAnswerTd = document.createElement("td");
                 correctAnswerTd.innerHTML = `
-            <input type="radio" name="correct_answer[${rowCount - 1}]" value="answer1" required> 1
-            <input type="radio" name="correct_answer[${rowCount - 1}]" value="answer2"> 2
-            <input type="radio" name="correct_answer[${rowCount - 1}]" value="answer3"> 3
-            <input type="radio" name="correct_answer[${rowCount - 1}]" value="answer4"> 4
-        `;
+                    <input type="radio" name="correct_answer[${rowCount - 1}]" value="answer1" required> 1
+                    <input type="radio" name="correct_answer[${rowCount - 1}]" value="answer2"> 2
+                    <input type="radio" name="correct_answer[${rowCount - 1}]" value="answer3"> 3
+                    <input type="radio" name="correct_answer[${rowCount - 1}]" value="answer4"> 4
+                `;
                 row.appendChild(correctAnswerTd);
             }
 
@@ -225,20 +247,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         window.onload = updateTable;
-
     </script>
 </head>
 <body>
+<nav class="breadcrumbs">
+    <a href="<?php echo BASE_URL; ?>">Home</a> &gt;
+    <a href="<?php echo BASE_URL; ?>quiz/createQuiz.php">Basic Info</a>
+</nav>
 
 <div class="quiz-container">
-    <?php include BASE_PATH . 'quiz/views/sidebar-create.php'; ?>
-
     <div class="content">
-        <h2>Create Quiz - Data</h2>
-
+        <h2>Create Quiz - SLIDESHOW</h2>
+        <p>Enter the Questions. For each question, there can be four possible answers, e.g, <em>World War One, WW1,
+                World War 1, WWI</em></p>
         <!-- Questions Table -->
         <form action="<?php echo BASE_URL ?>quiz/model/save-quiz.php" method="post">
-            <!-- Inside <form> tag -->
             <input type="hidden" name="quizTitle" value="<?php echo htmlspecialchars($quizTitle); ?>">
             <input type="hidden" name="quizDesc" value="<?php echo htmlspecialchars($quizDesc); ?>">
             <input type="hidden" name="quizCategory" value="<?php echo htmlspecialchars($quizCategory); ?>">
@@ -246,7 +269,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="hidden" name="quizType" value="<?php echo htmlspecialchars($quizType); ?>">
             <input type="hidden" name="quizTimer" value="<?php echo htmlspecialchars($quizTimer); ?>">
 
-            <table border="1" width="100%">
+            <table class="quiz-table">
                 <thead id="quizDataHead"></thead>
                 <tbody id="quizDataBody"></tbody>
             </table>
@@ -255,9 +278,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="button" class="btn-add" onclick="addRow()">Add Question</button>
             <button type="submit" class="btn-save">Save Quiz</button>
         </form>
-
     </div>
 </div>
-
 </body>
 </html>

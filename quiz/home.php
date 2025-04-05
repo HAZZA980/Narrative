@@ -3,6 +3,37 @@ include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 include BASE_PATH . "layouts/mastheads/quizzes/quiz-masthead.php";
 include BASE_PATH . 'includes/quiz-header.php';
 
+
+$userId = $_SESSION['user_id'] ?? null;
+$mostPlayedStmt = $conn->prepare("
+    SELECT qq.id, qq.title, COUNT(qa.id) AS attempts
+    FROM `quiz-attempts` qa
+    JOIN `quiz-quizzes` qq ON qa.quiz_id = qq.id
+    WHERE qa.attempted_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+    GROUP BY qa.quiz_id
+    ORDER BY attempts DESC
+    LIMIT 5
+");
+
+$mostPlayedStmt->execute();
+$mostPlayedResult = $mostPlayedStmt->get_result();
+
+// Get quizzes where the user scored the lowest
+$userLowestResult = null;
+if ($userId) {
+    $lowestScoreStmt = $conn->prepare("
+        SELECT qq.id, qq.title, qa.score
+        FROM `quiz-attempts` qa
+        JOIN `quiz-quizzes` qq ON qa.quiz_id = qq.id
+        WHERE qa.user_id = ?
+        ORDER BY qa.score ASC
+        LIMIT 5
+    ");
+    $lowestScoreStmt->bind_param("i", $userId);
+    $lowestScoreStmt->execute();
+    $userLowestResult = $lowestScoreStmt->get_result();
+}
+
 ?>
 
 <!doctype html>
@@ -17,9 +48,49 @@ include BASE_PATH . 'includes/quiz-header.php';
         .nav-home {
             border-bottom: white 6px solid !important;
         }
+
+
+        .quiz-summary-boxes {
+            display: flex;
+            gap: 2rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .summary-box {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 1.5rem;
+            flex: 1 1 45%;
+            min-width: 300px;
+        }
+
+        .summary-box h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .summary-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .summary-box ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-box a {
+            text-decoration: none;
+            color: #0077cc;
+        }
+
+        .summary-box a:hover {
+            text-decoration: underline;
+        }
+
     </style>
     <title>Home | Narrative Quizzes</title>
-<!--    <script src="trivia-questions.js"></script>-->
 <body>
 
 <main class="main-container">
@@ -96,137 +167,50 @@ include BASE_PATH . 'includes/quiz-header.php';
         </ul>
     </div>
     <div class="main-content">
-<!--        --><?php
-//        // Helper function to recursively gather quizzes and their session keys
-//        function extractQuizData($categories, &$quizData = [])
-//        {
-//            foreach ($categories as $key => $category) {
-//                if (isset($category['subcategories'])) {
-//                    extractQuizData($category['subcategories'], $quizData); // Recursively handle subcategories
-//                } else {
-//                    $quizData[] = [
-//                        'title' => $category['title'],
-//                        'sessionKey' => $key, // Session key corresponding to the quiz
-//                        'score' => $category['scoreVar'],
-//                        'link' => $category['link'] ?? null, // Quiz link
-//                        'lastUpdated' => isset($_SESSION['lastUpdated'][$key]) ? $_SESSION['lastUpdated'][$key] : 0, // Last updated timestamp
-//                    ];
-//                }
-//            }
-//        }
-//
-//        // Initialize the quizData array
-//        $quizData = [];
-//        extractQuizData($generalKnowledgeCategories, $quizData);
-//
-//        // Sort quizzes by the last updated timestamp (descending order)
-//        usort($quizData, function ($a, $b) {
-//            return $b['lastUpdated'] <=> $a['lastUpdated']; // Sort by lastUpdated in descending order
-//        });
-//
-//        // Get the 4 most recent quizzes
-//        $recent_quizzes = array_slice($quizData, 0, 4); // Limit to 4 most recent quizzes
-//        ?>
 
-<!--        <div class="section recent-quizzes">-->
-<!--            <h3 class="section-title">Recently Played Quizzes</h3>-->
-<!--            <ul class="quiz-list">-->
-<!--                --><?php //if (!empty($recent_quizzes)) : ?>
-<!--                    --><?php //foreach ($recent_quizzes as $quiz) : ?>
-<!--                        <li class="quiz-item">-->
-<!--                            --><?php //if (!empty($quiz['link'])) : ?>
-<!--                            <a href="--><?php //echo htmlspecialchars($quiz['link']); ?><!--">-->
-<!--                                --><?php //endif; ?>
-<!--                                --><?php //echo htmlspecialchars($quiz['title']) . ' - ' . htmlspecialchars(number_format($quiz['score'], 2) . '%'); ?>
-<!--                                --><?php //if (!empty($quiz['link'])) : ?>
-<!--                            </a>-->
-<!--                        --><?php //endif; ?>
-<!--                        </li>-->
-<!--                    --><?php //endforeach; ?>
-<!--                --><?php //else : ?>
-<!--                    <li>No recent quizzes played.</li>-->
-<!--                --><?php //endif; ?>
-<!--            </ul>-->
-<!--        </div>-->
-
-
-<!--        --><?php
-//
-////        // Dynamically set $currentQuizKey based on the URL parameter 'category'
-////        $currentQuizKey = isset($_GET['category']) ? $_GET['category'] : null; // Get the category from URL
-////
-////        if ($currentQuizKey) {
-////            // Update score based on the quiz being taken
-////            $newScore = 75.00; // Example score, replace with actual quiz result
-////
-////            // Update session with the new score for the specific quiz
-////            $_SESSION['scores'][$currentQuizKey] = $newScore;
-////
-////            // Update the lastUpdated timestamp
-////            $_SESSION['lastUpdated'][$currentQuizKey] = time(); // Current timestamp
-////        } else {
-////            // Handle the case when no category is provided, maybe show an error or default
-////            echo "No category Provided";
-////        }
-//
-//        // Step 1: Gather all the quizzes and their associated scores from the session
-//        $improveScores = [];
-//
-//        // Iterate through the categories and subcategories to gather quiz scores
-//        function extractQuizDataForImprovement($categories, &$improveScores = [])
-//        {
-//            foreach ($categories as $key => $category) {
-//                if (isset($category['subcategories'])) {
-//                    // Recursively handle subcategories
-//                    extractQuizDataForImprovement($category['subcategories'], $improveScores);
-//                } else {
-//                    // Add the quiz to the list if it has a score in the session
-//                    if (isset($_SESSION['scores'][$key])) {
-//                        $improveScores[] = [
-//                            'title' => $category['title'],
-//                            'description' => $category['description'],
-//                            'score' => $_SESSION['scores'][$key],  // Score from session
-//                            'link' => $category['link'] ?? null,   // Quiz link
-//                        ];
-//                    }
-//                }
-//            }
-//        }
-//
-//        // Initialize the improveScores array by gathering data from all categories
-//        extractQuizDataForImprovement($generalKnowledgeCategories, $improveScores);
-//
-//        // Step 2: Sort quizzes by score (ascending, so lowest scores come first)
-//        usort($improveScores, function ($a, $b) {
-//            return $a['score'] <=> $b['score']; // Sort in ascending order of scores
-//        });
-//
-//        // Step 3: Limit to a certain number of quizzes (e.g., the 4 lowest scores)
-//        $improveScores = array_slice($improveScores, 0, 4); // Change the number as needed
-//        ?>
-<!---->
-<!--        <!-- Improve Your Score Section -->-->
-<!--        <div class="section improve-section">-->
-<!--            <h3 class="section-title">Improve Your Score</h3>-->
-<!--            <ul class="quiz-list">-->
-<!--                --><?php //if (!empty($improveScores)) : ?>
-<!--                    --><?php //foreach ($improveScores as $quiz) : ?>
-<!--                        <li class="quiz-item">-->
-<!--                            <a href="--><?php //echo htmlspecialchars($quiz['link']); ?><!--" class="quiz-link">-->
-<!--                                --><?php //echo htmlspecialchars($quiz['title']); ?>
-<!--                            </a>-->
-<!--                            <p class="quiz-description">--><?php //echo htmlspecialchars($quiz['description']); ?><!--</p>-->
-<!--                            <p class="quiz-score">Your Score: --><?php //echo number_format($quiz['score'], 2); ?><!--%</p>-->
-<!--                        </li>-->
-<!--                    --><?php //endforeach; ?>
-<!--                --><?php //else : ?>
-<!--                    <li>No quizzes with recorded scores.</li>-->
-<!--                --><?php //endif; ?>
-<!--            </ul>-->
-<!--        </div>-->
 
     </div>
- 
+
+
+
+
+
+    <div class="quiz-summary-boxes">
+        <div class="summary-box">
+            <h3>🔥 Most Played Quizzes This Week</h3>
+            <ul>
+                <?php while ($row = $mostPlayedResult->fetch_assoc()): ?>
+                    <li>
+                        <a href="<?php echo BASE_URL . 'quiz/quiz.php?quiz_id=' . $row['id']; ?>">
+                            <?php echo htmlspecialchars($row['title']); ?> (<?php echo $row['attempts']; ?> plays)
+                        </a>
+                    </li>
+                <?php endwhile; ?>
+            </ul>
+        </div>
+
+        <div class="summary-box">
+            <h3>📉 Improve Your Score</h3>
+            <?php if (!$userId): ?>
+                <p><a href="<?php echo BASE_URL; ?>auth/login.php">Log in</a> to start recording your scores and track your progress!</p>
+            <?php elseif ($userLowestResult && $userLowestResult->num_rows > 0): ?>
+                <ul>
+                    <?php while ($row = $userLowestResult->fetch_assoc()): ?>
+                        <li>
+                            <a href="<?php echo BASE_URL . 'quiz/quiz.php?quiz_id=' . $row['id']; ?>">
+                                <?php echo htmlspecialchars($row['title']); ?> - Scored: <?php echo $row['score']; ?>
+                            </a>
+                        </li>
+                    <?php endwhile; ?>
+                </ul>
+            <?php else: ?>
+                <p>You've got no attempts logged yet! Go crush some quizzes 💪</p>
+            <?php endif; ?>
+        </div>
+    </div>
+
+
+
 </main>
 
 </body>

@@ -49,13 +49,6 @@
     width: 80%;
 }
 
-#answerInput {
-    width: 50%;
-    margin: 0 10px;
-    text-align: center;
-    display: none; /* Initially hidden */
-}
-
 #rightControls {
     display: flex;
     gap: 10px;
@@ -95,6 +88,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed; /* Ensure columns remain equal in size */
+
 }
 
 table tr {
@@ -119,6 +113,7 @@ td.answer {
     color: #007bff;
     font-style: italic;
 }
+
 
 td.answer.correct {
     background-color: #c8e6c9;

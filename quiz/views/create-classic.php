@@ -2,11 +2,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
+include BASE_PATH . 'includes/quiz-header.php';
 
-if ($_SESSION['quizType'] !== 'classic') {
-    header("Location: " . BASE_URL . "quiz/basic-info.php");
-    exit();
-}
 
 // Retrieve stored quiz data from session
 $quizType = $_SESSION['quizType'] ?? 'classic';
@@ -16,6 +13,7 @@ $quizCategory = $_SESSION['quizCategory'] ?? 'miscellaneous';
 $quizTags = $_SESSION['quizTags'] ?? '';
 $quizTimer = $_SESSION['quizTimer'] ?? '60';
 
+
 // If form is submitted, clear the session data
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     unset($_SESSION['quizType']);
@@ -23,17 +21,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     unset($_SESSION['quizDesc']);
     unset($_SESSION['quizCategory']);
     unset($_SESSION['quizTags']);
+
+    // Optionally, redirect after clearing session data
     header("Location: " . BASE_URL . "quiz/model/save-quiz.php");
     exit();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Quiz - Data</title>
+    <title>Create Quiz - Slideshow</title>
     <style>
         /* General Styling */
         body {
@@ -55,21 +56,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         /* Quiz Container */
         .quiz-container {
             display: flex;
+            justify-content: center; /* Center the content horizontally */
             min-height: 70vh;
+            width: 100%;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background: #f4f4f4;
-            padding: 20px;
-            border-right: 2px solid #ddd;
-        }
-
-        /* Content Area */
         .content {
             flex: 1;
+            max-width: 1200px; /* Maximum width */
             padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         /* Quiz Table */
@@ -139,131 +137,130 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: darkred;
             transform: scale(1.2);
         }
-    </style>
-    <script>
-        let quizData = {}; // This will store the entered data for each column
 
-        // Function to update the number of tables based on the selected columns
-        function updateTables() {
-            let numColumns = document.getElementById('numColumns').value;
-            let contentDiv = document.getElementById('quizContent');
+        /* Responsiveness */
+        @media screen and (max-width: 768px) {
+            .content {
+                padding: 15px;
+            }
 
-            // Clear previous content
-            contentDiv.innerHTML = '';
+            .quiz-container {
+                flex-direction: column;
+                padding: 0 15px;
+            }
 
-            // Create the tables for the specified number of columns
-            for (let i = 0; i < numColumns; i++) {
-                let table = document.createElement('table');
-                table.classList.add('quiz-table');
-                table.innerHTML = `
-                    <thead>
-                        <tr>
-                            <th>Column ${i + 1}</th>
-                            <th>Question</th>
-                            <th>Answer 1</th>
-                            <th>Answer 2</th>
-                            <th>Answer 3</th>
-                            <th>Answer 4</th>
-                        </tr>
-                    </thead>
-                    <tbody id="columnBody${i}">
-                    </tbody>
-                `;
-                contentDiv.appendChild(table);
+            .form-input {
+                padding: 10px;
+            }
 
-                // Add rows from stored data if they exist
-                if (quizData[i]) {
-                    quizData[i].forEach((rowData, index) => {
-                        addRow(i, rowData);
-                    });
-                } else {
-                    // Add a default row if no data exists
-                    addRow(i);
-                }
+            .btn-add, .btn-save {
+                width: 100%;
+                padding: 14px 0;
+                margin-top: 20px;
+            }
 
-                // Add Add Question button below each table
-                let addButton = document.createElement('button');
-                addButton.textContent = 'Add Question';
-                addButton.classList.add('btn-add');
-                addButton.setAttribute('type', 'button');
-                addButton.onclick = function() { addRow(i); };
-                contentDiv.appendChild(addButton);
+            table {
+                width: 100%;
             }
         }
+    </style>
+    <script>
+        function updateTable() {
+            let quizType = "<?php echo $quizType; ?>";
+            let tableHead = document.getElementById("quizDataHead");
 
-        // Function to add a new row for a specific column
-        function addRow(columnIndex, rowData = {}) {
-            let tableBody = document.getElementById('columnBody' + columnIndex);
-            let rowCount = tableBody.rows.length + 1;
-            let row = document.createElement("tr");
+            // Clear previous headers
+            tableHead.innerHTML = "";
 
-            row.innerHTML = `
-                <td><input type="text" name="question[${columnIndex}][]" class="form-input" value="${rowData.question || ''}" required></td>
-                <td><input type="text" name="answer1[${columnIndex}][]" class="form-input" value="${rowData.answer1 || ''}" required></td>
-                <td><input type="text" name="answer2[${columnIndex}][]" class="form-input" value="${rowData.answer2 || ''}"></td>
-                <td><input type="text" name="answer3[${columnIndex}][]" class="form-input" value="${rowData.answer3 || ''}"></td>
-                <td><input type="text" name="answer4[${columnIndex}][]" class="form-input" value="${rowData.answer4 || ''}"></td>
-                <td><button type="button" class="btn-remove" onclick="removeRow(this, ${columnIndex})">✖</button></td>
-            `;
-            tableBody.appendChild(row);
+            // Define common headers (but hide the # column)
+            let headers = ["", "Question", "Answer 1", "Answer 2", "Answer 3", "Answer 4"];
+            if (quizType === "clickable") {
+                headers.splice(1, 0, "Correct Answer"); // Add 'Correct Answer' after remove button
+            }
 
-            // Store the row data in quizData
-            storeRowData(columnIndex);
+            // Add table headers dynamically
+            let headerRow = "<tr>";
+            headers.forEach(header => {
+                headerRow += `<th>${header}</th>`;
+            });
+            headerRow += "</tr>";
+            tableHead.innerHTML = headerRow;
+
+            // Add the first default row
+            addRow();
         }
 
-        // Function to remove a row from a specific column
-        function removeRow(button, columnIndex) {
+        function addRow() {
+            let quizType = "<?php echo $quizType; ?>";
+            let tableBody = document.getElementById("quizDataBody");
+            let rowCount = tableBody.rows.length + 1;
+
+            let row = document.createElement("tr");
+
+            // Hidden column for numbering (still needed for logic)
+            row.innerHTML = `<td style="display:none;">${rowCount}</td>`;
+
+            // Remove button on the left
+            let removeTd = document.createElement("td");
+            removeTd.innerHTML = `<button type="button" class="btn-remove" onclick="removeRow(this)">✖</button>`;
+            row.appendChild(removeTd);
+
+            // Question and answers
+            row.innerHTML += `
+                <td><input type="text" name="question[]" class="form-input" required></td>
+                <td><input type="text" name="answer1[]" class="form-input" required></td>
+                <td><input type="text" name="answer2[]" class="form-input"></td>
+                <td><input type="text" name="answer3[]" class="form-input"></td>
+                <td><input type="text" name="answer4[]" class="form-input"></td>`;
+
+            // If quiz type is clickable, add correct answer selection
+            if (quizType === "clickable") {
+                let correctAnswerTd = document.createElement("td");
+                correctAnswerTd.innerHTML = `
+                    <input type="radio" name="correct_answer[${rowCount - 1}]" value="answer1" required> 1
+                    <input type="radio" name="correct_answer[${rowCount - 1}]" value="answer2"> 2
+                    <input type="radio" name="correct_answer[${rowCount - 1}]" value="answer3"> 3
+                    <input type="radio" name="correct_answer[${rowCount - 1}]" value="answer4"> 4
+                `;
+                row.appendChild(correctAnswerTd);
+            }
+
+            tableBody.appendChild(row);
+        }
+
+        function removeRow(button) {
             let row = button.parentElement.parentElement;
-            let tableBody = document.getElementById('columnBody' + columnIndex);
+            let tableBody = document.getElementById("quizDataBody");
 
             // Ensure at least one row remains
             if (tableBody.rows.length > 1) {
                 row.remove();
-                storeRowData(columnIndex); // Update stored data
+                updateRowNumbers();
             }
         }
 
-        // Function to store the data of each column into the quizData object
-        function storeRowData(columnIndex) {
-            let tableBody = document.getElementById('columnBody' + columnIndex);
-            let rows = tableBody.rows;
-            quizData[columnIndex] = [];
-
-            for (let row of rows) {
-                let inputs = row.querySelectorAll('input');
-                quizData[columnIndex].push({
-                    question: inputs[0].value,
-                    answer1: inputs[1].value,
-                    answer2: inputs[2].value,
-                    answer3: inputs[3].value,
-                    answer4: inputs[4].value
-                });
-            }
+        function updateRowNumbers() {
+            let rows = document.querySelectorAll("#quizDataBody tr");
+            rows.forEach((row, index) => {
+                row.cells[0].innerText = index + 1; // Update hidden numbering
+            });
         }
 
-        // Update the tables on page load and when the number of columns is changed
-        window.onload = function() {
-            updateTables();
-            document.getElementById('numColumns').addEventListener('change', updateTables);
-        }
+        window.onload = updateTable;
     </script>
 </head>
 <body>
+<nav class="breadcrumbs">
+    <a href="<?php echo BASE_URL; ?>">Home</a> &gt;
+    <a href="<?php echo BASE_URL; ?>quiz/createQuiz.php">Basic Info</a>
+</nav>
 
 <div class="quiz-container">
     <div class="content">
-        <h2>Create Quiz - Data</h2>
-
-        <!-- Number of columns dropdown -->
-        <label for="numColumns">Number of Columns:</label>
-        <select id="numColumns" name="numColumns">
-            <option value="1">1 Column</option>
-            <option value="2">2 Columns</option>
-            <option value="3">3 Columns</option>
-            <option value="4">4 Columns</option>
-        </select>
-
-        <!-- Dynamic Quiz Content -->
+        <h2>Create Quiz - SLIDESHOW</h2>
+        <p>Enter the Questions. For each question, there can be four possible answers, e.g, <em>World War One, WW1,
+                World War 1, WWI</em></p>
+        <!-- Questions Table -->
         <form action="<?php echo BASE_URL ?>quiz/model/save-quiz.php" method="post">
             <input type="hidden" name="quizTitle" value="<?php echo htmlspecialchars($quizTitle); ?>">
             <input type="hidden" name="quizDesc" value="<?php echo htmlspecialchars($quizDesc); ?>">
@@ -272,15 +269,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="hidden" name="quizType" value="<?php echo htmlspecialchars($quizType); ?>">
             <input type="hidden" name="quizTimer" value="<?php echo htmlspecialchars($quizTimer); ?>">
 
-            <!-- Dynamic tables for questions and answers based on the number of columns -->
-            <div id="quizContent"></div>
+            <table class="quiz-table">
+                <thead id="quizDataHead"></thead>
+                <tbody id="quizDataBody"></tbody>
+            </table>
 
-            <!-- Save Quiz Button -->
+            <!-- Add Question Button -->
+            <button type="button" class="btn-add" onclick="addRow()">Add Question</button>
             <button type="submit" class="btn-save">Save Quiz</button>
         </form>
-
     </div>
 </div>
-
 </body>
 </html>
