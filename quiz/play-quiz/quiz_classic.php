@@ -23,13 +23,13 @@ $stmt->close();
 if ($fetchedQuizId) {
     // Fetch questions and their correct answers (filtered to not include NULL answers)
     $stmt = $conn->prepare("
-        SELECT q.id AS question_id, q.question_text, a.answer_text
-        FROM `quiz-questions` q
-        LEFT JOIN `quiz-answers` a 
-            ON q.id = a.question_id AND a.is_correct = 1
-        WHERE q.quiz_id = ?
-        ORDER BY q.id ASC
-    ");
+    SELECT q.id AS question_id, q.question_text, a.answer_text
+    FROM `quiz-questions` q
+    LEFT JOIN `quiz-answers` a 
+        ON q.id = a.question_id AND a.is_correct = 1
+    WHERE q.quiz_id = ?
+    ORDER BY q.question_order ASC
+");
     $stmt->bind_param("i", $quizId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -50,8 +50,6 @@ if ($fetchedQuizId) {
             $quizData[$questionId]['answers'][] = strtolower($row['answer_text']);
         }
     }
-
-    $stmt->close();
 }
 
 //var_dump($quizData);
@@ -210,7 +208,94 @@ $timeStmt->close();
             font-weight: bold;
         }
 
+
+
+
+
+
+
+        /* Container for recommended quizzes */
+        #recommended-quizzes {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+        }
+
+        #recommended-quizzes h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Container for the quiz boxes */
+        .quiz-box-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            justify-items: center;
+            margin-top: 10px;
+        }
+
+        /* Individual quiz box */
+        .quiz-box {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Hover effect for quiz boxes */
+        .quiz-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Title styling */
+        .quiz-box h4 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin: 15px;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        /* Description styling */
+        .quiz-box p.quiz-description {
+            font-size: 14px;
+            color: #555;
+            margin: 0 15px 15px;
+            line-height: 1.5;
+            text-align: center;
+            height: 60px; /* Fixed height for description */
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Link styling */
+        .quiz-box a {
+            display: block;
+            text-decoration: none;
+        }
+
+        /* Hover effect for quiz box link */
+        .quiz-box a:hover h4 {
+            color: #1abc9c;
+        }
+
+        .quiz-box a:hover p.quiz-description {
+            color: #2c3e50;
+        }
+
     </style>
+
 
 
 </head>
@@ -304,6 +389,40 @@ $timeStmt->close();
                 </tbody>
             </table>
         </div>
+
+
+
+
+
+        <!-- Quizzes from the same category -->
+        <div id="recommended-quizzes">
+            <h3>If you liked this, you may like these</h3>
+            <div class="quiz-box-container">
+                <?php
+                // Fetch quizzes in the same category with descriptions
+                $stmt = $conn->prepare("
+            SELECT id, title, description
+            FROM `quiz-quizzes`
+            WHERE category = ? AND id != ?
+            ORDER BY title ASC
+            LIMIT 5
+        ");
+                $stmt->bind_param("si", $quizCategory, $quizId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                // Display the quizzes in boxes
+                while ($row = $result->fetch_assoc()): ?>
+                    <div class="quiz-box">
+                        <a href="<?php echo BASE_URL . 'quiz/quiz.php?quiz_id=' . $row['id']; ?>">
+                            <h4><?php echo htmlspecialchars($row['title']); ?></h4>
+                            <p class="quiz-description"><?php echo htmlspecialchars($row['description']); ?></p>
+                        </a>
+                    </div>
+                <?php endwhile; ?>
+            </div>
+        </div>
+
 
 
 
