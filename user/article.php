@@ -5,6 +5,9 @@ include BASE_PATH . "user/model/delete.article.php";
 include BASE_PATH . "user/view/delete-article-modal.html";
 include BASE_PATH . "user/model/article-logic.php";
 include BASE_PATH . 'features/write/write-icon-fixed.php';
+
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null; // Get logged-in user's ID if available
+
 ?>
 
 <!DOCTYPE html>
@@ -267,7 +270,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                             $like_count = $result->fetch_assoc()['like_count'];
                             ?>
 
-                            <button class="like-btn" data-article-id="<?php echo $article_id; ?>" data-user-id="<?php echo $user_id; ?>">
+                            <button class="like-btn" data-article-id="<?php echo $article_id; ?>" data-user-id="<?php echo $user_id; ?>" onclick="handleBookmarkClick(event)">
                                 <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
                                      alt="Add Like" class="like-icon like-default"
                                      style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
@@ -347,7 +350,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                         </div>
 
 
-                        <div class="bookmark" data-article-id="<?php echo $article_id; ?>">
+                        <div class="bookmark" data-article-id="<?php echo $article_id; ?>" onclick="handleBookmarkClick(event)">
                             <?php if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                                 <!-- If user is not logged in, redirect to login -->
                                 <form action="<?php echo BASE_URL; ?>user_auth.php" method="GET">
@@ -383,6 +386,17 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                         </div>
 
                         <script>
+                            // Function to handle bookmark button click
+                            function handleBookmarkClick(event) {
+                                <?php if (!isset($_SESSION['user_id'])): ?>
+                                // Redirect to login page if user is not logged in
+                                window.location.href = "<?php echo BASE_URL; ?>user_auth.php";
+                                event.preventDefault(); // Prevent the default action (like bookmarking) from happening
+                                <?php endif; ?>
+                            }
+
+
+
                             document.addEventListener("DOMContentLoaded", function () {
                                 document.querySelectorAll(".bookmark-btn").forEach(button => {
                                     button.addEventListener("click", function (event) {

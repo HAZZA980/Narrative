@@ -454,7 +454,7 @@ include BASE_PATH . 'features/search/search-logic.php';
 
                                         <!-- Like Button -->
                                         <button class="like-btn" data-article-id="<?php echo $article_id; ?>"
-                                                data-liked="<?php echo $article_liked ? '1' : '0'; ?>">
+                                                data-liked="<?php echo $article_liked ? '1' : '0'; ?>" onclick="handleBookmarkClick(event)">
                                             <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
                                                  class="like-icon like-unfilled"
                                                  style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
@@ -545,7 +545,7 @@ include BASE_PATH . 'features/search/search-logic.php';
                                             <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
                                             <!-- Show filled icon if the article is bookmarked -->
                                             <button type="submit" class="bookmark-btn" name="bookmark_action"
-                                                    value="<?php echo $article_bookmarked ? 'remove' : 'add'; ?>">
+                                                    value="<?php echo $article_bookmarked ? 'remove' : 'add'; ?>" onclick="handleBookmarkClick(event)">
                                                 <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg"
                                                      alt="Add to Bookmarks" class="bookmark-icon"
                                                      style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>
@@ -644,7 +644,7 @@ include BASE_PATH . 'features/search/search-logic.php';
 
                                         <!-- Like Button -->
                                         <button class="like-btn" data-article-id="<?php echo $article_id; ?>"
-                                                data-liked="<?php echo $article_liked ? '1' : '0'; ?>">
+                                                data-liked="<?php echo $article_liked ? '1' : '0'; ?>" onclick="handleBookmarkClick(event)">
                                             <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
                                                  class="like-icon like-unfilled"
                                                  style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
@@ -660,6 +660,15 @@ include BASE_PATH . 'features/search/search-logic.php';
                                     </div>
 
                                     <script>
+                                        // Function to handle bookmark button click
+                                        function handleBookmarkClick(event) {
+                                            <?php if (!isset($_SESSION['user_id'])): ?>
+                                            // Redirect to login page if user is not logged in
+                                            window.location.href = "<?php echo BASE_URL; ?>user_auth.php";
+                                            event.preventDefault(); // Prevent the default action (like bookmarking) from happening
+                                            <?php endif; ?>
+                                        }
+
                                         document.addEventListener("DOMContentLoaded", function () {
                                             document.querySelectorAll(".like-btn").forEach(button => {
                                                 button.addEventListener("click", function () {
@@ -731,8 +740,8 @@ include BASE_PATH . 'features/search/search-logic.php';
                                         ?>
                                         <div class="bookmark-form">
                                             <!-- Bookmark Button -->
-                                            <button class="bookmark-btn" data-article-id="<?php echo $article_id; ?>"
-                                                    data-bookmarked="<?php echo $article_bookmarked ? '1' : '0'; ?>">
+                                            <button class="bookmark-btn" data-article-id="<?php echo $article_id; ?> "
+                                                    data-bookmarked="<?php echo $article_bookmarked ? '1' : '0'; ?>" onclick="handleBookmarkClick(event)">
                                                 <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg"
                                                      class="bookmark-icon bookmark-unfilled"
                                                      style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>

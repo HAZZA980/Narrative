@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 include BASE_PATH . 'features/write/write-icon-fixed.php';
 
-
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null; // Get logged-in user's ID if available
 
 if (isset($_GET['username'])) {
     $username = htmlspecialchars($_GET['username']);
@@ -351,7 +351,7 @@ if (empty($preferred_categories)) {
                                     ?>
 
                                     <!-- Like Button -->
-                                    <button class="like-btn" data-article-id="<?php echo $article_id; ?>" data-liked="<?php echo $article_liked ? '1' : '0'; ?>">
+                                    <button class="like-btn" data-article-id="<?php echo $article_id; ?>" data-liked="<?php echo $article_liked ? '1' : '0'; ?>" onclick="handleBookmarkClick(event)">
                                         <img src="<?php echo BASE_URL ?>public/images/article-layout-img/heart-regular.svg"
                                              class="like-icon like-unfilled"
                                              style="display: <?php echo $article_liked ? 'none' : 'block'; ?>"/>
@@ -366,6 +366,18 @@ if (empty($preferred_categories)) {
                                 </div>
 
                                 <script>
+
+                                    // Function to handle bookmark button click
+                                    function handleBookmarkClick(event) {
+                                        <?php if (!isset($_SESSION['user_id'])): ?>
+                                        // Redirect to login page if user is not logged in
+                                        window.location.href = "<?php echo BASE_URL; ?>user_auth.php";
+                                        event.preventDefault(); // Prevent the default action (like bookmarking) from happening
+                                        <?php endif; ?>
+                                    }
+
+
+
                                     document.addEventListener("DOMContentLoaded", function() {
                                         document.querySelectorAll(".like-btn").forEach(button => {
                                             button.addEventListener("click", function() {
@@ -439,7 +451,7 @@ if (empty($preferred_categories)) {
                                     ?>
                                     <div class="bookmark-form">
                                         <!-- Bookmark Button -->
-                                        <button class="bookmark-btn" data-article-id="<?php echo $article_id; ?>" data-bookmarked="<?php echo $article_bookmarked ? '1' : '0'; ?>">
+                                        <button class="bookmark-btn" data-article-id="<?php echo $article_id; ?>" data-bookmarked="<?php echo $article_bookmarked ? '1' : '0'; ?>" onclick="handleBookmarkClick(event)">
                                             <img src="<?php echo BASE_URL ?>public/images/article-layout-img/file-earmark-plus.svg"
                                                  class="bookmark-icon bookmark-unfilled"
                                                  style="display: <?php echo $article_bookmarked ? 'none' : 'block'; ?>"/>
