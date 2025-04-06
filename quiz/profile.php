@@ -5,11 +5,6 @@ include BASE_PATH . 'includes/quiz-header.php';
 
 $userId = $_SESSION['user_id'] ?? null;
 
-// Redirect if not logged in
-if (!$userId) {
-    header("Location: " . BASE_URL . "auth/login.php");
-    exit();
-}
 
 // Fetch User-Created Quizzes
 $createdQuizzesStmt = $conn->prepare("
@@ -85,10 +80,42 @@ $mostAttempted = $mostAttemptedStmt->get_result();
         .profile-section a:hover {
             text-decoration: underline;
         }
+
+
+
+
+
+
+        /* Login Section */
+        .login-section {
+            text-align: center;
+            padding: 50px 0;
+        }
+
+        .login-button {
+            background-color: #007BFF;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
 <main class="main-container">
+    <?php if (!isset($_SESSION['user_id'])): ?>
+        <div class="login-section">
+            <h1>Log in to create a quiz!</h1>
+            <a href="<?php echo BASE_URL; ?>user_auth.php" class="login-button">Log in</a>
+        </div>
+    <?php else: ?>
+
+
     <div class="header">
         <h3 class="main-title">👤 Your Profile</h3>
     </div>
@@ -155,6 +182,7 @@ $mostAttempted = $mostAttemptedStmt->get_result();
         </div>
     </div>
 
+    <?php endif?>
 </main>
 
 <!-- Delete Quiz Modal Logic -->

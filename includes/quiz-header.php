@@ -67,6 +67,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.p
         color: white; /* White color for the text */
         text-decoration: none; /* Remove underline */
         font-weight: 700; /* Optional: make the title bold */
+
     }
 
     /* Hover state for the title link */
@@ -82,6 +83,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.p
         width: 100%;
         background-color: white;
         height: 1px;
+    }
+
+    .nav-create {
+        text-align: left !important;
     }
 
     .primary-navigation {

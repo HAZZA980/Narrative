@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 include $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.php';
 include BASE_PATH . 'includes/quiz-header.php';
 
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id'] ?? null;
 
 // Fetch the user's information (username and isAdmin status)
 $query = "SELECT isAdmin FROM users WHERE user_id = ?";
@@ -14,7 +14,7 @@ $stmt1->execute();
 $user_result = $stmt1->get_result();
 $user_row = $user_result->fetch_assoc();
 
-$isAdmin = $user_row['isAdmin']; // Fetch the isAdmin status
+$isAdmin = $user_row['isAdmin'] ?? 0; // Fetch the isAdmin status
 
 $searchTerm = $_GET['txt-search'] ?? '';
 $category = $_GET['category'] ?? 'all';

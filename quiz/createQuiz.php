@@ -48,10 +48,11 @@ $quizTimer = 60;
         }
 
         /* Headings */
-        h1, h2, h3 {
+        h1, h3 {
             text-align: center;
             color: #007BFF;
             margin-bottom: 20px;
+
         }
 
         /* Form Elements */
@@ -176,6 +177,10 @@ $quizTimer = 60;
             font-weight: 600;
         }
 
+        .login-section h1 {
+            color: black;
+        }
+
         .login-button:hover {
             background-color: #0056b3;
         }
@@ -263,7 +268,7 @@ $quizTimer = 60;
         .btn-remove {
             position: absolute;
             top: 0;
-            right:0;
+            right: 0;
             background-color: #e74c3c;
             color: white;
             border: none;
@@ -306,14 +311,14 @@ $quizTimer = 60;
     </style>
 </head>
 <body>
-
+<?php if (!isset($_SESSION['user_id'])): ?>
+    <div class="login-section">
+        <h1>Log in to create a quiz!</h1>
+        <a href="<?php echo BASE_URL; ?>user_auth.php" class="login-button">Log in</a>
+    </div>
+<?php else: ?>
 <div class="quiz-container">
-    <?php if (!isset($_SESSION['user_id'])): ?>
-        <div class="login-section">
-            <h1>Log in to create a quiz!</h1>
-            <a href="<?php echo BASE_URL; ?>user_auth.php" class="login-button">Log in</a>
-        </div>
-    <?php else: ?>
+
 
     <h2>Create a New Quiz</h2>
     <form action="<?php echo BASE_URL ?>quiz/model/save-quiz.php" method="POST" autocomplete="off">
@@ -379,12 +384,13 @@ $quizTimer = 60;
 
         <?php
         // Example: Set the quiz type
-        $quizType = isset($_GET['type']) ? $_GET['type'] : 'text'; // or 'clickable'
+        $quizType = isset($_GET['type']) ? $_GET['type'] : 'classic'; // or 'clickable'
         ?>
 
 
         <h3>Enter Your Questions</h3>
-        <p>Each question can have four possible correct answers if you so chose. Leave the unused answer boxes blank. </p>
+        <p>Each question can have four possible correct answers if you so chose. Leave the unused answer boxes
+            blank. </p>
 
         <div id="quizContainer"></div>
 
@@ -392,6 +398,7 @@ $quizTimer = 60;
         <br><br>
         <button type="submit" class="btn-add">Submit Quiz</button>
     </form>
+    <?php endif; ?>
 
 </div>
 <script>
@@ -502,7 +509,6 @@ $quizTimer = 60;
     }
 
 
-
     function updateRemoveButtons() {
         const blocks = document.querySelectorAll('.question-block');
         blocks.forEach((block) => {
@@ -548,6 +554,5 @@ $quizTimer = 60;
     }
 </script>
 
-<?php endif; ?>
 </body>
 </html>
