@@ -429,8 +429,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             block.classList.remove('drag-over');
         });
     }
-</script>
 
+    let formDirty = false;
+
+    // Detect changes in form fields
+    document.addEventListener('input', (event) => {
+        if (
+            event.target.matches('#quizTitle, #quizDesc, #quizTags, input[name="question[]"], input[name^="answers"]')
+        ) {
+            formDirty = true;
+        }
+    });
+
+    // Warn user before leaving the page with unsaved changes
+    window.addEventListener('beforeunload', function (e) {
+        if (formDirty) {
+            const confirmationMessage = 'Unsaved data. Are you sure you want to leave?';
+            (e || window.event).returnValue = confirmationMessage; // For legacy browsers
+            return confirmationMessage; // For modern browsers
+        }
+    });
+
+    // If the form is submitted, clear the dirty flag
+    document.querySelector('form').addEventListener('submit', function () {
+        formDirty = false;
+    });
+</script>
 
 <?php endif; ?>
 </body>

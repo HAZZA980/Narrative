@@ -108,30 +108,33 @@ while ($row = $result->fetch_assoc()) {
 
         .result-item {
             background-color: #ffffff;
-            border: 1px solid #ddd;
-            border-left: 5px solid #007BFF; /* Accent color */
-            padding: 20px;
+            /*border: 1px solid #ddd;*/
+            /*border-left: 5px solid #007BFF; !* Accent color *!*/
+            padding: 5px 0 0 20px;
             border-radius: 8px;
             transition: box-shadow 0.2s ease, transform 0.2s ease;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
         }
 
         .result-item:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-            transform: translateY(-2px);
+            padding: 5px 0 0 20px;
+            border-radius: 8px;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            background-color: #f9f9f9;
         }
+
 
         .result-item a {
             font-size: 1.3rem;
-            font-weight: 600;
+            /*font-weight: 600;*/
             color: #007BFF;
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 8px;
+            /*display: inline-block;*/
+            /*margin-bottom: 8px;*/
         }
 
         .result-item a:hover {
-            text-decoration: underline;
+            text-decoration: none;
             color: #0056b3;
         }
 
@@ -141,6 +144,16 @@ while ($row = $result->fetch_assoc()) {
             margin-bottom: 10px;
         }
 
+        .result-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: blue;
+        }
+
+        .result-title:hover {
+            text-decoration: underline;
+            color: darkblue;
+        }
         .result-meta {
             font-size: 0.9rem;
             color: #888;
@@ -241,8 +254,7 @@ while ($row = $result->fetch_assoc()) {
             <?php foreach ($searchResults as $result): ?>
                 <li class="result-item">
                     <a href="<?php echo BASE_URL ?>quiz/quiz.php?quiz_id=<?php echo urlencode($result['id'] ?? ''); ?>">
-                        <?php echo htmlspecialchars($result['title'] ?? 'Untitled Quiz'); ?>
-                    </a>
+                        <h5 class="result-title"><?php echo htmlspecialchars($result['title'] ?? 'Untitled Quiz'); ?></h5>
                     <div class="quiz-description">
                         <p class="result-description"><em><?php echo htmlspecialchars($result['description'] ?? 'No description'); ?></em></p>
 
@@ -273,6 +285,7 @@ while ($row = $result->fetch_assoc()) {
                         ?>
                         <p class="result-meta">📅 Created: <?php echo $createdDate; ?></p>
                     </div>
+                    </a>
                 </li>
             <?php endforeach; ?>
         </ul>

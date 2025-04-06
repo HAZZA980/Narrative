@@ -37,6 +37,7 @@ body {
 .form-bar {
     width: 100%; /* Full width */
     display: flex;
+    height: 3rem;
     align-items: center;
     background-color: #F6F6F6;
     border-radius: 8px;
@@ -48,7 +49,7 @@ body {
 
 #text-search-bar {
     flex-grow: 1;
-    height: 50px;
+    height: 20px;
     border: none;
     background: none;
     padding: 10px;
@@ -58,10 +59,9 @@ body {
 }
 
 #btn-search {
-    height: 50px;
+    height: 40px;
     padding: 0 20px;
-    background-color: #007BFF;
-    color: white;
+    background-color: #F6F6F6;;
     font-weight: 600;
     border: none;
     border-radius: 8px;

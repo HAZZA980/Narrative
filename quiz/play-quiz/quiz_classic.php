@@ -340,11 +340,13 @@ $timeStmt->close();
             <div id="quizTableContainer">
                 <table id="quizTable">
                     <?php
+                    $rows = ceil($totalQuestions / $columns);
 
-                    for ($i = 0; $i < ceil($totalQuestions / $columns); $i++) {
+                    echo "<table id='quizTable'>";
+                    for ($r = 0; $r < $rows; $r++) {
                         echo "<tr>";
-                        for ($j = 0; $j < $columns; $j++) {
-                            $index = $i * $columns + $j;
+                        for ($c = 0; $c < $columns; $c++) {
+                            $index = $c * $rows + $r;
                             if (isset($questions[$index])) {
                                 echo "<td class='question'>{$questions[$index]['question']}</td>";
                                 echo "<td class='answer' id='answer_$index' data-answers='" . json_encode($questions[$index]['answers'], JSON_HEX_APOS | JSON_HEX_QUOT) . "'></td>";
@@ -354,7 +356,9 @@ $timeStmt->close();
                         }
                         echo "</tr>";
                     }
+                    echo "</table>";
                     ?>
+
                 </table>
 
             </div>
@@ -586,16 +590,69 @@ $timeStmt->close();
                 document.getElementById('timer').innerHTML = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
             }
 
+            // Normalize answer (removes stop words and punctuation)
+            function normalizeAnswer(str) {
+                const stopWords = ['the', 'and', 'a', 'an', 'of', 'in', 'on', 'to', 'with', 'at', 'by', 'for', 'from'];
+                return str
+                    .toLowerCase()
+                    .replace(/[^\w\s]/g, '') // Remove punctuation
+                    .split(/\s+/) // Split into words
+                    .filter(word => !stopWords.includes(word)) // Remove stop words
+                    .join(' ')
+                    .trim();
+            }
+
+            // Capitalize the first letter of each word, unless it is a stop word
+            function capitalizeWords(str) {
+                const stopWords = ['the', 'and', 'a', 'an', 'of', 'in', 'on', 'to', 'with', 'at', 'by', 'for', 'from'];
+                return str.split(/\s+/).map(word => {
+                    // Check if word is a stop word (already normalized)
+                    if (stopWords.includes(word.toLowerCase())) {
+                        return word.toLowerCase(); // Keep stop words in lowercase
+                    }
+                    // Capitalize the first letter of non-stop words
+                    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+                }).join(' ');
+            }
+
+            // Function to handle the user input and check answers
+            function checkAnswer(userInput) {
+                const normalizedInput = normalizeAnswer(userInput);
+                const answerElements = document.querySelectorAll(".answer");
+
+                answerElements.forEach((answerElement, index) => {
+                    if (answeredQuestions.has(index)) return;
+
+                    const correctAnswers = JSON.parse(answerElement.getAttribute("data-answers"));
+
+                    const isCorrect = correctAnswers.some(correct => {
+                        return normalizeAnswer(correct) === normalizedInput;
+                    });
+
+                    if (isCorrect) {
+                        answerElement.textContent = capitalizeWords(correctAnswers[0]); // Capitalize the first answer
+                        answerElement.style.visibility = 'visible';
+                        answerElement.style.opacity = 1;
+
+                        answeredQuestions.add(index);
+                        score++;
+                        document.getElementById('score').textContent = `${score}/${totalQuestions}`;
+                        document.getElementById('answerInput').value = '';
+                    }
+                });
+            }
+
+            // Function for Give Up Button
             function giveUp() {
                 clearInterval(timer);
                 submitQuizResults();
 
-                // Reveal all the answers
+                // Reveal only the first correct answer with capitalized words (excluding stop words)
                 document.querySelectorAll('.answer').forEach((answer, index) => {
                     const answers = JSON.parse(answer.getAttribute('data-answers'));
 
-                    // Show answer
-                    answer.textContent = answers.join(', ');
+                    // Show only the first answer in the list, capitalized
+                    answer.textContent = capitalizeWords(answers[0]);
                     answer.style.visibility = 'visible';
 
                     // If question wasn't answered, mark it in red
@@ -618,6 +675,8 @@ $timeStmt->close();
             }
 
 
+
+
             // Restart the quiz
             function restartQuiz() {
                 location.reload(); // Refresh the page
@@ -628,35 +687,7 @@ $timeStmt->close();
                 checkAnswer(event.target.value.trim().toLowerCase());
             };
 
-            // Check if the answer is correct
-            function checkAnswer(userAnswer) {
-                const answerElements = document.querySelectorAll(".answer");
 
-                answerElements.forEach((answerElement, index) => {
-                    // Skip if the question has already been answered correctly
-                    if (answeredQuestions.has(index)) {
-                        return;
-                    }
-
-                    // Retrieve the correct answers from the data-answers attribute
-                    const correctAnswers = JSON.parse(answerElement.getAttribute("data-answers"));
-
-                    // Compare the user input with the correct answers
-                    if (correctAnswers.some(answer => answer.toLowerCase().trim() === userAnswer)) {
-                        answerElement.textContent = correctAnswers[0]; // Set the first correct answer
-                        answerElement.style.visibility = 'visible';  // Make it visible
-                        answerElement.style.opacity = 1;  // Ensure it's visible
-
-                        // Mark as answered correctly
-                        answeredQuestions.add(index);
-
-                        // Update score
-                        score++;
-                        document.getElementById('score').textContent = `${score}/${totalQuestions}`;
-                        document.getElementById('answerInput').value = '';  // Clear input field
-                    }
-                });
-            }
 
             // Initialize the timer on page load
             window.onload = function () {
