@@ -27,6 +27,7 @@ $stmt->bind_param("ii", $quizId, $userId);
 $stmt->execute();
 $quizResult = $stmt->get_result();
 
+
 if ($quizResult->num_rows === 0) {
     echo "Quiz not found or access denied.";
     exit;
@@ -113,8 +114,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Insert or update
         if (is_numeric($questionId)) {
             // Update existing
-            $stmt = $conn->prepare("UPDATE `quiz-questions` SET question_text=? WHERE id=? AND quiz_id=?");
-            $stmt->bind_param("sii", $qText, $questionId, $quizId);
+            $stmt = $conn->prepare("UPDATE `quiz-questions` SET question_text=?, question_type=? WHERE id=? AND quiz_id=?");
+            $stmt->bind_param("ssii", $qText, $quizType, $questionId, $quizId);
+
             $stmt->execute();
         } else {
             // Insert new
