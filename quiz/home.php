@@ -18,21 +18,24 @@ $mostPlayedStmt = $conn->prepare("
 $mostPlayedStmt->execute();
 $mostPlayedResult = $mostPlayedStmt->get_result();
 
-// Get quizzes where the user scored the lowest
-$userLowestResult = null;
+// Get the highest score for each distinct quiz the user has played
+$userLowestHighestResult = null;
 if ($userId) {
-    $lowestScoreStmt = $conn->prepare("
-        SELECT qq.id, qq.title, qa.score
+    $lowestHighestScoreStmt = $conn->prepare("
+        SELECT qq.id, qq.title, MAX(qa.score) AS highest_score, 
+               (SELECT COUNT(*) FROM `quiz-questions` q WHERE q.quiz_id = qq.id) AS total_questions
         FROM `quiz-attempts` qa
         JOIN `quiz-quizzes` qq ON qa.quiz_id = qq.id
         WHERE qa.user_id = ?
-        ORDER BY qa.score ASC
+        GROUP BY qq.id
+        ORDER BY highest_score DESC
         LIMIT 5
     ");
-    $lowestScoreStmt->bind_param("i", $userId);
-    $lowestScoreStmt->execute();
-    $userLowestResult = $lowestScoreStmt->get_result();
+    $lowestHighestScoreStmt->bind_param("i", $userId);
+    $lowestHighestScoreStmt->execute();
+    $userLowestHighestResult = $lowestHighestScoreStmt->get_result();
 }
+
 
 ?>
 
@@ -190,15 +193,23 @@ if ($userId) {
         </div>
 
         <div class="summary-box">
-            <h3>📉 Improve Your Score</h3>
+            <h3>📉 Your Lowest Highest Scores</h3>
             <?php if (!$userId): ?>
                 <p><a href="<?php echo BASE_URL; ?>auth/login.php">Log in</a> to start recording your scores and track your progress!</p>
-            <?php elseif ($userLowestResult && $userLowestResult->num_rows > 0): ?>
+            <?php elseif ($userLowestHighestResult && $userLowestHighestResult->num_rows > 0): ?>
                 <ul>
-                    <?php while ($row = $userLowestResult->fetch_assoc()): ?>
+                    <?php while ($row = $userLowestHighestResult->fetch_assoc()): ?>
+                        <?php
+                        // Get the highest score
+                        $highestScore = (int) $row['highest_score'];
+                        // Get the total number of questions in the quiz
+                        $totalQuestions = (int) $row['total_questions'];
+                        // Calculate the percentage of the highest score
+                        $percentage = $totalQuestions > 0 ? round(($highestScore / $totalQuestions) * 100) : 0;
+                        ?>
                         <li>
                             <a href="<?php echo BASE_URL . 'quiz/quiz.php?quiz_id=' . $row['id']; ?>">
-                                <?php echo htmlspecialchars($row['title']); ?> - Scored: <?php echo $row['score']; ?>
+                                <?php echo htmlspecialchars($row['title']); ?> - Highest Score: <?php echo $percentage; ?>%
                             </a>
                         </li>
                     <?php endwhile; ?>
@@ -207,6 +218,8 @@ if ($userId) {
                 <p>You've got no attempts logged yet! Go crush some quizzes 💪</p>
             <?php endif; ?>
         </div>
+
+
     </div>
 
 

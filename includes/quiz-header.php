@@ -187,7 +187,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/phpProjects/Narrative/config/config.p
 <div class="divider"></div>
 <div class="masthead-container">
     <div class="title-container">
-        <h2 id="title"><a href="<?php echo BASE_URL?>">QUIZZES</a></h2>
+        <h2 id="title"><a href="<?php echo BASE_URL?>quiz/home.php">QUIZZES</a></h2>
     </div>
     <div class="divider"></div>
     <nav class="primary-navigation">

@@ -66,10 +66,10 @@ $isAdmin = $user_row['isAdmin']; // Fetch the isAdmin status
                class="account-tab feed <?php echo $active_tab === 'feed' ? 'active' : ''; ?>">
                 Your Feed
             </a>
-            <a href="<?php echo BASE_URL ?>account/quiz-stats.php"
-               class="account-tab quiz <?php echo $active_tab === 'quiz' ? 'active' : ''; ?>">
-                Quiz Stats
-            </a>
+<!--            <a href="--><?php //echo BASE_URL ?><!--account/quiz-stats.php"-->
+<!--               class="account-tab quiz --><?php //echo $active_tab === 'quiz' ? 'active' : ''; ?><!--">-->
+<!--                Quiz Stats-->
+<!--            </a>-->
             <a href="<?php echo BASE_URL ?>account/settings.php"
                class="account-tab settings <?php echo $active_tab === 'settings' ? 'active' : ''; ?>">
                 Settings
