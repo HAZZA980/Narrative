@@ -175,11 +175,6 @@ $timeStmt->close();
             display: inline-block;
         }
 
-
-
-
-
-
     /*    LEADERBOARD*/
         #leaderboardContainer {
             margin-top: 30px;
@@ -207,10 +202,6 @@ $timeStmt->close();
             background-color: #f4f4f4;
             font-weight: bold;
         }
-
-
-
-
 
 
 
@@ -295,9 +286,6 @@ $timeStmt->close();
         }
 
     </style>
-
-
-
 </head>
 <body>
 

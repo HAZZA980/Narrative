@@ -36,7 +36,7 @@
     align-items: center;
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 800;
     background-color: #fff;
     padding: 10px;
     border-bottom: 1px solid #ccc;
@@ -126,7 +126,7 @@ td.answer.incorrect {
 }
 
 /* Buttons */
-button {
+#startButton, #giveUpButton, #restartButton {
     height: 40px;
     padding: 0 20px;
     font-size: 16px;
@@ -136,6 +136,9 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    display: inline-block;
+    justify-content: center;
+    align-content: center;
 }
 
 button:hover {

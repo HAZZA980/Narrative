@@ -94,6 +94,7 @@ body {
 
 .orb-nav-articles:hover, .header-links-img:hover {
     background-color: #f4f4f4;
+    z-index: 9999;
 }
 
 .orb-nav-articles:hover::after {
