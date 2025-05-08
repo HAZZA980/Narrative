@@ -128,15 +128,16 @@ if ($userId) {
         <h3 class="category-title">Popular Categories</h3>
         <ul class="category-list">
             <li class="category-item">
-                <a href=<?php echo BASE_URL?>"layouts/pages/quizzes/quizzes-general-knowledge.php?category=film_and_tv">
+                <a href="quiz-search.php?txt-search=&category=movies">
                     <div class="category-image">
                         <img src="<?php echo BASE_URL?>public/images/users/52/The-Philadelphia-Story-009.webp" alt="Film & TV">
                     </div>
-                    <p class="category-text">Film & TV</p>
+                    <p class="category-text">Movies</p>
                 </a>
             </li>
             <li class="category-item">
-                <a href="<?php echo BASE_URL?>layouts/pages/quizzes/quizzes-general-knowledge.php?category=history">
+<!--                <a href="--><?php //echo BASE_URL?><!--layouts/pages/quizzes/quizzes-general-knowledge.php?category=history">-->
+                <a href="quiz-search.php?txt-search=&category=history">
                     <div class="category-image">
                         <img src="<?php echo BASE_URL?>public/images/users/52/Napoleon.jpg" alt="History">
                     </div>
@@ -144,7 +145,7 @@ if ($userId) {
                 </a>
             </li>
             <li class="category-item">
-                <a href="<?php echo BASE_URL?>layouts/pages/quizzes/quizzes-general-knowledge.php?category=literature">
+                <a href="quiz-search.php?txt-search=&category=literature">
                     <div class="category-image">
                         <img src="<?php echo BASE_URL?>public/images/users/52/shakespeare.jpg" alt="Literature">
                     </div>
@@ -152,7 +153,7 @@ if ($userId) {
                 </a>
             </li>
             <li class="category-item">
-                <a href="<?php echo BASE_URL?>layouts/pages/quizzes/quizzes-general-knowledge.php?category=geography">
+                <a href="quiz-search.php?txt-search=&category=geography">
                     <div class="category-image">
                         <img src="<?php echo BASE_URL?>public/images/users/52/geography.jpg" alt="Geography">
                     </div>
@@ -160,7 +161,7 @@ if ($userId) {
                 </a>
             </li>
             <li class="category-item">
-                <a href="<?php echo BASE_URL?>layouts/pages/quizzes/quizzes-general-knowledge.php?category=science">
+                <a href="quiz-search.php?txt-search=&category=science">
                     <div class="category-image">
                         <img src="<?php echo BASE_URL?>public/images/users/52/science.jpg" alt="Science">
                     </div>

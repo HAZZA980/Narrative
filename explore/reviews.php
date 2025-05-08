@@ -82,8 +82,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
 
 
     <div class="featured-author-section"> <!-- Added a parent div with a specific class -->
-        <h4 class="main-content-title featured-author">Books of the Week
-            Process</h4>
+        <h4 class="main-content-title featured-author">Books of the Week</h4>
 
         <?php include BASE_PATH . "features/carousel/carouselBookReviews.php"; ?>
     </div>

@@ -406,7 +406,6 @@ include BASE_PATH . 'model/for-you-logic.php';
         // If no preferences found, just skip the filtering for categories (avoid empty IN clause)
         $excluded_categories_str = count($excluded_categories) > 0 ? "'" . implode("','", $excluded_categories) . "'" : "'0'"; // Default to '0' if no preferences
 
-        // Query to get articles that are not written by the logged-in user and not in the user's preferred categories
         $sql = "
                 SELECT b.id, b.title, LEFT(b.content, 270) AS summary, b.datePublished, b.Category, b.Image, b.user_id, u.username
                 FROM tbl_blogs b
@@ -415,8 +414,7 @@ include BASE_PATH . 'model/for-you-logic.php';
                   AND b.Private = 0
                   AND b.Category NOT IN ($excluded_categories_str)
                 ORDER BY RAND()  -- Randomize the order of articles
-                LIMIT 5
-";
+                LIMIT 5";
 
 
         // Prepare and execute the query
