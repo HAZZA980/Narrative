@@ -73,6 +73,12 @@ include BASE_PATH . 'includes/model/header_file_mapping.php';
             </a>
         </div>
 
+        <div class="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
         <ul class="orbit-header-links">
             <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
                 <div class="account-container">
@@ -154,5 +160,18 @@ include BASE_PATH . 'includes/model/header_file_mapping.php';
     </div>
 </nav>
 <script src="<?php echo BASE_URL; ?>includes/js/searchQueryChecker.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const hamburger = document.querySelector(".hamburger");
+        const navLinks = document.querySelector(".orbit-header-links");
+
+        if (hamburger && navLinks) {
+            hamburger.addEventListener("click", () => {
+                navLinks.classList.toggle("show");
+            });
+        }
+    });
+
+</script>
 </body>
 </html>

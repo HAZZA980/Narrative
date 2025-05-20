@@ -104,3 +104,57 @@
     padding: 10px 5px;
     font-weight: bold;
 }
+
+
+
+@media screen and (max-width: 1420px) {
+    /* Make main content more fluid */
+    .search-page-main-content {
+        width: 90%;
+    }
+
+    /* Responsive search bar layout */
+    .search {
+        width: 100%;
+        margin: 1.5rem 0;
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    /* Stack form elements vertically */
+    .form-bar {
+        flex-direction: column;
+        width: 100%;
+        height: auto;
+        gap: 0.5rem;
+    }
+
+    /* Adjust input field for better spacing */
+    #text-search-bar {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+
+    /* Full-width button with good tap target */
+    #btn-search {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    /* Pagination becomes more compact and wraps if needed */
+    .pagination {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .pagination a,
+    .pagination span {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+}

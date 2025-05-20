@@ -15,6 +15,7 @@ include BASE_PATH . 'model/category-file-mapping.php';
 <!--    <link rel="stylesheet" href="articleLayouts/layoutOne_7_12_Item.css">-->
     <title>Explore | Narrative</title>
     <style>
+
         /* Pagination Styles */
         .pagination {
             display: flex;
@@ -40,6 +41,8 @@ include BASE_PATH . 'model/category-file-mapping.php';
             background-color: #ddd;
         }
 
+
+
     </style>
 </head>
 <body>
@@ -60,7 +63,7 @@ include BASE_PATH . 'model/category-file-mapping.php';
             <div class="grid-container">
                 <?php
                 // Query to get featured blogs
-                $sql = "SELECT Id, Title, LEFT(Content, 270) AS summary, DatePublished, Tags, Image, Private, user_id 
+                $sql = "SELECT Id, Title, LEFT(Content, 100) AS summary, DatePublished, Tags, Image, Private, user_id 
                         FROM tbl_blogs 
                         WHERE Featured = '1' and Private = '0'
                         ORDER BY DatePublished DESC LIMIT 13";
@@ -195,7 +198,7 @@ include BASE_PATH . 'model/category-file-mapping.php';
         <div class="latest-container">
             <?php
             // Query to get latest blogs with pagination
-            $sql = "SELECT Id, Title, LEFT(Content, 190) AS summary, DatePublished, Tags, Image, user_id, Private
+            $sql = "SELECT Id, Title, LEFT(Content, 100) AS summary, DatePublished, Tags, Image, user_id, Private
                     FROM tbl_blogs where Private = '0'
                     ORDER BY DatePublished DESC 
                     LIMIT $results_per_page OFFSET $start_from";

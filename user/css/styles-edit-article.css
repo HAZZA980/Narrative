@@ -736,3 +736,103 @@ button.item-class {
 #cke-eab0a75c0dc52364d1a498b9dea2ca425, .cke_notification, .cke_notification_warning {
     display: none;
 }
+
+@media (max-width: 1420px) {
+    .main-content {
+        width: 90%;
+        flex-direction: column; /* stack content vertically */
+    }
+
+    .flex-container {
+        min-width: 100%;
+        max-width: 100%;
+        align-items: center; /* center content horizontally */
+    }
+
+    .edit-article-header {
+        font-size: 1.75rem;
+        width: 95%;
+    }
+
+    .blog-title {
+        font-size: 3.5rem;
+        padding-top: 0.5rem;
+        width: 100%;
+        text-align: center;
+    }
+
+    .editing-container {
+        padding-top: 1.5rem;
+    }
+
+    .content-box {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    #blog {
+        font-size: 1rem;
+    }
+
+    .edit-title-container,
+    .edit-content-container,
+    .edit-category-container,
+    .edit-image-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .blog-content {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .edit-image-container #image {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+
+    input#blog-title {
+        width: 100%;
+        font-size: 1.5em;
+        padding-top: 0.5rem;
+    }
+
+    #editor,
+    .cke,
+    .cke_contents {
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Form adjustments */
+    #updateForm {
+        padding: 0 1rem;
+    }
+
+    #updateForm button {
+        font-size: 1rem;
+        padding: 0.75rem;
+    }
+
+    /* Aside links adjustments */
+    .aside-links {
+        min-width: 100%;
+        max-width: 100%;
+        border-left: none;
+        padding-left: 0;
+        margin-top: 2rem;
+        border-top: 1px solid #ddd;
+    }
+
+    .aside-last-updated {
+        margin-top: 3rem;
+    }
+
+    /* Modal width adjustment */
+    .modal-content {
+        width: 80%;
+        margin: 10% auto;
+    }
+}

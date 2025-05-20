@@ -644,3 +644,66 @@
     background-color: #007bff; /* Blue on hover */
     color: #fff; /* White text on hover */
 }
+
+
+
+
+@media screen and (max-width: 1420px) {
+    .main-content {
+        width: 95%;
+        flex-direction: column;
+    }
+
+    .flex-container {
+        width: 100%;
+    }
+
+    .aside-links {
+        margin-left: 0;
+        margin-top: 2rem;
+        padding-left: 0;
+        border-left: none;
+        border-top: 1px solid #ddd;
+        padding-top: 1rem;
+        max-width: 100%;
+    }
+
+    .blog-title {
+        font-size: 2.5rem;
+    }
+
+    .likes-and-comments {
+        margin-left: 0;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .likes-and-comments div a {
+        justify-content: center;
+    }
+
+    .preferred_tags {
+        justify-content: center;
+    }
+
+    .comment-form button {
+        width: auto;
+    }
+
+    .blog-item,
+    #blog {
+        width: 100%;
+    }
+
+    .aside-image-container {
+        height: 100px;
+    }
+
+    .article-title {
+        font-size: 1.1rem;
+    }
+
+    .blog-image {
+        height: auto;
+    }
+}

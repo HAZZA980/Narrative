@@ -516,3 +516,42 @@
 }
 
 
+@media screen and (max-width: 1420px) {
+    .main-content {
+        width: 90%;
+    }
+
+    .grid-container {
+        grid-template-columns: repeat(3, 1fr); /* Reduce to 3 columns */
+        gap: 1.5em;
+    }
+
+    .p1 {
+        grid-column: span 3; /* Allow featured post to span full width */
+        grid-row: auto;
+    }
+
+    .p1 .blog-details #blog-title {
+        font-size: 1.5rem !important;
+    }
+
+    .latest {
+        width: 90%;
+    }
+
+    .carousel-container {
+        width: 90%;
+    }
+
+    .carousel-grid-item {
+        flex: 0 0 calc(33.333% - 16px); /* Show ~3 items */
+    }
+
+    .featured-author {
+        width: 90%;
+    }
+
+    .featured-author-section {
+        padding: 40px 0;
+    }
+}

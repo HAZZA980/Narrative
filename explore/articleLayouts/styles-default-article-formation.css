@@ -413,3 +413,51 @@
     text-decoration: none; /* Ensure the underline does not appear on hover */
     color: inherit; /* Keep the text color same on hover */
 }
+
+
+
+@media screen and (max-width: 1420px) {
+    .flex-container {
+        width: 90%;
+    }
+
+    .blog-body {
+        flex-direction: column;
+        padding-right: 0;
+    }
+
+    .blog-details {
+        width: 100%;
+        margin-right: 0;
+        padding-right: 0;
+    }
+
+    .image-container {
+        width: 100%;
+        height: auto;
+        margin-top: 1rem;
+    }
+
+    .blog-details-2 {
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+    }
+
+    .likes-and-comments {
+        margin-left: 0;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .article-author-and-topic {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .edit-menu {
+        right: 0.5rem;
+    }
+}
+

@@ -300,3 +300,160 @@ body {
 }
 
 
+/* --- Mobile (under 1420px) --- */
+@media screen and (max-width: 1420px) {
+
+    /* For screens under 1420px: Arrange the elements as required */
+    .orb-container {
+        flex-direction: column; /* Stack the items vertically */
+        align-items: center; /* Center the elements */
+        height: auto;
+    }
+
+    .orb-nav-title {
+        margin-bottom: 1rem; /* Space between logo and hamburger */
+    }
+
+    .hamburger {
+        margin-bottom: 1rem; /* Space between hamburger and search bar */
+    }
+
+    .orb-nav-search {
+        width: 100%; /* Make search bar take full width on smaller screens */
+        display: block; /* Ensure it's visible and displayed beneath */
+        margin-top: 1rem; /* Space between hamburger and search bar */
+    }
+
+    .orb-nav-searchbar {
+        width: 100%; /* Ensure the search bar takes full width */
+        display: flex;
+        justify-content: space-between; /* Space items in the search bar */
+    }
+
+    #header-search-bar {
+        width: 80%; /* Adjust the search bar width */
+    }
+
+    .orb-nav-searchbar button {
+        width: 15%; /* Button width */
+    }
+
+    .hamburger div {
+        width: 25px;
+        height: 3px;
+        background-color: black;
+        margin: 4px 0;
+        z-index: 9999;
+    }
+
+
+    .orbit-header-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        margin-top: 1rem;
+        background-color: whitesmoke;
+        z-index: 999;
+    }
+
+    .orbit-header-links.show {
+        position: relative; /* or absolute/fixed if needed */
+        z-index: 9999;
+        display: flex;
+        background-color: white;
+    }
+
+
+    .orbit-header-links a,
+    .orbit-header-links .orb-nav-search,
+    .orbit-header-links .account-container {
+        width: 100%;
+        padding: 0.5rem 0;
+        background-color: #ffffff;
+    }
+
+    .orbit-sublink {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .orb-nav-searchbar {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .dropdown-menu {
+        display: none !important; /* hide Categories mega menu on mobile */
+    }
+
+
+    .dropdown-menu {
+        display: block;
+        position: relative;
+        top: 0;
+        left: 0;
+        background-color: transparent;
+        box-shadow: none;
+        border: none;
+        opacity: 1;
+        transform: none;
+        width: 100%;
+        padding: 0;
+        z-index: auto;
+    }
+
+    .dropdown-header-3 {
+        border-bottom: 2px solid #ccc;
+        padding: 10px 15px;
+        font-size: 1.1rem;
+        grid-column: auto;
+    }
+
+    .dropdown-menu-items {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        font-size: 1rem;
+        font-weight: normal;
+        color: #333;
+        background-color: #fff;
+        border: none;
+        border-bottom: 1px solid #eee;
+        border-radius: 0;
+        width: 100%;
+        justify-content: flex-start;
+        transition: background-color 0.2s ease;
+    }
+
+    .dropdown-menu-items:hover {
+        background-color: #f9f9f9;
+    }
+
+    /* Disable hover behavior */
+    .orb-nav-articles:hover + .dropdown-menu,
+    .dropdown-menu:hover {
+        display: block;
+        opacity: 1;
+        transform: none;
+    }
+
+    /* Move the search bar into the hamburger dropdown menu visually */
+    .orb-nav-search {
+        order: 1; /* Places it near the top, adjust as needed */
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .orbit-header-links.show .orb-nav-search {
+        display: block;
+    }
+
+    .orb-nav-searchbar {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 0.5rem 1rem;
+    }
+
+
+}
+

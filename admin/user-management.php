@@ -245,16 +245,80 @@ include BASE_PATH . "admin/view/delete-user-modal.html";
             cursor: pointer; /* Only buttons and checkboxes should be clickable, not the entire row */
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
+        @media screen and (max-width: 1420px) {
+            .feed-outer-container {
+                width: 100%;
+                padding: 0 20px;
+                box-sizing: border-box;
+                align-items: stretch;
+            }
+
+            .top-container {
+                width: 100%;
+                background: linear-gradient(to bottom, darkgrey 0%, white 40px, white 100%);
+                padding: 15px 10px;
+            }
+
+            /* Modal Content */
+            .modal-content {
+                top: 20%;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 90%;
+                max-width: 400px;
+                padding: 20px;
+            }
+
+            .modal-content h2 {
+                font-size: 1.4rem;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .modal-actions button {
+                width: 100%;
+                padding: 12px;
+                font-size: 1rem;
+            }
+
+            /* Admin insights */
+            .admin-insights {
+                margin: 1rem;
+                font-size: 1.25rem;
+            }
+
+            /* Table container */
+            .users-table-container {
+                padding: 10px;
+                overflow-x: auto;
+            }
+
             table {
-                font-size: 0.85rem;
+                font-size: 0.9rem;
+                margin: 15px 0;
+                display: block;
+                white-space: nowrap;
             }
 
             th, td {
-                padding: 10px;
+                padding: 8px;
+            }
+
+            /* Adjust last two cells alignment for smaller screens */
+            td:last-child, td:nth-last-child(2) {
+                text-align: center;
+            }
+
+            /* Buttons */
+            button.delete-btn, .freeze-btn {
+                padding: 8px 10px;
+                font-size: 0.85rem;
             }
         }
+
 
     </style>
 </head>

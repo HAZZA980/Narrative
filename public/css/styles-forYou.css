@@ -200,3 +200,33 @@
     color: #777;
     text-align: center;
 }
+
+
+
+@media screen and (max-width: 1420px) {
+    .main-content {
+        flex-direction: column;
+        width: 90%;
+    }
+
+    .non-recommended-articles {
+        border-left: none;
+        padding-left: 0;
+        margin-left: 0;
+        margin-top: 2rem;
+        max-width: 100%;
+    }
+
+    .aside-recommended-topics {
+        width: 100%;
+    }
+
+    .preferred_tags {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .main-content-title {
+        text-align: center;
+    }
+}

@@ -253,3 +253,35 @@ button:hover {
     background-color: #003f7f; /* Even darker shade for active state */
     transform: translateY(0); /* Reset lift effect */
 }
+
+
+@media screen and (max-width: 1420px) {
+    .main-container {
+        flex-direction: column;  /* Stack children vertically */
+        align-items: stretch;    /* Stretch full width */
+        padding: 0 20px;         /* Optional: add some horizontal padding */
+    }
+
+    .main-content {
+        width: 100%;             /* Full width instead of 73% */
+        max-width: none;         /* Remove max-width if set elsewhere */
+        margin: 0 auto;          /* Center if you want */
+    }
+
+    #topControls {
+        flex-direction: column;  /* Stack controls vertically */
+        align-items: stretch;    /* Stretch buttons and controls */
+        gap: 15px;               /* Space between controls */
+    }
+
+    #rightControls {
+        justify-content: flex-start; /* Align controls to the left */
+        gap: 12px;
+        margin-top: 10px;             /* Space from other controls */
+        flex-wrap: wrap;
+    }
+
+    #startButton {
+        width: 100%; /* Full width button */
+    }
+}

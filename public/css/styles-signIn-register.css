@@ -111,3 +111,42 @@
 
 
 
+@media screen and (max-width: 1420px) {
+    .form-and-logo-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        gap: 30px;
+    }
+
+    .form-container-wrapper,
+    .logo-image-container {
+        width: 90%;
+    }
+
+    .tabs {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .tab {
+        flex: none;
+        width: 100%;
+        text-align: center;
+    }
+
+    .form-container {
+        padding: 15px;
+    }
+
+    .logo-image-container {
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .logo-image-container img {
+        width: 100%;
+        height: auto;
+    }
+}

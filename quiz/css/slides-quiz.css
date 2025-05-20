@@ -147,15 +147,49 @@ tbody td {
     border-bottom: 1px solid #ddd;
 }
 
-/* Add responsive design for small screens */
-@media (max-width: 768px) {
+@media screen and (max-width: 1420px) {
+    .main-container {
+        width: 100%;
+        padding: 1rem 20px;
+        margin: 0 auto;
+    }
+
+    .quiz-container {
+        max-width: 100%;
+        width: 100%;
+        padding: 25px 20px;
+        box-sizing: border-box;
+        text-align: left; /* Optional: easier reading on narrow screens */
+    }
+
+    .quiz-container h1 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .quiz-container p {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+
+    .quiz-container input[type="text"] {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .quiz-container button {
+        width: 100%;
+        padding: 12px 0;
+        font-size: 1.1rem;
+    }
+
     .table-container {
         width: 100%;
-        padding: 10px;
+        padding: 15px;
     }
 
     table {
-        font-size: 12px;
+        font-size: 13px;
     }
 }
 

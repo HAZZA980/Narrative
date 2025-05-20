@@ -93,19 +93,80 @@ html, body {
 }
 
 /* Mobile Responsiveness */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+    .footer-container {
+        padding: 1.5rem 0;
+        height: auto;
+    }
+
+    .contact-links {
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .additional {
+        gap: 1rem;
+    }
+
+    .legal {
+        gap: 1.2rem;
+        font-size: 0.85rem;
+    }
+
+    .contact-links .element h4,
+    .contact-links .element h5 {
+        font-size: 1rem;
+    }
+
+    .additional a {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .footer-content {
+        padding: 0 1rem;
+    }
+
+    .footer-container {
+        padding: 2rem 1rem;
+        height: auto;
+        text-align: center;
+    }
+
     .contact-links {
         flex-direction: column;
         align-items: center;
+        gap: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .contact-links .element img {
+        width: 36px;
+        height: 36px;
+    }
+
+    .contact-links .element h4,
+    .contact-links .element h5 {
+        font-size: 0.95rem;
     }
 
     .additional {
         flex-direction: column;
         align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .additional a {
+        font-size: 0.9rem;
     }
 
     .legal {
         flex-direction: column;
         align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+        text-align: center;
     }
 }

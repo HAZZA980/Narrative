@@ -116,3 +116,65 @@
 }
 
 
+@media screen and (max-width: 1420px) {
+    .admin-bar {
+        position: fixed !important;  /* Make sticky behavior consistent on smaller screens */
+        top: 0;
+        left: 0;
+        width: 100% !important;     /* Full width on smaller screens */
+        padding: 8px 15px;
+        box-sizing: border-box;
+        margin: 0 !important;
+        border-radius: 0;
+        z-index: 10000;             /* Ensure it stays above other content */
+    }
+
+    .admin-bar.sticky {
+        width: 100% !important;
+        left: 0 !important;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    #featured-form {
+        top: 0;
+        margin-bottom: 8px;
+    }
+
+    .admin-taskbar-title {
+        flex-direction: column;   /* Stack vertically on smaller screens */
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 1rem;
+    }
+
+    .admin-bar .img-container {
+        margin-right: 10px;
+    }
+
+    .admin-bar .img-container img {
+        width: 20px;
+        height: 20px;
+    }
+
+    #category-dropdown {
+        font-size: 13px;
+        padding: 6px 8px;
+    }
+
+    #featured {
+        margin-right: 10px;
+    }
+
+    #freeze-user {
+        width: 100%;         /* Full width for easier tap */
+        font-size: 14px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin-top: 10px;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    }
+
+    /* Adjust hover states remain same, no change needed */
+}
+
+

@@ -54,6 +54,40 @@ include BASE_PATH . "admin/model/article_analysis.php";
         tbody tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
+        @media screen and (max-width: 1420px) {
+            .feed-outer-container {
+                width: 100%;
+                padding: 0 20px;
+                box-sizing: border-box;
+                align-items: stretch;
+            }
+
+            .top-container {
+                width: 100%;
+                padding: 15px 10px;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                border-bottom: 2px solid #333;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            table {
+                font-size: 14px; /* Slightly smaller text for narrow screens */
+                margin-top: 15px;
+                overflow-x: auto;
+                display: block; /* Allows horizontal scroll on small screens */
+                white-space: nowrap; /* Prevents table cells from breaking lines */
+            }
+
+            th, td {
+                padding: 8px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+        }
+
     </style>
 </head>
 <body>

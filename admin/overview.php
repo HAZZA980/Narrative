@@ -97,19 +97,63 @@ include BASE_PATH . "admin/model/overview.php";
             background-color: #1b3a4b; /* Slightly darker teal on hover */
             transform: scale(1.02); /* Subtle hover effect */
         }
+        @media screen and (max-width: 1420px) {
+            .feed-outer-container {
+                width: 100%;
+                padding: 0 20px;
+                box-sizing: border-box;
+                align-items: stretch;
+            }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
             .top-container {
+                width: 100%;
+                padding: 15px 10px;
                 flex-direction: column;
                 align-items: center;
+                text-align: center;
+                border-bottom: 2px solid #333;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             }
 
-            .insights-container, .links-container {
+            .insights-container,
+            .links-container {
                 max-width: 100%;
+                margin: 10px 0 0 0;
+                padding: 15px;
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .insights-container {
                 margin-right: 0;
             }
+
+            .insight-box h2 {
+                font-size: 1.1rem;
+                margin: 8px 0;
+            }
+
+            .insight-box p {
+                font-size: 1.3rem;
+                margin: 4px 0 12px;
+            }
+
+            .links-container {
+                gap: 12px;
+            }
+
+            .link-box {
+                justify-content: center;
+                padding: 10px;
+                border-radius: 5px;
+                transition: background-color 0.3s ease, transform 0.2s;
+            }
+
+            .link-box a {
+                font-size: 1rem;
+            }
         }
+
     </style>
 </head>
 <body>

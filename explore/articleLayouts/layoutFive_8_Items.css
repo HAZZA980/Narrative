@@ -452,3 +452,159 @@
 .pagination a:hover {
     background-color: #ddd;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media screen and (max-width: 1420px) {
+    .main-content {
+        width: 90%;
+    }
+
+    .grid-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .grid-item,
+    .p1, .p2, .p3, .p4, .p5, .p6 {
+        grid-column: auto;
+        grid-row: auto;
+        width: 100%;
+    }
+
+    .p1 #blog-content {
+        display: none; /* Hide extended content on mobile */
+    }
+
+    .p1 .blog-details #blog-title {
+        font-size: 1.25rem !important;
+    }
+
+    .image-container,
+    .carousel-grid-item .image-container {
+        height: 200px; /* Adjust for smaller screens */
+    }
+
+    .carousel-grid {
+        flex-direction: column;
+    }
+
+    .carousel-grid-item {
+        flex: 1 0 100%;
+        width: 100%;
+    }
+
+    .carousel-button {
+        display: none; /* Hide carousel buttons on mobile */
+    }
+
+    .latest-grid-container {
+        grid-template-columns: 1fr; /* Stack vertically */
+    }
+
+    .latest-grid-container-2 {
+        margin-left: 0;
+    }
+
+    .latest-grid-container-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .latest-grid-item-3 {
+        justify-content: flex-start;
+    }
+
+    .latest-blog-tags {
+        width: 100%;
+    }
+
+    .main-content .main-content-title {
+        margin-top: 2rem;
+        font-size: 1.25rem;
+    }
+
+    #blog-title {
+        font-size: 1rem;
+    }
+
+    #blog-content {
+        font-size: 0.875rem;
+    }
+
+    .blog-details-2 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+        position: static;
+        margin-top: 0.5rem;
+    }
+
+
+    .pagination {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 0 10px;
+    }
+
+    .pagination-link {
+        flex: 1 1 auto;
+        min-width: 44px;
+        padding: 8px;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+    .pagination-link.active {
+        background-color: #007BFF;
+        color: white;
+    }
+
+    .pagination-link:hover {
+        background-color: #ccc;
+    }
+
+
+}
