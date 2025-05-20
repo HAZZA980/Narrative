@@ -153,9 +153,6 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
             ?>
         </div>
 
-
-
-
         <h5 class="main-content-title">Latest</h5>
         <div class="latest-container">
             <?php
@@ -306,7 +303,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                 <?php
                 $sql = "SELECT id, title, LEFT(content, 180) AS summary, datePublished, Tags, featured, Image, user_id 
                     FROM tbl_blogs 
-                    WHERE Category = 'food and drink' 
+                    WHERE Category = 'food' 
                     ORDER BY RAND() 
                     LIMIT 5";
                 $result = $conn->query($sql);
@@ -357,7 +354,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
             <div class="grid-container">
                 <?php
                 $sql = "SELECT id, title, LEFT(content, 180) AS summary, datePublished, Tags, featured, Image, user_id 
-                        FROM tbl_blogs WHERE Private = 0 AND Category = 'Philosophy' ORDER BY RAND() LIMIT 10";
+                        FROM tbl_blogs WHERE Private = 0 AND Category = 'politics' ORDER BY RAND() LIMIT 10";
                 $result = $conn->query($sql);
 
                 $i = 1; // Counter to track grid items

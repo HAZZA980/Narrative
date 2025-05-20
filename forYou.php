@@ -15,70 +15,7 @@ include BASE_PATH . 'model/for-you-logic.php';
     <link rel="stylesheet" href="public/css/styles-forYou.css">
     <link rel="stylesheet" href="features/pagination/css/pagination.css">
     <link rel="stylesheet" href="explore/articleLayouts/styles-default-article-formation.css">
-    <style>
-        /* Profile Image Container */
-
-
-        /* Container for the entire section */
-
-        /* Profile image container */
-        .profile-image-container {
-            display: flex;
-            align-items: center;
-            margin-right: 10px;
-        }
-
-        /* Wrapper for the profile picture */
-        .profile-pic-wrapper {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            overflow: hidden;
-            margin-right: 10px;
-            position: relative;
-        }
-
-        /* Profile picture */
-        .pp-author-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Profile initial (if no image is available) */
-        .profile-initial {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 2rem; /* Adjust font size for initials */
-            text-align: center;
-            background-color: #888; /* Default random color */
-        }
-
-        /* Author name */
-        .profile-author-name {
-            font-size: 1rem;
-            font-weight: bold;
-            text-decoration: none;
-            color: #333;
-            margin-left: 1rem;
-        }
-
-        /* Hover effect for author name */
-        .profile-author-name:hover {
-            color: #007bff;
-            text-decoration: underline;
-        }
-
-
-
-    </style>
+    <link rel="stylesheet" href="includes/css/feed.css">
 </head>
 <body>
 <main class="main-container">

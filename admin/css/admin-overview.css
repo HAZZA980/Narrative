@@ -1,0 +1,141 @@
+/* Keep the existing outer feed and top container styles */
+.feed-outer-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.top-container {
+    width: 73%;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    background-color: #e9ecef; /* Tertiary Background */
+    border-bottom: 2px solid #dee2e6;
+    box-sizing: border-box;
+    text-align: center;
+    border-bottom: 2px solid #333;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Insights container styles */
+.insights-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    background-color: #f4f5f7; /* Primary Background */
+    border: 1px solid #dee2e6; /* Accent Background as a border */
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Softer shadow */
+    margin-right: 20px;
+    max-width: 45%; /* Adjust to ensure responsiveness */
+}
+
+.insight-box h2 {
+    font-size: 1.2rem;
+    color: #444; /* Neutral dark grey for headers */
+    margin: 10px 0;
+}
+
+.insight-box p {
+    font-size: 1.5rem;
+    color: #2a9d8f; /* Professional teal for key stats */
+    font-weight: bold;
+    margin: 5px 0 15px;
+}
+
+/* Links container styles */
+.links-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    background-color: #ffffff; /* Crisp white background */
+    border: 1px solid #ccc; /* Match with insights container */
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.link-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    background-color: #264653; /* Dark teal for buttons */
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.link-box a {
+    text-decoration: none;
+    color: #ffffff; /* White text for contrast */
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.link-box:hover {
+    background-color: #1b3a4b; /* Slightly darker teal on hover */
+    transform: scale(1.02); /* Subtle hover effect */
+}
+@media screen and (max-width: 1420px) {
+    .feed-outer-container {
+        width: 100%;
+        padding: 0 20px;
+        box-sizing: border-box;
+        align-items: stretch;
+    }
+
+    .top-container {
+        width: 100%;
+        padding: 15px 10px;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        border-bottom: 2px solid #333;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .insights-container,
+    .links-container {
+        max-width: 100%;
+        margin: 10px 0 0 0;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .insights-container {
+        margin-right: 0;
+    }
+
+    .insight-box h2 {
+        font-size: 1.1rem;
+        margin: 8px 0;
+    }
+
+    .insight-box p {
+        font-size: 1.3rem;
+        margin: 4px 0 12px;
+    }
+
+    .links-container {
+        gap: 12px;
+    }
+
+    .link-box {
+        justify-content: center;
+        padding: 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, transform 0.2s;
+    }
+
+    .link-box a {
+        font-size: 1rem;
+    }
+}

@@ -16,63 +16,8 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="articleLayouts/layoutOne_7_12_Item.css">
+    <link rel="stylesheet" href="articleLayouts/carousel_article.css">
     <title>Sport | Narrative</title>
-    <style>
-        .carousel-item {
-            min-height: 30rem; /* Consistent height */
-        }
-
-        .carousel-item .container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%; /* Ensure full height within each slide */
-        }
-
-        .carousel-item .row {
-            width: 100%; /* Ensures content stretches properly */
-        }
-
-        .carousel-item img {
-            width: 100%;
-            height: 25rem; /* Fixed height */
-            object-fit: cover; /* Ensures good cropping */
-            border-radius: 10px;
-        }
-
-        .carousel-content {
-            padding: 20px;
-        }
-
-        .carousel-content h5 {
-            font-weight: 600;
-            font-size: 30px;
-            color: black;
-        }
-
-        .carousel-content p {
-        }
-
-        .carousel-caption {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            background-color: black; /* Makes the icons black */
-            border-radius: 50%; /* Optional: Makes them rounded */
-            width: 50px; /* Adjust size */
-            height: 50px;
-        }
-
-        .carousel-control-prev,
-        .carousel-control-next {
-            opacity: 1; /* Ensures full visibility */
-        }
-
-    </style>
 </head>
 <body>
 
@@ -142,73 +87,6 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
     </div>
 
     <div class="main-content">
-        <h4 class="main-content-title">Olympic Highlights</h4>
-        <div class="grid-container">
-            <?php
-            $sql = "SELECT id, title, LEFT(content, 270) AS summary, datePublished, Tags, Image, user_id 
-                    FROM tbl_blogs 
-                    WHERE Tags like '%Olympic%' 
-                      AND featured = 0 
-                      AND Private = 0
-                    ORDER BY datePublished DESC 
-                    LIMIT 12";
-            $result = $conn->query($sql);
-
-            $i = 1;
-            while ($row = $result->fetch_assoc()) {
-                $featured_ids[] = $row['id'];
-
-                ?>
-                <div class="grid-item">
-                    <a href="<?php echo BASE_URL ?>user/article.php?id=<?php echo $row['id']; ?>">
-                        <div class="image-container">
-                            <img src="<?php echo isset($row['Image']) && !empty($row['Image']) && $row['Image'] !== 'narrative-logo-big.png'
-                                ? BASE_URL . 'public/images/users/' . $row['user_id'] . '/' . $row['Image']
-                                : BASE_URL . 'narrative-logo-big.png'; ?>" alt="Blog Image">
-                        </div>
-                        <div class="blog-details">
-                            <h2 id="blog-title"><?php echo htmlspecialchars($row['title']); ?></h2>
-                            <p id="blog-content"><?php echo strip_tags($row['summary']); ?>...</p>
-                        </div>
-                    </a>
-                    <div class="blog-details-2">
-                        <p id="blog-tags">
-                            <?php
-                            if (!empty($row['Tags'])) {
-                                // Explode tags by comma and trim whitespace
-                                $tags = explode(",", $row['Tags']);
-                                $first_tag = trim($tags[0]); // Get the first tag
-                                ?>
-                                <!-- Tag link to feed.php with tag query -->
-                                <a href="<?php echo BASE_URL; ?>tag.php?tag=<?php echo urlencode($first_tag); ?>"
-                                   class="tag-link">
-                                    <?php echo htmlspecialchars($first_tag); ?>
-                                </a>
-                                <?php
-                            } else {
-                                echo "<span>Uncategorized</span>";
-                            }
-                            ?>
-                        </p>
-                        <p id="blog-date">
-                            <small><?php echo date('F j, Y', strtotime($row['datePublished'])); ?></small>
-                        </p>
-                    </div>
-                </div>
-                <?php
-                $i++;
-            }
-
-            if ($result->num_rows > 0) {
-                $article = $result->fetch_assoc();
-                // Display article
-            } else {
-                echo "Article not found or private.";
-            }
-
-            ?>
-        </div>
-
 
 
 

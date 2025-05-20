@@ -86,7 +86,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
     </div>
 
     <div class="main-content">
-        <h4 class="main-content-title">Is there such a thing as true altruism?</h4>
+        <h4 class="main-content-title">THERE ARE NO ARTICLES IN THIS CATEGORY YET!</h4>
         <div class="grid-container">
             <?php
             $sql = "SELECT id, title, LEFT(content, 270) AS summary, datePublished, Tags, Image, user_id 
@@ -147,7 +147,7 @@ include BASE_PATH . 'features/write/write-icon-fixed.php';
                 $article = $result->fetch_assoc();
                 // Display article
             } else {
-                echo "Article not found or private.";
+                echo "";
             }
 
             ?>

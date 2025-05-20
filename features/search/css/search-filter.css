@@ -1,0 +1,147 @@
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    width: 450px;
+    text-align: center;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+    font-family: 'Poppins', sans-serif; /* Softer, more modern font */
+}
+
+/* Title Styling - Softer Look */
+.modal h2 {
+    margin-bottom: 15px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #1E3A8A;
+}
+
+/* Filter Options */
+.filter-options {
+    margin: 15px 0;
+    border-bottom: #1E3A8A dotted 3px;
+}
+
+/* Labels */
+label {
+    font-size: 16px;
+    font-weight: 500;
+    margin-right: 10px;
+    color: #333;
+}
+
+/* Date Filter Section - Styled to Appear in a Row */
+/* Date Filters Section */
+.date-filters {
+    margin-top: 15px;
+    padding-bottom: 1rem;
+    text-align: left;
+}
+
+/* Date Range Wrapper */
+.date-range {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+/* Individual Date Fields */
+.date-item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Labels */
+.date-item label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+/* Date Inputs */
+.date-item input[type="date"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    background: #f8f9fa;
+    text-align: center;
+    width: 100%;
+}
+
+
+.filter-title {
+    font-weight: bold;
+    text-align: left;
+    font-size: 1em;
+    font-family: inherit;
+}
+
+/* Category Buttons */
+.category-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+/* Category Button Styling */
+.category-btn {
+    margin: 5px;
+    padding: 8px 12px;
+    border: 1px solid #1E3A8A;
+    border-radius: 5px;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.category-btn:hover {
+    background: #1E3A8A;
+    color: white;
+}
+
+.category-btn.active {
+    background: #1E3A8A;
+    color: white;
+}
+
+/* Modal Footer */
+.modal-footer {
+    margin-top: 15px;
+}
+
+.modal-footer button {
+    padding: 10px 18px;
+    border: none;
+    background: #FF6B00;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: 0.2s ease-in-out;
+}
+
+.modal-footer button:hover {
+    background: #e65c00;
+}

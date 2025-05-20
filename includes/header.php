@@ -1,6 +1,5 @@
 <?php
 ob_start();
-//Add this because I was having trouble redirecting from change password back to settings
 
 include BASE_PATH . 'includes/model/header_file_mapping.php';
 ?>
