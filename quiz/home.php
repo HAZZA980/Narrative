@@ -196,7 +196,7 @@ if ($userId) {
         <div class="summary-box">
             <h3>📉 Your Lowest Highest Scores</h3>
             <?php if (!$userId): ?>
-                <p><a href="<?php echo BASE_URL; ?>auth/login.php">Log in</a> to start recording your scores and track your progress!</p>
+                <p><a href="<?php echo BASE_URL; ?>user_auth.php">Log in</a> to start recording your scores and track your progress!</p>
             <?php elseif ($userLowestHighestResult && $userLowestHighestResult->num_rows > 0): ?>
                 <ul>
                     <?php while ($row = $userLowestHighestResult->fetch_assoc()): ?>
