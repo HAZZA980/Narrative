@@ -522,17 +522,7 @@
     }
 
     .grid-container {
-        grid-template-columns: repeat(3, 1fr); /* Reduce to 3 columns */
-        gap: 1.5em;
-    }
-
-    .p1 {
-        grid-column: span 3; /* Allow featured post to span full width */
-        grid-row: auto;
-    }
-
-    .p1 .blog-details #blog-title {
-        font-size: 1.5rem !important;
+        grid-template-columns: repeat(1, 1fr);
     }
 
     .latest {
@@ -554,4 +544,65 @@
     .featured-author-section {
         padding: 40px 0;
     }
+
+    #latest-blog-content {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+        display: block;
+        margin-bottom: 1rem;
+        max-width: 100%;
+    }
+
+    .latest-grid-container-2 {
+        grid-auto-rows: auto;
+        height: auto;
+    }
+
+    .latest-content {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    /* Prevent overlap between sections */
+    .elsewhere-section h5.main-content-title {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Add space between grids */
+    .elsewhere-section .grid-container + h5.main-content-title {
+        margin-top: 3rem; /* separates the two sections more clearly */
+    }
+
+    /* Make sure each grid has bottom margin */
+    .elsewhere-section .grid-container {
+        margin-bottom: 2rem;
+    }
+
+    /* Optional: add padding to the section */
+    .elsewhere-section {
+        padding-bottom: 3rem;
+    }
+
+    .grid-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem; /* space between items */
+        padding: 1rem;
+    }
+
+    .grid-item {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 8px;     /* optional, for softer edges */
+        background: #fff;       /* optional, to stand out from background */
+    }
+
+    .image-container img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
 }
+
