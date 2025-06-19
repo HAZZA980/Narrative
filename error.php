@@ -75,8 +75,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/phpProjects/narrative/config/config.p
     <div class="error-message">
         <img class="error-message-image-container" src="<?php echo BASE_URL ?>public/images/error-page/broken-screen.png" alt="Error Image">
         <h3 class="error-message-title">WHOOPS - Something's Broken</h3>
-        <h6 class="error-message-para">Try using the <a class="error-message-link" href="<?php echo BASE_PATH; ?>search.php">SEARCH</a> if you're looking for something
-            specific. <br><br>Otherwise, try the Explore tab to browse categories or visit the <a class="error-message-link" href="<?php echo BASE_PATH; ?>siteMap.php">SITE MAP</a>.</h6>
+        <h6 class="error-message-para">Try using the <a class="error-message-link" href="<?php echo BASE_URL; ?>search.php">SEARCH</a> if you're looking for something
+            specific. <br><br>Otherwise, try the Explore tab to browse categories or visit the <a class="error-message-link" href="<?php echo BASE_URL; ?>info/siteMap.php">SITE MAP</a>.</h6>
     </div>
 </div>
 

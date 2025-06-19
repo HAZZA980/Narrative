@@ -494,10 +494,8 @@ $timeStmt->close();
                          alt="Pause Button">
                 </div>
             </div>
-
-
-
         </div>
+
         <div class="question-area">
             <p id="question" class="question"></p>
         </div>
@@ -612,6 +610,7 @@ $timeStmt->close();
         const resultsTableBody = document.querySelector('#results-table tbody');
         const quizResultsDiv = document.getElementById('quiz-results');
 
+        let revealedQuestions = [];
         let currentQuestionIndex = 0;
         let correctTally = 0;
         let answeredCorrectly = [];
@@ -693,12 +692,34 @@ $timeStmt->close();
                 scoreTracker.textContent = `Score: ${correctTally}/${questions.length}`;
 
                 setTimeout(() => {
-                    currentQuestionIndex++;
-                    while (answeredCorrectly.includes(currentQuestionIndex) && currentQuestionIndex < questions.length) {
+                    // If not last question, move to next question normally
+                    if (currentQuestionIndex < questions.length - 1) {
                         currentQuestionIndex++;
+                        // Skip already answered questions
+                        while (answeredCorrectly.includes(currentQuestionIndex) && currentQuestionIndex < questions.length) {
+                            currentQuestionIndex++;
+                        }
+                        loadQuestion();
+                    } else {
+                        // If last question, check for skipped questions
+                        let nextUnanswered = null;
+                        for (let i = 0; i < questions.length; i++) {
+                            if (!answeredCorrectly.includes(i)) {
+                                nextUnanswered = i;
+                                break;
+                            }
+                        }
+
+                        if (nextUnanswered !== null) {
+                            currentQuestionIndex = nextUnanswered;
+                            loadQuestion();
+                        } else {
+                            // No skipped questions left, show results
+                            showResults();
+                        }
                     }
-                    loadQuestion();
                 }, 1000);
+
             } else {
                 feedbackElement.classList.add("incorrect");
             }
@@ -745,10 +766,10 @@ $timeStmt->close();
                 let correctAnswers = question.answers.filter(a => a.is_correct === 1).map(a => a.text);
                 let answerText = correctAnswers.join(', ');
 
-                if (answeredCorrectly.includes(index)) {
-                    answerCell.classList.add("correct-answer"); // Green for correct answers
+                if (answeredCorrectly.includes(index) && !revealedQuestions.includes(index)) {
+                    answerCell.classList.add("correct-answer"); // Green only if correct and not revealed
                 } else {
-                    answerCell.classList.add("incorrect-answer"); // Red for incorrect answers
+                    answerCell.classList.add("incorrect-answer"); // Red if wrong or revealed
                 }
 
                 answerCell.textContent = answerText;
@@ -772,27 +793,85 @@ $timeStmt->close();
             feedbackElement.textContent = `The correct answer(s): ${correctAnswers.join(', ')}`;
             feedbackElement.classList.add("incorrect");
 
+            // Mark this question as revealed
+            if (!revealedQuestions.includes(currentQuestionIndex)) {
+                revealedQuestions.push(currentQuestionIndex);
+            }
+
+            // Prevent going back to this question
+            if (!answeredCorrectly.includes(currentQuestionIndex)) {
+                answeredCorrectly.push(currentQuestionIndex);
+            }
+
             setTimeout(() => {
-                currentQuestionIndex++;
-                while (answeredCorrectly.includes(currentQuestionIndex) && currentQuestionIndex < questions.length) {
-                    currentQuestionIndex++;
+                for (let i = currentQuestionIndex + 1; i < questions.length; i++) {
+                    if (!answeredCorrectly.includes(i)) {
+                        currentQuestionIndex = i;
+                        loadQuestion();
+                        return;
+                    }
                 }
-                loadQuestion();
+
+                for (let i = 0; i < questions.length; i++) {
+                    if (!answeredCorrectly.includes(i)) {
+                        currentQuestionIndex = i;
+                        loadQuestion();
+                        return;
+                    }
+                }
+
+                showResults();
             }, 1000);
         }
+
+
 
 
         // Listen for user input to check answers
         answerInput.addEventListener("input", checkAnswer);
         nextBtn.addEventListener("click", () => {
-            currentQuestionIndex++;
-            loadQuestion();
+            const totalQuestions = questions.length;
+
+            // Case 1: Still more questions ahead
+            for (let i = currentQuestionIndex + 1; i < totalQuestions; i++) {
+                if (!answeredCorrectly.includes(i)) {
+                    currentQuestionIndex = i;
+                    loadQuestion();
+                    return;
+                }
+            }
+
+            // Case 2: We're at or near the end and there are skipped questions earlier
+            for (let i = 0; i < totalQuestions; i++) {
+                if (!answeredCorrectly.includes(i)) {
+                    currentQuestionIndex = i;
+                    loadQuestion();
+                    return;
+                }
+            }
+
+            // Case 3: All questions have been answered
+            showResults();
         });
 
         prevBtn.addEventListener("click", () => {
-            currentQuestionIndex--;
-            loadQuestion();
+            let found = false;
+            for (let i = currentQuestionIndex - 1; i >= 0; i--) {
+                if (!answeredCorrectly.includes(i)) {
+                    currentQuestionIndex = i;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) {
+                loadQuestion();
+            } else {
+                feedbackElement.textContent = "No skipped questions before this.";
+                feedbackElement.className = "feedback";
+            }
         });
+
 
         revealAnswerBtn.addEventListener("click", revealAnswer);
     });

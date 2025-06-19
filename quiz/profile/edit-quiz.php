@@ -58,8 +58,10 @@ while ($row = $questionsResult->fetch_assoc()) {
     while ($answerRow = $answersResult->fetch_assoc()) {
         $answers[] = [
             'id' => $answerRow['id'],
-            'answer_text' => $answerRow['answer_text']
+            'answer_text' => $answerRow['answer_text'],
+            'is_correct' => (int)$answerRow['is_correct'],  // cast to int to be safe
         ];
+
     }
 
     $questions[] = [
@@ -136,17 +138,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $qidKey = $_POST['questionId'][$index];
         $answers = $_POST['answers'][$qidKey] ?? [];
 
-        foreach ($answers as $aText) {
+        foreach ($answers as $i => $aText) {
             $aText = trim($aText);
             if ($aText === '') continue;
 
-            $stmt = $conn->prepare("INSERT INTO `quiz-answers` (question_id, answer_text, is_correct) VALUES (?, ?, 1)");
-            $stmt->bind_param("is", $questionId, $aText);
+            // Determine if this answer is the selected correct one
+            $correctIndex = $_POST['correct'][$qidKey] ?? null;
+            $isCorrect = ($correctIndex == ($i + 1)) ? 1 : 0;
+
+            $stmt = $conn->prepare("INSERT INTO `quiz-answers` (question_id, answer_text, is_correct) VALUES (?, ?, ?)");
+            $stmt->bind_param("isi", $questionId, $aText, $isCorrect);
             $stmt->execute();
         }
     }
 
-    // Redirect
+        // Redirect
     header("Location: " . BASE_URL . "quiz/profile.php");
     exit();
 }
@@ -176,7 +182,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form action="<?php echo BASE_URL ?>quiz/profile/edit-quiz.php?id=<?php echo $quizId; ?>" method="POST"
           autocomplete="off">
         <!-- Basic Info -->
-        <h3>Basic Info</h3>
+        <h3>Basic Info
+        </h3>
         <div class="form-row">
             <!-- Quiz Type -->
             <div class="form-group">
@@ -184,6 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <select id="quizType" name="quizType" class="form-select" required>
                     <option value="classic" <?php echo ($quizType === "classic") ? "selected" : ""; ?>>Classic</option>
                     <option value="slides" <?php echo ($quizType === "slides") ? "selected" : ""; ?>>Slides</option>
+                    <option value="multiple-choice" <?php echo ($quizType === "multiple-choice") ? "selected" : ""; ?>>Multiple Choice</option>
                 </select>
             </div>
 
@@ -232,14 +240,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                placeholder="e.g., trivia, fun, general knowledge"
                value="<?php echo htmlspecialchars($quizTags); ?>" required>
 
-        <!-- Questions Section -->
-
-
-        <?php
-        // Example: Set the quiz type
-        $quizType = isset($_GET['type']) ? $_GET['type'] : 'text'; // or 'clickable'
-        ?>
-
 
         <h3>Enter Your Questions</h3>
         <p>Each question can have four possible correct answers if you so choose. Leave the unused answer boxes
@@ -264,18 +264,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         form.addEventListener('submit', updateQuestionOrderInputs);
     });
 
+    function getQuizType() {
+        return document.getElementById('quizType')?.value;
+    }
+
+
     function initializeQuizForm() {
         const existingQuestions = <?php echo json_encode($questions); ?>;
+        window.quizType = "<?php echo $quizType; ?>";
         existingQuestions.forEach((questionData) => {
             if (questionData && questionData.question && questionData.answers.length > 0) {
-                addExistingQuestion(questionData);
+                addExistingQuestion(questionData, quizType);
             }
         });
     }
 
-    function addExistingQuestion(questionData) {
+
+    function addExistingQuestion(questionData, quizType) {
         const quizContainer = document.getElementById('quizContainer');
-        const questionBlock = createQuestionBlock(questionData.question['id'], questionData.question['question_text'], questionData.answers);
+        const questionBlock = createQuestionBlock(
+            questionData.question['id'],
+            questionData.question['question_text'],
+            questionData.answers,
+            quizType
+        );
         quizContainer.appendChild(questionBlock);
         updateRemoveButtons();
     }
@@ -283,12 +295,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     function addQuestion() {
         const quizContainer = document.getElementById('quizContainer');
         const newId = 'new_' + Date.now();
-        const questionBlock = createQuestionBlock(newId, '', []);
+        const quizType = getQuizType(); // dynamically detect current type
+        const questionBlock = createQuestionBlock(newId, '', [], quizType);
         quizContainer.appendChild(questionBlock);
+
         updateRemoveButtons();
     }
 
-    function createQuestionBlock(questionId, questionText = '', answers = []) {
+
+    function createQuestionBlock(questionId, questionText = '', answers = [], quizType = window.quizType || '') {
         const block = document.createElement('div');
         block.className = 'question-block';
         block.setAttribute('draggable', 'true');
@@ -346,8 +361,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         block.appendChild(answersRow);
 
+        if (quizType === 'multiple-choice') {
+            const correctIndex = answers.findIndex(ans => ans.is_correct === 1); // zero-based index
+            const correctRow = document.createElement('div');
+            correctRow.className = 'correct-answer-row';
+            correctRow.innerHTML = `
+        <label>Select correct answer:</label><br>
+        ${[1, 2, 3, 4].map(i => {
+                const checked = (correctIndex === i - 1) ? 'checked' : '';
+                return `<label><input type="radio" name="correct[${questionId}]" value="${i}" ${checked}> ${i}</label>`;
+            }).join(' ')}
+    `;
+            block.appendChild(correctRow);
+        }
+
+
         return block;
     }
+
+    document.getElementById('quizType').addEventListener('change', () => {
+        const quizType = getQuizType();
+        const allBlocks = document.querySelectorAll('.question-block');
+
+        allBlocks.forEach(block => {
+            const existingRadios = block.querySelector('.correct-answer-row');
+            if (quizType === 'multiple-choice') {
+                if (!existingRadios) {
+                    const qId = block.querySelector('input[name="questionId[]"]').value;
+                    const correctRow = document.createElement('div');
+                    correctRow.className = 'correct-answer-row';
+                    correctRow.innerHTML = `
+                    <label>Select correct answer:</label><br>
+                    ${[1, 2, 3, 4].map(i =>
+                        `<label><input type="radio" name="correct[${qId}]" value="${i}"> ${i}</label>`
+                    ).join(' ')}
+                `;
+                    block.appendChild(correctRow);
+                }
+            } else {
+                if (existingRadios) {
+                    existingRadios.remove();
+                }
+            }
+        });
+    });
 
     function removeQuestion(block) {
         const container = document.getElementById('quizContainer');
@@ -394,6 +451,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             form.appendChild(input);
         });
     }
+
+    // Correct answer radios (optional)
+    if (getQuizType() === 'multiple-choice') {
+        const correctRow = document.createElement('div');
+        correctRow.className = 'correct-answer-row';
+        correctRow.innerHTML = `
+                    <label>Select correct answer:</label><br>
+                    <label><input type="radio" name="correct_answer[${index}]" value="answer1" required> 1</label>
+                    <label><input type="radio" name="correct_answer[${index}]" value="answer2"> 2</label>
+                    <label><input type="radio" name="correct_answer[${index}]" value="answer3"> 3</label>
+                    <label><input type="radio" name="correct_answer[${index}]" value="answer4"> 4</label>
+                `;
+        questionBlock.appendChild(correctRow);
+    }
+
 
     let draggedBlock = null;
 
