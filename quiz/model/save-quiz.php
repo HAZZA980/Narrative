@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $is_correct = 0; // Default to incorrect
 
             // If the quiz is clickable, set only the selected answer as correct
-            if ($quizType === "clickable") {
+            if ($quizType === "multiple-choice") {
                 $is_correct = ($_POST['correct_answer'][$index] === "answer{$i}") ? 1 : 0;
             } else {
                 // For non-clickable quizzes, every answer with text is considered correct

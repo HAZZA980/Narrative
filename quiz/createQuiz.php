@@ -331,6 +331,7 @@ $quizTimer = 60;
                 <select id="quizType" name="quizType" class="form-select" required>
                     <option value="classic" <?php echo ($quizType === "classic") ? "selected" : ""; ?>>Classic</option>
                     <option value="slides" <?php echo ($quizType === "slides") ? "selected" : ""; ?>>Slides</option>
+                    <option value="multiple-choice" <?php echo ($quizType === "multiple-choice") ? "selected" : ""; ?>>Multiple Choice</option>
                 </select>
             </div>
 
@@ -406,7 +407,9 @@ $quizTimer = 60;
         initializeQuizForm();
     });
 
-    const quizType = "<?php echo $quizType; ?>";
+    function getQuizType() {
+        return document.getElementById('quizType').value;
+    }
 
     function initializeQuizForm() {
         addQuestion(); // Show one block by default
@@ -467,7 +470,7 @@ $quizTimer = 60;
         questionBlock.appendChild(answersRow);
 
         // Correct answer radios (optional)
-        if (quizType === 'clickable') {
+        if (getQuizType() === 'multiple-choice') {
             const correctRow = document.createElement('div');
             correctRow.className = 'correct-answer-row';
             correctRow.innerHTML = `
@@ -552,6 +555,12 @@ $quizTimer = 60;
             block.classList.remove('drag-over');
         });
     }
+    document.getElementById('quizType').addEventListener('change', () => {
+        const quizContainer = document.getElementById('quizContainer');
+        quizContainer.innerHTML = ''; // Clear all existing questions
+        addQuestion(); // Add the first question with updated type
+    });
+
 </script>
 
 </body>

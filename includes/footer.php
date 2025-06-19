@@ -16,12 +16,12 @@
 
         <!-- Additional Links -->
         <div class="additional">
-            <a href="<?php echo BASE_URL?>info/terms.php">Terms & Conditions</a>
-            <a href="<?php echo BASE_URL?>info/privacy.php">Privacy & Cookie Policy</a>
-            <a href="<?php echo BASE_URL?>info/accessibility.php">Accessibility</a>
+            <a href="<?php echo BASE_URL?>error.php">Terms & Conditions</a>
+            <a href="<?php echo BASE_URL?>error.php">Privacy & Cookie Policy</a>
+            <a href="<?php echo BASE_URL?>error.php">Accessibility</a>
             <a href="<?php echo BASE_URL?>info/siteMap.php">Site Map</a>
-            <a href="<?php echo BASE_URL?>siteMap.php">Mission Statement & Core Values</a>
-            <a href="<?php echo BASE_URL?>siteMap.php">FAQs</a>
+            <a href="<?php echo BASE_URL?>error.php">Mission Statement & Core Values</a>
+            <a href="<?php echo BASE_URL?>error.php">FAQs</a>
         </div>
 
         <!-- Legal Info -->
