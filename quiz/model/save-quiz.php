@@ -15,8 +15,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     // Insert the quiz into `quiz-quizzes`
-    $stmt = $conn->prepare("INSERT INTO `quiz-quizzes` (user_id, title, description, category, tags, timer) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("issssi", $user_id, $title, $description, $category, $tags, $quizTimer);
+    $stmt = $conn->prepare("INSERT INTO `quiz-quizzes` (user_id, title, description, category, tags, timer, quiz_type) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("issssis", $user_id, $title, $description, $category, $tags, $quizTimer, $quizType);
     $stmt->execute();
     $quiz_id = $stmt->insert_id; // Get the new quiz ID
     $stmt->close();

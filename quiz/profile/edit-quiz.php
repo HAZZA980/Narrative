@@ -36,7 +36,7 @@ $quizDesc = $quiz['description'];
 $quizCategory = $quiz['category'];
 $quizTags = $quiz['tags'];
 $quizTimer = $quiz['timer'];
-$quizType = $quiz['quiz_type'] ?? 'classic';
+$quizType = isset($quiz['quiz_type']) ? strtolower(trim($quiz['quiz_type'])) : 'classic';
 
 // Fetch questions & answers ordered by question_order
 $stmt = $conn->prepare("SELECT * FROM `quiz-questions` WHERE quiz_id = ? ORDER BY question_order ASC");
@@ -178,7 +178,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php else: ?>
 
-    <h2>Create a New Quiz</h2>
+    <h2>Create a New Quiz <?php echo "quiz_type: '$quizType'";?>
+    </h2>
     <form action="<?php echo BASE_URL ?>quiz/profile/edit-quiz.php?id=<?php echo $quizId; ?>" method="POST"
           autocomplete="off">
         <!-- Basic Info -->
@@ -200,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="quizCategory">Category:</label>
                 <select id="quizCategory" name="quizCategory" class="form-select" required>
                     <?php
-                    $categories = ["sports", "geography", "music", "movies", "tv", "history", "language", "science", "gaming", "literature", "entertainment", "miscellaneous"];
+                    $categories = ["sports", "geography", "music", "movies", "tv", "history", "language", "science", "IT", "literature", "entertainment", "miscellaneous"];
                     foreach ($categories as $category) {
                         $selected = ($quizCategory === $category) ? "selected" : "";
                         echo "<option value='$category' $selected>" . ucfirst($category) . "</option>";

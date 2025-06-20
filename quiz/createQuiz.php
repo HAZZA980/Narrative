@@ -340,7 +340,7 @@ $quizTimer = 60;
                 <label for="quizCategory">Category:</label>
                 <select id="quizCategory" name="quizCategory" class="form-select" required>
                     <?php
-                    $categories = ["sports", "geography", "music", "movies", "tv", "history", "language", "science", "gaming", "literature", "entertainment", "miscellaneous"];
+                    $categories = ["sports", "geography", "music", "movies", "tv", "history", "language", "science", "IT", "literature", "entertainment", "miscellaneous"];
                     foreach ($categories as $category) {
                         $selected = ($quizCategory === $category) ? "selected" : "";
                         echo "<option value='$category' $selected>" . ucfirst($category) . "</option>";

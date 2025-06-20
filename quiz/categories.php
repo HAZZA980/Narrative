@@ -77,12 +77,6 @@ include BASE_PATH . 'includes/quiz-header.php';
         <h3>Entertainment</h3>
     </a>
 
-    <!-- Gaming Category -->
-    <a href="quiz-search.php?txt-search=&category=gaming" class="category-box">
-        <img src="<?php echo BASE_URL?>public/images/quiz/warzone.jpg" alt="Gaming">
-        <h3>Gaming</h3>
-    </a>
-
     <!-- Geography Category -->
     <a href="quiz-search.php?txt-search=&category=geography" class="category-box">
         <img src="<?php echo BASE_URL?>public/images/users/52/geography.jpg" alt="Geography">
@@ -93,6 +87,12 @@ include BASE_PATH . 'includes/quiz-header.php';
     <a href="quiz-search.php?txt-search=&category=history" class="category-box">
         <img src="<?php echo BASE_URL?>public/images/users/52/Napoleon.jpg" alt="History">
         <h3>History</h3>
+    </a>
+
+    <!-- IT Category -->
+    <a href="quiz-search.php?txt-search=&category=IT" class="category-box">
+        <img src="<?php echo BASE_URL?>public/images/quiz/IT.jpg" alt="IT">
+        <h3>IT</h3>
     </a>
 
     <!-- Language Category -->
