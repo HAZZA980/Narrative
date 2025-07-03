@@ -122,6 +122,7 @@ body {
     border-radius: 10px;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    height: 9rem;
 }
 
 .result-item:hover {
@@ -142,7 +143,7 @@ body {
 .result-description {
     font-size: 1rem;
     color: #555;
-    margin: 12px 0;
+    margin: 8px 0;
 }
 
 .result-title {
@@ -171,14 +172,13 @@ body {
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
-    margin-top: 12px;
 }
 
 .quiz-description {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin-top: 8px;
+    margin-top: 2px;
 }
 
 /* Responsive: Screens < 1420px */

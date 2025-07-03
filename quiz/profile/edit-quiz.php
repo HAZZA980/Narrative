@@ -144,7 +144,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Determine if this answer is the selected correct one
             $correctIndex = $_POST['correct'][$qidKey] ?? null;
-            $isCorrect = ($correctIndex == ($i + 1)) ? 1 : 0;
+            if ($quizType === 'multiple-choice') {
+                $isCorrect = ($correctIndex == ($i + 1)) ? 1 : 0;
+            } else {
+                // For classic or slides, any answer provided is correct
+                $isCorrect = 1;
+            }
 
             $stmt = $conn->prepare("INSERT INTO `quiz-answers` (question_id, answer_text, is_correct) VALUES (?, ?, ?)");
             $stmt->bind_param("isi", $questionId, $aText, $isCorrect);
